@@ -1,9 +1,13 @@
-
-
 Vopros Chat
 ===========
 
 Imlements chatting with Vopros editors.
+
+Starting the server
+-------------------
+
+Simply run `drush vopros-chat-start` to start a server. Add the
+`--node-debug` option to get more debugging output from node.
 
 Internals
 ---------
