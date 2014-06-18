@@ -1,5 +1,5 @@
 name = Vopros Chat
-description =
+description = Implements chat for Vopros.
 core = 7.x
 package = Vopros
 
