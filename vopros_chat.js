@@ -101,32 +101,18 @@
   Drupal.vopros_chat.postMessage = function(message, channelDomId) {
     var channelId = chatIdsMapping[channelDomId];
 
-    if (Drupal.settings.vopros_chat.chats[channelId].settings.messageTransmission == 'drupal') {
-      var postMessagePath = Drupal.settings.vopros_chat.chats[channelId].settings.postMessagePath;
-      $.ajax({
-        type: 'POST',
-        url: postMessagePath + '/' + channelId,
-        dataType: 'json',
-        success: function(data) {},
-        data: {
-          message: message
-        }
-      });
-    }
-    else {
-      var msg = {
-        type: 'vopros_chat',
-        action: 'chat_message',
-        channel: channelId,
-        callback: 'voprosChatMessageHandler',
-        data: {
-          uid: Drupal.settings.vopros_chat.currentUser.uid,
-          name: Drupal.settings.vopros_chat.currentUser.name,
-          msg: message
-        }
-      };
-      Drupal.Nodejs.socket.emit('message', msg);
-    }
+    var msg = {
+      type: 'vopros_chat',
+      action: 'chat_message',
+      channel: channelId,
+      callback: 'voprosChatMessageHandler',
+      data: {
+        uid: Drupal.settings.vopros_chat.currentUser.uid,
+        name: Drupal.settings.vopros_chat.currentUser.name,
+        msg: message
+      }
+    };
+    Drupal.Nodejs.socket.emit('message', msg);
   };
 
   Drupal.vopros_chat.processMessageArea = function(e) {
