@@ -1,43 +1,43 @@
-.nodejs-chat .user-list {
-  background: #FAFAFA;
-  border: 1px solid #CCCCCC;
+.vopros-chat .user-list {
+  background: #fafafa;
+  border: 1px solid #cccccc;
   float: right;
   height: 220px;
   overflow: auto;
   padding: 0 5px;
   width: 200px;
 }
-.nodejs-chat .user-list ul {
+.vopros-chat .user-list ul {
   padding: 0;
 }
-.nodejs-chat .user-list ul li {
+.vopros-chat .user-list ul li {
   list-style-type: none;
 }
-.nodejs-chat .user-list ul li span.username {
+.vopros-chat .user-list ul li .username {
   font-size: 14px;
   line-height: 28px;
   margin-left: 5px;
   vertical-align: top;
 }
-.nodejs-chat .chat-log {
-  border: 1px solid #CCCCCC;
-  border-width: 1px 0px;
+.vopros-chat .chat-log {
+  border: 1px solid #cccccc;
+  border-width: 1px 0;
   height: 220px;
   margin-top: 10px;
   overflow: auto;
   padding-right: 5px;
 }
-.nodejs-chat-message {
+.vopros-chat-message {
   clear: both;
 }
-.nodejs-chat .chat-log .message-content {
+.vopros-chat .chat-log .message-content {
   float: left;
   width: 90%;
 }
-.nodejs-chat .chat-log .message-author {
+.vopros-chat .chat-log .message-author {
   font-weight: bold;
 }
-.nodejs-chat .chat-log .message-time {
+.vopros-chat .chat-log .message-time {
   color: #858585;
   float: right;
   font-size: 12px;

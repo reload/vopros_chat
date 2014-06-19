@@ -3,12 +3,12 @@ description = Implements chat for Vopros.
 core = 7.x
 package = Vopros
 
+files[] = includes/VoprosChat.inc
+
 dependencies[] = vopros_embed
 dependencies[] = nodejs
-dependencies[] = nodejs_chat
 ; stylesheets[all][] = css/vopros_chat.base.css
 ; scripts[] = scripts/vopros_chat.js
-; files[] = vopros_chat.test
 ; php =
 ; configure = admin/config/something/vopros_chat
 ; required = TRUE

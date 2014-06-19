@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Basic Chat class
+ * Vopros Chat class
  */
-class Chat {
+class VoprosChat {
 
   /**
    * Chat Name. Human name to be displayed as markup (e.g the chat Title).
@@ -30,7 +30,7 @@ class Chat {
   /**
    * Users on the chat, stored as User IDs
    */
-  protected $user_ids;
+  protected $userIds;
 
   /**
    * Chat render array
@@ -40,7 +40,7 @@ class Chat {
   /**
    * Basic constructor, just with the socket.io channel assigned.
    */
-  function __construct($channel, $name = 'Node JS Chat', $settings = array()) {
+  public function __construct($channel, $name = 'Vopros Chat', $settings = array()) {
     // Make sure the channel name generated is unique within the page request.
     $unique_id = &drupal_static(__METHOD__);
     if (!isset($unique_id)) {
@@ -53,7 +53,7 @@ class Chat {
     $this->channel = preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $unique_channel);
 
 
-    // Check if chat channel exists
+    // Check if chat channel exists.
     if (!nodejs_get_check_channel($this->channel)) {
       // It doesn't, so try to add it.
       if (nodejs_get_add_channel($this->channel)) {
@@ -61,7 +61,7 @@ class Chat {
       }
       // In case of error, let the caller know.
       else {
-        drupal_set_message(t('The Chat channel couldn\'t be created'), 'error');
+        drupal_set_message(t("The Chat channel couldn\'t be created"), 'error');
         return FALSE;
       }
     }
@@ -76,16 +76,16 @@ class Chat {
   /**
    * Wrapper function to call sequential steps to render a functional chat.
    */
-  function render() {
-    // Create socket.io channel
+  public function render() {
+    // Create socket.io channel.
     $this->createSocketChannel();
 
     // Set the list of present users.
     $this->setUserList();
 
-    // Generate form
+    // Generate form.
     $this->form = $this->renderArray();
-    // Add assets to the page
+    // Add assets to the page.
     $this->loadAssets();
 
     // Render the form.
@@ -95,7 +95,7 @@ class Chat {
   /**
    * Generate render array for the chat form.
    */
-  function renderArray() {
+  public function renderArray() {
     // If the render array has already been generated, return it.
     if (isset($this->form)) {
       return $this->form;
@@ -105,25 +105,25 @@ class Chat {
 
     // Connected users info. TODO: Still need improvements and better placement.
     // This shouldn't be on the renderArray(() method.
-    $users_markup = theme('nodejs_chat_users', array('user_ids' => $this->user_ids));
-    $form['nodejs_chat'] = array(
+    $users_markup = theme('vopros_chat_users', array('user_ids' => $this->userIds));
+    $form['vopros_chat'] = array(
       '#type' => 'fieldset',
       '#title' => $this->name,
       '#attributes' => array(
          // Assuming channel comes transliterated as a valid CSS ID.
-        'id' => 'nodejs_chat_' . $this->channel,
+        'id' => 'vopros_chat_' . $this->channel,
         'class' => array(
-          'nodejs-chat',
+          'vopros-chat',
         ),
       ),
     );
-    $form['nodejs_chat']['user_list'] = array(
+    $form['vopros_chat']['user_list'] = array(
       '#markup' => '<div class="user-list">' . 'Users on the chat:' . $users_markup .  '</div>',
     );
-    $form['nodejs_chat']['chat_log'] = array(
+    $form['vopros_chat']['chat_log'] = array(
       '#markup' => '<div class="chat-log">Chat log is empty. Start writing! =): </div>',
     );
-    $form['nodejs_chat']['chat_entry_box'] = array(
+    $form['vopros_chat']['chat_entry_box'] = array(
       '#type' => 'textarea',
       '#title' => t('Enter your message here: '),
       '#value' => '',
@@ -132,7 +132,7 @@ class Chat {
         'id' => 'chat-entry-box',
       ),
     );
-    $form['nodejs_chat']['submit'] = array(
+    $form['vopros_chat']['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Send Message'),
     );
@@ -140,15 +140,18 @@ class Chat {
     return $form;
   }
 
-  function loadAssets() {
+  /**
+   * Add the assert needed to the page.
+   */
+  public function loadAssets() {
     // Javascript Assets.
-    drupal_add_js(drupal_get_path('module', 'nodejs_chat') . '/nodejs_chat.js');
+    drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/vopros_chat.js');
 
     // This is not the best place to do this, but for now it does the job to
     // allow a dev to choose whether the chat messages will go through drupal,
     // or through the nodejs server extension (directly through sockets).
     if (isset($this->settings['messageTransmission']) && $this->settings['messageTransmission'] == 'drupal') {
-      $this->settings['postMessagePath'] = url('nodejs-chat/message/post', array('absolute' => TRUE));
+      $this->settings['postMessagePath'] = url('vopros-chat/message/post', array('absolute' => TRUE));
     }
 
     // Add general chat settings.
@@ -158,13 +161,13 @@ class Chat {
         'settings' => $this->settings,
       ),
     );
-    drupal_add_js(array('nodejs_chat' => array('chats' => $chat_settings)), 'setting');
+    drupal_add_js(array('vopros_chat' => array('chats' => $chat_settings)), 'setting');
 
     // Add global settings. TODO: This should be overridable.
     $global_settings = array(
       'defaultAvatar' => '/' . variable_get('user_picture_default', ''),
     );
-    drupal_add_js(array('nodejs_chat' => array('globalSettings' => $global_settings)), 'setting');
+    drupal_add_js(array('vopros_chat' => array('globalSettings' => $global_settings)), 'setting');
 
     // Current user settings.
     global $user;
@@ -173,19 +176,22 @@ class Chat {
       'name' => $user->name,
       'picture' => $user->picture,
     );
-    drupal_add_js(array('nodejs_chat' => array('currentUser' => $current_user)), 'setting');
+    drupal_add_js(array('vopros_chat' => array('currentUser' => $current_user)), 'setting');
 
     // CSS Assets TODO: Make this optional, through a setting option maybe?.
-    drupal_add_css(drupal_get_path('module', 'nodejs_chat') . '/css/nodejs_chat.css');
+    drupal_add_css(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css');
   }
 
-  function createSocketChannel() {
+  /**
+   * Create channel.
+   */
+  public function createSocketChannel() {
     global $user;
 
     $message = (object) array(
       'broadcast' => FALSE,
       'channel' => $this->channel,
-      'callback' => 'nodejsChatUserOnlineHandler',
+      'callback' => 'voprosChatUserOnlineHandler',
       'data' => array(
         'chatroom' => $this->channel,
         'name' => $user->name,
@@ -203,20 +209,22 @@ class Chat {
   }
 
   /**
+   * Set user list.
+   *
    * Sets the list of users present on the chat, making sure the current user
    * is on the list.
    */
-  function setUserList() {
+  public function setUserList() {
     global $user;
     nodejs_add_user_to_channel($user->uid, $this->channel);
-    $this->user_ids = $this->getUids();
+    $this->userIds = $this->getUids();
 
     // Make sure the current user is as added as well to the channel uids, as it
     // might not have been added by node js if the server hasn't authenticated
     // him previously.
-    if (empty($this->user_ids) || !in_array($user->uid, $this->user_ids)) {
-      $this->user_ids[] = $user->uid;
-      sort($this->user_ids);
+    if (empty($this->userIds) || !in_array($user->uid, $this->userIds)) {
+      $this->userIds[] = $user->uid;
+      sort($this->userIds);
     }
   }
 
@@ -232,5 +240,4 @@ class Chat {
     }
     return $uids_on_channel;
   }
-
 }

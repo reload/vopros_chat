@@ -106,7 +106,7 @@ settings = {
   // Relative to the nodejs module. We'd rather prefer to avoid having
   // a dependency on the two modules being in the same location, but
   // that's not possible at the moment.
-  extensions: ['../nodejs_chat/extensions/nodejs_chat.module.js'],
+  extensions: ['../vopros_chat/extensions/vopros_chat.module.js'],
   clientsCanWriteToChannels: true,
   clientsCanWriteToClients: false,
   transports: ['websocket', 'polling'],
