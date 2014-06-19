@@ -77,9 +77,6 @@ class VoprosChat {
    * Wrapper function to call sequential steps to render a functional chat.
    */
   public function render() {
-    // Create socket.io channel.
-    $this->createSocketChannel();
-
     // Set the list of present users.
     $this->setUserList();
 
@@ -173,32 +170,6 @@ class VoprosChat {
 
     // CSS Assets TODO: Make this optional, through a setting option maybe?.
     drupal_add_css(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css');
-  }
-
-  /**
-   * Create channel.
-   */
-  public function createSocketChannel() {
-    global $user;
-
-    $message = (object) array(
-      'broadcast' => FALSE,
-      'channel' => $this->channel,
-      'callback' => 'voprosChatUserOnlineHandler',
-      'data' => array(
-        'chatroom' => $this->channel,
-        'name' => $user->name,
-        'subject' => 'New user connected',
-        'body' => 'User ' . $user->name . ' has entered the chat',
-        'user' => array(
-          'uid' => $user->uid,
-          'name' => $user->name,
-          'picture' => $user->picture,
-        ),
-      ),
-    );
-    nodejs_send_content_channel_token($this->channel, TRUE);
-    nodejs_send_content_channel_message($message);
   }
 
   /**
