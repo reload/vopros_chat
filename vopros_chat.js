@@ -8,6 +8,8 @@
 
   Drupal.vopros_chat = Drupal.vopros_chat || {'initialised' : false};
   var chatIdsMapping = {};
+  // Create an id for this browser window.
+  var sessionId = Math.floor(Math.random() * 10000000000000001);
 
   var keyUpHandler = function(e) {
     if (e.keyCode == 13 && !e.shiftKey && !e.ctrlKey) {
@@ -26,6 +28,8 @@
 
   Drupal.vopros_chat.initialiseChat = function() {
     for (var chat in Drupal.settings.vopros_chat.chats) {
+      // Add a unique session id so we can spot our own messages.
+      Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
       // Let the client join the channel.
       Drupal.vopros_chat.addClientToChatChannel(Drupal.settings.vopros_chat.chats[chat].channel);
 
@@ -48,7 +52,12 @@
 
   Drupal.Nodejs.callbacks.voprosChatUserOnlineHandler = {
     callback: function (message) {
-      // @todo print a message about the new user.
+      if (message.data.user.sessionId != sessionId) {
+        var chatID = '#vopros_chat_' + message.channel;
+        // @todo print name.
+        $(chatID + ' .chat-log').append('<div class="vopros-chat-message">User joined</div>');
+      }
+
     }
   };
 
@@ -60,7 +69,7 @@
       // Get current date, to display the time at which the message was sent.
       var currentTime = new Date();
       var messageTime = '<span class="message-time">' + currentTime.getHours() + ':' + currentTime.getMinutes() + '</span>';
-      var messageAuthor = '<span class="message-author">' + msg.name + ':</span>';
+      var messageAuthor = '<span class="message-author">' + (msg.sessionId == sessionId ? Drupal.t('Me') : msg.name) + ':</span>';
 
       // Display URLs as proper links.
       // After failing for some time with my custom regex, took one from
@@ -109,6 +118,7 @@
       data: {
         uid: Drupal.settings.vopros_chat.currentUser.uid,
         name: Drupal.settings.vopros_chat.currentUser.name,
+        sessionId: sessionId,
         msg: message
       }
     };
