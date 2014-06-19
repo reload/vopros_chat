@@ -103,9 +103,6 @@ class VoprosChat {
     // Otherwise, generate it.
     $form = array();
 
-    // Connected users info. TODO: Still need improvements and better placement.
-    // This shouldn't be on the renderArray(() method.
-    $users_markup = theme('vopros_chat_users', array('user_ids' => $this->userIds));
     $form['vopros_chat'] = array(
       '#type' => 'fieldset',
       '#title' => $this->name,
@@ -116,9 +113,6 @@ class VoprosChat {
           'vopros-chat',
         ),
       ),
-    );
-    $form['vopros_chat']['user_list'] = array(
-      '#markup' => '<div class="user-list">' . 'Users on the chat:' . $users_markup .  '</div>',
     );
     $form['vopros_chat']['chat_log'] = array(
       '#markup' => '<div class="chat-log">Chat log is empty. Start writing! =): </div>',
@@ -174,7 +168,6 @@ class VoprosChat {
     $current_user = array(
       'uid' => $user->uid,
       'name' => $user->name,
-      'picture' => $user->picture,
     );
     drupal_add_js(array('vopros_chat' => array('currentUser' => $current_user)), 'setting');
 

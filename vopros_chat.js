@@ -9,6 +9,21 @@
   Drupal.vopros_chat = Drupal.vopros_chat || {'initialised' : false};
   var chatIdsMapping = {};
 
+  var keyUpHandler = function(e) {
+    if (e.keyCode == 13 && !e.shiftKey && !e.ctrlKey) {
+      Drupal.vopros_chat.processMessageArea(e);
+    }
+    else {
+      return true;
+    }
+  };
+
+  var submitHandler = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    Drupal.vopros_chat.processMessageArea(e);
+  };
+
   Drupal.vopros_chat.initialiseChat = function() {
     for (var chat in Drupal.settings.vopros_chat.chats) {
       // Let the client join the channel.
@@ -18,20 +33,9 @@
       var chatID = '#vopros_chat_' + Drupal.settings.vopros_chat.chats[chat].channel;
       chatIdsMapping[chatID] = Drupal.settings.vopros_chat.chats[chat].channel;
 
-      $(chatID + ' .form-type-textarea textarea').keyup(function(e) {
-        if (e.keyCode == 13 && !e.shiftKey && !e.ctrlKey) {
-          Drupal.vopros_chat.processMessageArea(e);
-        }
-        else {
-          return true;
-        }
-      });
+      $(chatID + ' .form-type-textarea textarea').keyup(keyUpHandler);
 
-      $(chatID + ' .form-submit').click(function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        Drupal.vopros_chat.processMessageArea(e);
-      });
+      $(chatID + ' .form-submit').click(submitHandler);
     }
   };
 
@@ -44,22 +48,7 @@
 
   Drupal.Nodejs.callbacks.voprosChatUserOnlineHandler = {
     callback: function (message) {
-      // Get variables for user-box markup
-      var uid = message.data.user.uid;
-      if (message.data.user.picture != '0') {
-        var picture = message.data.user.picture;
-      }
-      else var picture = Drupal.settings.vopros_chat.globalSettings.defaultAvatar;
-      var name = message.data.user.name;
-
-      var userMarkup = '<li class="vopros-chat-user-box-' + uid + '" class="vopros-chat-user-box first">' +
-                          '<img src="' + picture + '" width="35" height="35" alt="">' +
-                          '<span class="username">' + name + '</span></li>';
-
-      if ($('#vopros_chat_' + message.channel + ' .vopros-chat-user-box-' + uid).length === 0) {
-        $('#vopros_chat_' + message.channel + ' .user-list ul').append(userMarkup);
-      }
-
+      // @todo print a message about the new user.
     }
   };
 
