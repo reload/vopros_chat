@@ -103,8 +103,11 @@ settings = {
   toggleDebugUrl: 'debug/toggle',
   contentTokenUrl: 'content/token',
   publishMessageToContentChannelUrl: 'content/token/message',
-  extensions: [],
-  clientsCanWriteToChannels: false,
+  // Relative to the nodejs module. We'd rather prefer to avoid having
+  // a dependency on the two modules being in the same location, but
+  // that's not possible at the moment.
+  extensions: ['../nodejs_chat/extensions/nodejs_chat.module.js'],
+  clientsCanWriteToChannels: true,
   clientsCanWriteToClients: false,
   transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling'],
   jsMinification: true,
