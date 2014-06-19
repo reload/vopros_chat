@@ -109,9 +109,8 @@ settings = {
   extensions: ['../nodejs_chat/extensions/nodejs_chat.module.js'],
   clientsCanWriteToChannels: true,
   clientsCanWriteToClients: false,
-  transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling'],
+  transports: ['websocket', 'polling'],
   jsMinification: true,
   jsEtag: true,
   logLevel: 1
 };
-
