@@ -3,6 +3,7 @@ description = Implements chat for Vopros.
 core = 7.x
 package = Vopros
 
+dependencies[] = vopros_embed
 dependencies[] = nodejs
 dependencies[] = nodejs_chat
 ; stylesheets[all][] = css/vopros_chat.base.css
