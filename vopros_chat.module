@@ -4,3 +4,12 @@
  * @file
  * Vopros chat module.
  */
+
+/**
+ * Implements hook_vopros_question_user_answer_preference().
+ *
+ * Exposes chat as an user answer preference for questions.
+ */
+function vopros_chat_vopros_question_user_answer_preference() {
+  return array('chat' => t('Chat'));
+}
