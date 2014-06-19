@@ -54,8 +54,7 @@
     callback: function (message) {
       if (message.data.user.sessionId != sessionId) {
         var chatID = '#vopros_chat_' + message.channel;
-        // @todo print name.
-        $(chatID + ' .chat-log').append('<div class="vopros-chat-message">User joined</div>');
+        $(chatID + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' joined</div>');
       }
 
     }
