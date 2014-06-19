@@ -77,9 +77,6 @@ class VoprosChat {
    * Wrapper function to call sequential steps to render a functional chat.
    */
   public function render() {
-    // Set the list of present users.
-    $this->setUserList();
-
     // Generate form.
     $this->form = $this->renderArray();
     // Add assets to the page.
@@ -173,36 +170,5 @@ class VoprosChat {
     drupal_add_css(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css');
   }
 
-  /**
-   * Set user list.
-   *
-   * Sets the list of users present on the chat, making sure the current user
-   * is on the list.
-   */
-  public function setUserList() {
-    global $user;
-    nodejs_add_user_to_channel($user->uid, $this->channel);
-    $this->userIds = $this->getUids();
-
-    // Make sure the current user is as added as well to the channel uids, as it
-    // might not have been added by node js if the server hasn't authenticated
-    // him previously.
-    if (empty($this->userIds) || !in_array($user->uid, $this->userIds)) {
-      $this->userIds[] = $user->uid;
-      sort($this->userIds);
-    }
-  }
-
-  /**
-   * Returns an array with the UIDs of the users present on the channel.
-   */
-  public function getUids() {
-    $uids_on_channel = array();
-    // Check socket.io channel and return the uids in the desired format.
-    if ($users_on_channel = nodejs_get_content_channel_users($this->channel)) {
-      // Check how data is returned, for compatibility with all nodejs verions.
-      $uids_on_channel = is_object($users_on_channel) ? $users_on_channel->uids : $users_on_channel['uids'];
-    }
-    return $uids_on_channel;
   }
 }
