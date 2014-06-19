@@ -60,6 +60,7 @@ class VoprosChat {
         drupal_set_message(t('Chat channel created successfully'));
       }
       // In case of error, let the caller know.
+      // @todo this is broken, you cannot return false from a constructor.
       else {
         drupal_set_message(t("The Chat channel couldn\'t be created"), 'error');
         return FALSE;
@@ -108,9 +109,12 @@ class VoprosChat {
         ),
       ),
     );
+
+    // @todo need another welcome message.
     $form['vopros_chat']['chat_log'] = array(
       '#markup' => '<div class="chat-log">Chat log is empty. Start writing! =): </div>',
     );
+
     $form['vopros_chat']['chat_entry_box'] = array(
       '#type' => 'textarea',
       '#title' => t('Enter your message here: '),
@@ -120,6 +124,7 @@ class VoprosChat {
         'id' => 'chat-entry-box',
       ),
     );
+
     $form['vopros_chat']['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Send Message'),
@@ -132,15 +137,10 @@ class VoprosChat {
    * Add the assert needed to the page.
    */
   public function loadAssets() {
-    // Javascript Assets.
+    // Add JavaScript.
     drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/vopros_chat.js');
-
-    // This is not the best place to do this, but for now it does the job to
-    // allow a dev to choose whether the chat messages will go through drupal,
-    // or through the nodejs server extension (directly through sockets).
-    if (isset($this->settings['messageTransmission']) && $this->settings['messageTransmission'] == 'drupal') {
-      $this->settings['postMessagePath'] = url('vopros-chat/message/post', array('absolute' => TRUE));
-    }
+    // Add CSS.
+    drupal_add_css(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css');
 
     // Add general chat settings.
     $chat_settings = array(
@@ -151,12 +151,6 @@ class VoprosChat {
     );
     drupal_add_js(array('vopros_chat' => array('chats' => $chat_settings)), 'setting');
 
-    // Add global settings. TODO: This should be overridable.
-    $global_settings = array(
-      'defaultAvatar' => '/' . variable_get('user_picture_default', ''),
-    );
-    drupal_add_js(array('vopros_chat' => array('globalSettings' => $global_settings)), 'setting');
-
     // Current user settings.
     global $user;
     $current_user = array(
@@ -165,10 +159,5 @@ class VoprosChat {
       'name' => $user->uid ? $user->name : t('User'),
     );
     drupal_add_js(array('vopros_chat' => array('currentUser' => $current_user)), 'setting');
-
-    // CSS Assets TODO: Make this optional, through a setting option maybe?.
-    drupal_add_css(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css');
-  }
-
   }
 }
