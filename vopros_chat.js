@@ -44,9 +44,6 @@
 
   Drupal.Nodejs.callbacks.voprosChatUserOnlineHandler = {
     callback: function (message) {
-      if (Drupal.settings.vopros_chat.chats[message.channel].settings.showNotifications) {
-        Drupal.vopros_chat.showNotification(message.data.body, message.data.subject, message.channel);
-      }
       // Get variables for user-box markup
       var uid = message.data.user.uid;
       if (message.data.user.picture != '0') {
@@ -98,24 +95,6 @@
     }
   };
 
-  Drupal.Nodejs.contentChannelNotificationCallbacks.vopros_chat = {
-    callback: function (message) {
-      if (message.contentChannelNotification && message.data.type == 'disconnect') {
-        // The next check is probably unneeded. This callback will be triggered
-        // Only on clients linked to socket.io channel generating the event.
-//        if (message.channel == Drupal.settings.vopros_chat.chatwindow) {
-          var uid = message.data.uid;
-          if (Drupal.settings.vopros_chat.chats[message.channel].settings.showNotifications) {
-            Drupal.vopros_chat.showNotification('User with uid: ' + uid + ', went offline', 'User disconnected', message.channel);
-          }
-//        }
-        // Remove user from connected users.
-        var chatID = '#vopros_chat_' + message.channel;
-        $(chatID + ' .vopros-chat-user-box-' + uid).remove();
-      }
-    }
-  };
-
   Drupal.vopros_chat.addClientToChatChannel = function(channelId) {
     var msg = {
       type: 'vopros_chat',
@@ -159,13 +138,6 @@
       };
       Drupal.Nodejs.socket.emit('message', msg);
     }
-  };
-
-  Drupal.vopros_chat.showNotification = function(subject, message, channel) {
-    var notificationTime = (Drupal.settings.vopros_chat.chats[channel].settings.notificationTime)
-      ? Drupal.settings.vopros_chat.chats[channel].settings.notificationTime
-      : Drupal.settings.vopros_notify.notification_time * 1000;
-    $.jGrowl(message, {header: subject, life: notificationTime});
   };
 
   Drupal.vopros_chat.processMessageArea = function(e) {
