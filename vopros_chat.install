@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the vopros_chat module.
+ */
+
+/**
+ * Implements hook_enable().
+ *
+ * Add chat question filter to filter list on overridden views. Unmodified views
+ * will be handled by hook_views_default_views_alter()
+ *
+ * @see vopros_chat_views_default_views_alter()
+ */
+function vopros_chat_enable() {
+  $view = views_get_view('vopros_question_list');
+
+  // If the view is overridden (stored in the database - vid is a number) we
+  // need to add the filter to it.
+  if (!empty($view) && is_numeric($view->vid)) {
+    $filter = array(
+      'operator' => '!=',
+      'value' => 'chat',
+    );
+
+    // Add out filter to all displays of the view.
+    foreach ($view->display as $display) {
+      $view->add_item($display->display_plugin, 'filter', 'vopros_question', 'user_answer_preference', $filter, 'vopros_chat_filter');
+    }
+    $view->save();
+  }
+}
+
+/**
+ * Implements hook_disable().
+ *
+ * Remove chat question filter to filter list from overridden views.
+ */
+function vopros_chat_disable() {
+  $view = views_get_view('vopros_question_list');
+
+  // If the view is overridden (stored in the database - vid is a number) we
+  // need to remove the filter from it.
+  if (!empty($view) && is_numeric($view->vid)) {
+    foreach ($view->display as $display) {
+      $view->set_item($display->display_plugin, 'filter', 'vopros_chat_filter', NULL);
+    }
+    $view->save();
+  }
+}
