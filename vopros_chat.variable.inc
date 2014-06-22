@@ -31,3 +31,14 @@ function vopros_chat_variable_info($options) {
 
   return $variable;
 }
+
+/**
+ * Implements hook_variable_update().
+ *
+ * Invalidate views cache when the filter question list variable is changed.
+ */
+function vopros_chat_variable_update($name, $value, $old_value, $options) {
+  if ($name == 'vopros_chat_filter_question_list' && $value != $old_value) {
+    views_invalidate_cache();
+  }
+}
