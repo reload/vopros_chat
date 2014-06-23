@@ -11,10 +11,10 @@
 function vopros_chat_menu() {
   $items = array();
 
-  $items['embed/ask-question/chat/%'] = array(
+  $items['embed/ask-question/chat/%/%'] = array(
     'title' => 'Chat',
     'page callback' => 'vopros_chat_client_page',
-    'page arguments' => array(3),
+    'page arguments' => array(3, 4),
     // @todo access callback should check that chat id is bound to a question.
     'access callback' => TRUE,
     'file' => 'vopros_chat.pages.inc',
