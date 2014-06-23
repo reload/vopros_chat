@@ -24,7 +24,7 @@ function vopros_chat_enable() {
       'value' => 'chat',
     );
 
-    // Add out filter to all displays of the view.
+    // Add filter to all displays of the view.
     foreach ($view->display as $display) {
       $view->add_item($display->display_plugin, 'filter', 'vopros_question', 'user_answer_preference', $filter, 'vopros_chat_filter');
     }
