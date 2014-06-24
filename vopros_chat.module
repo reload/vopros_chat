@@ -8,6 +8,15 @@
 include_once 'vopros_chat.features.inc';
 
 /**
+ * Implements hook_init().
+ */
+function vopros_chat_init() {
+  if (path_is_admin(current_path())) {
+    drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/vopros_chat.admin.js');
+  }
+}
+
+/**
  * Implements hook_menu().
  */
 function vopros_chat_menu() {
@@ -61,7 +70,36 @@ function vopros_chat_views_default_views_alter(&$views) {
       $views['vopros_question_list']->add_item($display->display_plugin, 'filter', 'vopros_question', 'user_answer_preference', $filter, 'vopros_chat_filter');
     }
   }
+
 }
+/**
+ * Implements hook_views_data_alter().
+ *
+ * Add an extra field to questions for chat status.
+ */
+function vopros_chat_views_data_alter(&$data) {
+  $data['vopros_question']['chat_status'] = array(
+    'title' => t('Chat status'),
+    'help' => t('Shows the current status of chat questions.'),
+    'field' => array(
+      'handler' => 'vopros_chat_handler_field_vopros_quesiton_chat_status',
+    ),
+  );
+}
+
+/**
+ * Get path to chat from a question.
+ *
+ * @param VoprosQuestion $question
+ *   The question to chat about.
+ *
+ * @return string
+ *   The local path to the chat.
+ */
+function vopros_chat_url($question) {
+  return 'embed/ask-question/chat/' . $question->question_id . '/' . vopros_chat_get_channel_hash_from_question_id($question->question_id);
+}
+
 
 /**
  * Get channel name from question ID.
@@ -133,7 +171,7 @@ function vopros_chat_create_chat_config() {
     'publishMessageToContentChannelUrl' => 'content/token/message',
     'extensions' => array($vopros_chat_extension_path),
     'clientsCanWriteToChannels' => TRUE,
-    'clientsCanWriteToClients' => FALSE,
+    'clientsCanWriteToClients' => TRUE,
     'transports' => array('websocket', 'polling'),
     'jsMinification' => TRUE,
     'jsEtag' => TRUE,

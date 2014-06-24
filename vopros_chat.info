@@ -11,3 +11,4 @@ features[ctools][] = views:views_default:3.0
 features[features_api][] = api:2
 features[views_view][] = vopros_chat_question_list
 files[] = includes/VoprosChat.inc
+files[] = includes/views/handlers/vopros_chat_handler_field_vopros_quesiton_chat_status.inc

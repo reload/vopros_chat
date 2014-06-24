@@ -41,16 +41,8 @@ class VoprosChat {
    * Basic constructor, just with the socket.io channel assigned.
    */
   public function __construct($channel, $name = 'Vopros Chat', $settings = array()) {
-    // Make sure the channel name generated is unique within the page request.
-    $unique_id = &drupal_static(__METHOD__);
-    if (!isset($unique_id)) {
-      $unique_id = 0;
-    }
-    $unique_id++;
-    $unique_channel = __CLASS__ . '__' . $channel . '_' . $unique_id;
-
     // Some filtering to avoid unwanted characters on the channel_name.
-    $this->channel = preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $unique_channel);
+    $this->channel = 'vopros_chat__' . preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
 
 
     // Check if chat channel exists.

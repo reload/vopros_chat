@@ -1,7 +1,7 @@
 /**
  * @file vopros_chat.js
  *
- * Node JS Callbacks and general Javascript code for the Node JS Chat module.
+ * Node JS Callbacks and general Javascript code for the Vopros Chat module.
  */
 
 (function ($) {
