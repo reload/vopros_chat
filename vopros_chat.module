@@ -62,3 +62,29 @@ function vopros_chat_views_default_views_alter(&$views) {
     }
   }
 }
+
+/**
+ * Get channel name from question ID.
+ *
+ * @param int $question_id
+ *   The ID of the question.
+ *
+ * @return string
+ *   The name of the channel associated with the question.
+ */
+function vopros_chat_get_channel_name_from_question_id($question_id) {
+  return $question_id . '_' . vopros_chat_get_channel_hash_from_question_id($question_id);
+}
+
+/**
+ * Get channel hash from question ID.
+ *
+ * @param int $question_id
+ *   The ID of the question.
+ *
+ * @return string
+ *   The hash of the channel associated with the question.
+ */
+function vopros_chat_get_channel_hash_from_question_id($question_id) {
+  return hash('sha256', variable_get('nodejs_service_key', '') . $question_id);
+}
