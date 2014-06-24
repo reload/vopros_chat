@@ -2,14 +2,12 @@ name = Vopros Chat
 description = Implements chat for Vopros.
 core = 7.x
 package = Vopros
-
-files[] = includes/VoprosChat.inc
-
-dependencies[] = vopros_embed
+version = 7.x-1.0
+project = vopros_chat2
 dependencies[] = nodejs
-; stylesheets[all][] = css/vopros_chat.base.css
-; scripts[] = scripts/vopros_chat.js
-; php =
-; configure = admin/config/something/vopros_chat
-; required = TRUE
-; hidden = TRUE
+dependencies[] = views
+dependencies[] = vopros_embed
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = vopros_chat_question_list
+files[] = includes/VoprosChat.inc

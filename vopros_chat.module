@@ -5,6 +5,8 @@
  * Vopros chat module.
  */
 
+include_once 'vopros_chat.features.inc';
+
 /**
  * Implements hook_menu().
  */
