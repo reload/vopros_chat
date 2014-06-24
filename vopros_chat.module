@@ -88,3 +88,92 @@ function vopros_chat_get_channel_name_from_question_id($question_id) {
 function vopros_chat_get_channel_hash_from_question_id($question_id) {
   return hash('sha256', variable_get('nodejs_service_key', '') . $question_id);
 }
+
+/**
+ * Create a chart config file.
+ *
+ * You can define overrides in $conf['vopros_chat_config_override'].
+ *
+ * @return string
+ *   File name of the generated config file.
+ */
+function vopros_chat_create_chat_config() {
+  $vopros_chat_extension_path = _vopros_chat_relative_path(drupal_get_path('module', 'nodejs'), drupal_get_path('module', 'vopros_chat') . '/extensions/vopros_chat.module.js');
+
+  $config = array(
+    'scheme' => 'http',
+    'port' => 8080,
+    'host' => $_SERVER['HTTP_HOST'],
+    'resource' => '/socket.io',
+    'serviceKey' => variable_get('nodejs_service_key', ''),
+    'backend' => array(
+      'port' => 80,
+      'host' => $_SERVER['HTTP_HOST'],
+      'scheme' => 'http',
+      'basePath' => '',
+      'messagePath' => '/nodejs/message',
+    ),
+    'debug' => FALSE,
+    'sslKeyPath' => '',
+    'sslCertPath' => '',
+    'sslCAPath' => '',
+    'baseAuthPath' => '/nodejs/',
+    'publishUrl' => 'publish',
+    'kickUserUrl' => 'user/kick/:uid',
+    'logoutUserUrl' => 'user/logout/:authtoken',
+    'addUserToChannelUrl' => 'user/channel/add/:channel/:uid',
+    'removeUserFromChannelUrl' => 'user/channel/remove/:channel/:uid',
+    'addChannelUrl' => 'channel/add/:channel',
+    'removeChannelUrl' => 'channel/remove/:channel',
+    'setUserPresenceListUrl' => 'user/presence-list/:uid/:uidList',
+    'addAuthTokenToChannelUrl' => 'authtoken/channel/add/:channel/:uid',
+    'removeAuthTokenFromChannelUrl' => 'authtoken/channel/remove/:channel/:uid',
+    'toggleDebugUrl' => 'debug/toggle',
+    'contentTokenUrl' => 'content/token',
+    'publishMessageToContentChannelUrl' => 'content/token/message',
+    'extensions' => array($vopros_chat_extension_path),
+    'clientsCanWriteToChannels' => TRUE,
+    'clientsCanWriteToClients' => FALSE,
+    'transports' => array('websocket', 'polling'),
+    'jsMinification' => TRUE,
+    'jsEtag' => TRUE,
+    'logLevel' => 1,
+  );
+
+  // Merge in overrides from $conf['vopros_chat_config_override'].
+  $config = variable_get('vopros_chat_config_override', array()) + $config;
+
+  // Create temporary config file.
+  $config_file = drupal_tempnam(variable_get('file_temporary_path', '/tmp'), 'vopros_chat_config_');
+
+  file_put_contents($config_file, 'settings = ' . drupal_json_encode($config));
+
+  return $config_file;
+}
+
+/**
+ * Get a relative path from one file/dir to another.
+ *
+ * This implementation is borrowed from php.net.
+ *
+ * @param string $from
+ *   The file to derive the relative path from.
+ * @param string $to
+ *   The file to get the relative path to.
+ * @param string $ps
+ *   (optional) Directory separator.
+ *
+ * @return string
+ *   The relative path from $from to $to.
+ *
+ * @see http://dk1.php.net/manual/en/function.realpath.php#105876
+ */
+function _vopros_chat_relative_path($from, $to, $ps = DIRECTORY_SEPARATOR) {
+  $ar_from = explode($ps, rtrim($from, $ps));
+  $ar_to = explode($ps, rtrim($to, $ps));
+  while (count($ar_from) && count($ar_to) && ($ar_from[0] == $ar_to[0])) {
+    array_shift($ar_from);
+    array_shift($ar_to);
+  }
+  return str_pad('', count($ar_from) * 3, '..' . $ps) . implode($ps, $ar_to);
+}

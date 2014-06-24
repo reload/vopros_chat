@@ -6,6 +6,18 @@
  */
 
 /**
+ * Implements hook_install().
+ *
+ * Generate a service key for NodeJS if we don't already have one.
+ */
+function vopros_chat_install() {
+  // Generate a service key for NodeJS if we don't already have one.
+  if (!variable_get('nodejs_service_key', FALSE)) {
+    variable_set('nodejs_service_key', drupal_random_key());
+  }
+}
+
+/**
  * Implements hook_enable().
  *
  * Add chat question filter to filter list on overridden views. Unmodified views

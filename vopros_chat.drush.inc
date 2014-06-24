@@ -30,11 +30,13 @@ function drush_vopros_chat_start() {
   $vopros_chat_path = getcwd() . '/' . drupal_get_path('module', 'vopros_chat');
 
   chdir(drupal_get_path('module', 'vopros_chat') . '/server');
-  $command = 'NODE_PATH=%s/server/node_modules node %s/server.js';
+  $config_file = vopros_chat_create_chat_config();
+  $command = 'NODE_PATH=%s/server/node_modules node %s/server.js %s';
 
   if (drush_get_option('node-debug', FALSE)) {
     $command = 'DEBUG=* ' . $command;
   }
 
-  printf($command . "\n", $vopros_chat_path, $nodejs_path);
-  drush_shell_exec_interactive($command, $vopros_chat_path, $nodejs_path, TRUE);}
+  printf($command . "\n", $vopros_chat_path, $nodejs_path, $config_file);
+  drush_shell_exec_interactive($command, $vopros_chat_path, $nodejs_path, $config_file, TRUE);
+}
