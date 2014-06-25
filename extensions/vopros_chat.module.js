@@ -101,6 +101,7 @@ exports.setup = function (config) {
 
         // Usual message transmission.
       case 'chat_message':
+        channelStatus[message.channel] = channelStatus[message.channel] || {'users' : 0, 'timestamp': 0};
         channelStatus[message.channel].timestamp = timestamp();
         updateStatus(message.channel);
         publishMessageToChannel(message);
