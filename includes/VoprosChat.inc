@@ -23,11 +23,6 @@ class VoprosChat {
   protected $channel;
 
   /**
-   * Javascript settings to be sent to the browser.
-   */
-  protected $settings;
-
-  /**
    * Users on the chat, stored as User IDs
    */
   protected $userIds;
@@ -40,7 +35,7 @@ class VoprosChat {
   /**
    * Basic constructor, just with the socket.io channel assigned.
    */
-  public function __construct($channel, $name = 'Vopros Chat', $settings = array()) {
+  public function __construct($channel, $name = 'Vopros Chat') {
     // Some filtering to avoid unwanted characters on the channel_name.
     $this->channel = 'vopros_chat__' . preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
 
@@ -61,9 +56,6 @@ class VoprosChat {
 
     // Set the chat name.
     $this->name = $name;
-
-    // Store any settings passed on to the constructor.
-    $this->settings = $settings;
   }
 
   /**
@@ -138,7 +130,6 @@ class VoprosChat {
     $chat_settings = array(
       $this->channel => array(
         'channel' => $this->channel,
-        'settings' => $this->settings,
       ),
     );
     drupal_add_js(array('vopros_chat' => array('chats' => $chat_settings)), 'setting');
