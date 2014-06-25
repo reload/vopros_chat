@@ -54,25 +54,31 @@
   Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
     callback: function (message) {
       console.dir(message);
-      foundStatus = false;
+      wantTicker = false;
       var time = ((new Date()).getTime() / 1000);
       $('span[data-channel-name=' + message.channel_name + ']').each(function () {
-        foundStatus = true;
-        offset = time - message.ref_time;
+        // Only show counter for channels with users in it.
+        if (message.users > 0) {
+          wantTicker = true;
+          offset = time - message.ref_time;
 
-        var idle = Math.floor(message.ref_time - message.timestamp);
+          var idle = Math.floor(message.ref_time - message.timestamp);
 
-        $(this).addClass('idleTimer');
-        $(this).attr('data-timestamp', timestamp());
-        $(this).attr('data-idle', idle);
+          $(this).addClass('idleTimer');
+          $(this).attr('data-timestamp', timestamp());
+          $(this).attr('data-idle', idle);
 
-        $(this).text("Idle: " + idleString(idle));
+          $(this).text("Idle: " + idleString(idle));
+        }
+        else {
+          $(this).text("Empty");
+        }
 
       });
-      if (foundStatus && timer === null) {
+      if (wantTicker && timer === null) {
         timer = window.setTimeout(updateCallback, 1000);
       }
-      else if (!foundStatus && timer !== null) {
+      else if (!wantTicker && timer !== null) {
         window.clearTimeout(timer);
       }
     }

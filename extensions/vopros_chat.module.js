@@ -28,7 +28,6 @@ exports.setup = function (config) {
 
     var users = 0;
     if (config.channels[channelName]) {
-      console.dir(config.channels[channelName].sessionIds);
       users = Object.keys(config.channels[channelName].sessionIds).length;
     }
 
@@ -64,7 +63,6 @@ exports.setup = function (config) {
   }
 
   process.on('client-message', function (sessionId, message) {
-    console.dir(message);
     // Check message type. Prevents the extension from forwarding any message
     // that is not from the vopros_chat module.
     if (message.type == 'vopros_chat') {
@@ -116,11 +114,36 @@ exports.setup = function (config) {
       switch (message.action) {
       case 'subscribe':
         addClientToChannel(sessionId, 'vopros_channel_admin_status');
+        var time = timestamp();
         for (var channelId in channelStatus) {
-          updateStatus(channelId, timestamp());
+          updateStatus(channelId, time);
         }
         break;
       }
     }
+  });
+
+  process.on('client-disconnect', function (sessionId) {
+    // Update status for all channels this connection was part of
+    // (should really just be one).
+
+    var updateChannels = [];
+
+    for (var channelId in config.channels) {
+      if (config.channels[channelId].sessionIds[sessionId]) {
+        updateChannels.push(channelId);
+      }
+    }
+
+    // Send the updates after a one second timeout, to give
+    // cleanupSocket time to remove the socket from the channels.
+    setTimeout(function(channels) {
+      var time = timestamp();
+      for (var index in channels) {
+        if (channels.hasOwnProperty(index)) {
+          updateStatus(channels[index], time);
+        }
+      }
+    }, 1000, updateChannels);
   });
 };
