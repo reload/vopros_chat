@@ -138,16 +138,18 @@ function vopros_chat_get_channel_hash_from_question_id($question_id) {
 function vopros_chat_create_chat_config() {
   $vopros_chat_extension_path = _vopros_chat_relative_path(drupal_get_path('module', 'nodejs'), drupal_get_path('module', 'vopros_chat') . '/extensions/vopros_chat.module.js');
 
+  global $is_https;
+
   $config = array(
     'scheme' => 'http',
     'port' => 8080,
-    'host' => $_SERVER['HTTP_HOST'],
+    'host' => 'localhost',
     'resource' => '/socket.io',
     'serviceKey' => variable_get('nodejs_service_key', ''),
     'backend' => array(
-      'port' => 80,
+      'port' => $is_https ? 443 : 80,
       'host' => $_SERVER['HTTP_HOST'],
-      'scheme' => 'http',
+      'scheme' => $is_https ? 'https' : 'http',
       'basePath' => '',
       'messagePath' => base_path() . 'nodejs/message',
     ),
@@ -155,7 +157,7 @@ function vopros_chat_create_chat_config() {
     'sslKeyPath' => '',
     'sslCertPath' => '',
     'sslCAPath' => '',
-    'baseAuthPath' => base_path() . 'nodejs/',
+    'baseAuthPath' => '/nodejs/',
     'publishUrl' => 'publish',
     'kickUserUrl' => 'user/kick/:uid',
     'logoutUserUrl' => 'user/logout/:authtoken',
