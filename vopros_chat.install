@@ -61,3 +61,54 @@ function vopros_chat_disable() {
     $view->save();
   }
 }
+
+/**
+ * Implements hook_schema().
+ */
+function vopros_chat_schema() {
+  $schema = array(
+    'vopros_chat_log' => array(
+      'description' => 'Chat logs',
+      'fields' => array(
+        'timestamp' => array(
+          'description' => 'Timestamp when the entry was logged.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'question_id' => array(
+          'description' => 'UID of the logger',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'uid' => array(
+          'description' => 'UID of the logger',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'name' => array(
+          'description' => 'Name of the logger',
+          'type' => 'varchar',
+          'length' => 256,
+          'not null' => TRUE,
+        ),
+        'session_id' => array(
+          'description' => 'Session ID of the chat',
+          'type' => 'varchar',
+          'length' => 256,
+          'not null' => TRUE,
+        ),
+        'msg' => array(
+          'description' => 'The chatted message',
+          'type' => 'varchar',
+          'length' => 1024,
+          'not null' => TRUE,
+        ),
+      ),
+    ),
+  );
+
+  return $schema;
+}

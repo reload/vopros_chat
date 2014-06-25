@@ -3,7 +3,8 @@
  *
  * Node JS Chat Server extension.
  */
-var crypto = require('crypto');
+var crypto = require('crypto'),
+    drupal = require('drupal');
 
 exports.setup = function (config) {
   publishMessageToChannel = config.publishMessageToChannel;
@@ -44,6 +45,22 @@ exports.setup = function (config) {
       config.channels[message.channel] = {'sessionIds': {}};
     }
     publishMessageToChannel(message);
+  }
+
+  var connectToDatabase = function(config) {
+    options = config.settings.database;
+    // We need to rename the username property to user.
+    options.user = options.username;
+    delete options.username;
+
+    // Connect to the database.
+    drupal.db.connect(options);
+  }
+  connectToDatabase(config);
+
+  var logMessageToDatabase = function(message) {
+    questionId = message.channel.split('__')[1].split('_')[0];
+    drupal.db.query("INSERT INTO vopros_chat_log (timestamp, question_id, uid, name, session_id, msg) VALUES (?, ?, ?, ?, ?, ?)", [Math.floor(Date.now() / 1000), questionId, message.data.uid, message.data.name, message.data.sessionId, message.data.msg], function (err, rows) {});
   }
 
   process.on('client-message', function (sessionId, message) {
@@ -87,6 +104,7 @@ exports.setup = function (config) {
         channelStatus[message.channel].timestamp = timestamp();
         updateStatus(message.channel);
         publishMessageToChannel(message);
+        logMessageToDatabase(message);
         break;
 
       }
