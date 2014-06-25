@@ -19,6 +19,11 @@ function vopros_chat_drush_command() {
     ),
   );
 
+  $items['vopros-chat-package-json'] = array(
+    'description' => 'Generate Vopros chat package.json.',
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL,
+  );
+
   return $items;
 }
 
@@ -39,4 +44,28 @@ function drush_vopros_chat_start() {
 
   printf($command . "\n", $vopros_chat_path, $nodejs_path, $config_file);
   drush_shell_exec_interactive($command, $vopros_chat_path, $nodejs_path, $config_file, TRUE);
+}
+
+/**
+ * Command callback for generating package.json.
+ */
+function drush_vopros_chat_package_json() {
+  $nodejs_path = getcwd() . '/' . drupal_get_path('module', 'nodejs');
+  $vopros_chat_path = getcwd() . '/' . drupal_get_path('module', 'vopros_chat');
+  $info = drupal_parse_info_file($vopros_chat_path . '/vopros_chat.info');
+
+  // Read package.json from nodejs.module.
+  $package_json = json_decode(file_get_contents($nodejs_path . '/package.json'));
+
+  // Fix some entries.
+  $package_json->name = 'Vopros_Chat';
+  $package_json->homepage = 'https://github.com/reload/vopros_chat';
+  $package_json->description = $info['description'];
+  if (!empty($info['version'])) {
+    $package_json->version = preg_replace('/x-/', '', $info['version']);
+  }
+  $package_json->dependencies->drupal = '0.5.2';
+
+  // Write it as our own package.json.
+  file_put_contents($vopros_chat_path . '/server/package.json', drupal_json_encode($package_json));
 }

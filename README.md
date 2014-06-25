@@ -16,4 +16,7 @@ To install/update the node modules used by the server from the nodejs
 module, symlink the package.json file into the server directory and
 run npm install/update.
 
-Then also run "npm install drupal" from the server directory.
+Then also run `npm install drupal` from the server directory.
+
+Or simply run `drush vopros-chat-package-json` which will generate a
+package.json file in the server directory for you.
