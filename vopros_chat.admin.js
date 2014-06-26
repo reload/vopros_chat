@@ -40,7 +40,6 @@
   };
 
   Drupal.Nodejs.connectionSetupHandlers.vopros_chat_admin = {
-
     connect: function() {
       var msg = {
         type: 'vopros_chat_admin',
@@ -93,4 +92,61 @@
     }
   };
 
+  /**
+   * Behavior to attach ajax loading to channel list and chats.
+   */
+  Drupal.behaviors.vopros_chat_admin = {
+    attach: function(context, settings) {
+      $('#vopros-chat-admin-channel-list').once('voproc-chat', function() {
+        var base = $(this).attr('id');
+        var element_settings = {
+          url: '/admin/vopros/questions/chat/channels',
+          event: 'vopros-chat-admin-refresh-channels',
+          progress: {
+            type: 'throbber'
+          }
+        };
+        Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
+      });
+
+      $('#vopros-chat-admin-chats').once('voproc-chat', function() {
+        var base = $(this).attr('id');
+        var element_settings = {
+          url: '/admin/vopros/questions/chat/chat',
+          event: 'vopros-chat-admin-add-chat',
+          progress: {
+            type: 'throbber'
+          }
+        };
+        Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
+      });
+    }
+  };
+
+  /**
+   * Behaviour to make question links open a chat.
+   */
+  Drupal.behaviors.vopros_chat_admin_links = {
+    attach: function(context, settings) {
+      $('.view-vopros-chat-question-list').once('voproc-chat', function() {
+        $('a', this).each(function() {
+          var question_id = $(this).attr('href').split('/').pop();
+          var base = 'vopros-chat-' + question_id;
+          $(this).attr('id', base);
+          var element_settings = {
+            url: '/admin/vopros/questions/chat/add/' + question_id,
+            event: 'click',
+            progress: {
+              type: 'throbber'
+            }
+          };
+          Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
+        });
+      });
+    }
+  };
+
+  $(document).ready(function() {
+    $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
+  });
 })(jQuery);

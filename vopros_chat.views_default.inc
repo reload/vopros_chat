@@ -23,6 +23,7 @@ function vopros_chat_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Question list';
+  $handler->display->display_options['use_ajax'] = TRUE;
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['access']['perm'] = 'access questions';
@@ -118,6 +119,10 @@ function vopros_chat_views_default_views() {
   $handler->display->display_options['fields']['created']['field'] = 'created';
   $handler->display->display_options['fields']['created']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['created']['date_format'] = 'short';
+  /* Field: Question: Chat status */
+  $handler->display->display_options['fields']['chat_status']['id'] = 'chat_status';
+  $handler->display->display_options['fields']['chat_status']['table'] = 'vopros_question';
+  $handler->display->display_options['fields']['chat_status']['field'] = 'chat_status';
   /* Sort criterion: Question: Created */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'vopros_question';
@@ -137,24 +142,6 @@ function vopros_chat_views_default_views() {
     'new' => 'new',
     'active' => 'active',
   );
-
-  /* Display: List */
-  $handler = $view->new_display('page', 'List', 'page');
-  $handler->display->display_options['defaults']['exposed_form'] = FALSE;
-  $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['exposed_form']['options']['autosubmit'] = TRUE;
-  $handler->display->display_options['defaults']['arguments'] = FALSE;
-  $handler->display->display_options['path'] = 'admin/vopros/questions/chat';
-  $handler->display->display_options['menu']['type'] = 'tab';
-  $handler->display->display_options['menu']['title'] = 'Chat Question list';
-  $handler->display->display_options['menu']['weight'] = '0';
-  $handler->display->display_options['menu']['context'] = 0;
-  $handler->display->display_options['menu']['context_only_inline'] = 0;
-  $handler->display->display_options['tab_options']['type'] = 'normal';
-  $handler->display->display_options['tab_options']['title'] = 'Chat questions';
-  $handler->display->display_options['tab_options']['description'] = 'Display a list of active questions';
-  $handler->display->display_options['tab_options']['weight'] = '0';
-  $handler->display->display_options['tab_options']['name'] = 'management';
   $translatables['vopros_chat_question_list'] = array(
     t('Master'),
     t('Question list'),
@@ -178,7 +165,7 @@ function vopros_chat_views_default_views() {
     t('Title'),
     t('Received from'),
     t('Created'),
-    t('List'),
+    t('Chat status'),
   );
   $export['vopros_chat_question_list'] = $view;
 

@@ -8,15 +8,6 @@
 include_once 'vopros_chat.features.inc';
 
 /**
- * Implements hook_init().
- */
-function vopros_chat_init() {
-  if (path_is_admin(current_path())) {
-    drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/vopros_chat.admin.js');
-  }
-}
-
-/**
  * Implements hook_menu().
  */
 function vopros_chat_menu() {
@@ -32,7 +23,49 @@ function vopros_chat_menu() {
     'delivery callback' => 'vopros_embed_deliver_html_page',
   );
 
+  $items['admin/vopros/questions/chat'] = array(
+    'title' => 'Chat question list',
+    'page callback' => 'vopros_chat_admin_page',
+    'page arguments' => array(),
+    'access arguments' => 'answer vopros chats',
+    'file' => 'vopros_chat.pages.inc',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  $items['admin/vopros/questions/chat/channels'] = array(
+    'title' => 'AHAH callback',
+    'page callback' => 'vopros_chat_channels_js',
+    'delivery callback' => 'ajax_deliver',
+    'access callback' => TRUE,
+    'theme callback' => 'ajax_base_page_theme',
+    'file' => 'vopros_chat.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/vopros/questions/chat/add/%'] = array(
+    'title' => 'AHAH callback',
+    'page callback' => 'vopros_chat_add_chat_js',
+    'page arguments' => array(5),
+    'delivery callback' => 'ajax_deliver',
+    'access callback' => TRUE,
+    'theme callback' => 'ajax_base_page_theme',
+    'file' => 'vopros_chat.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function vopros_chat_permission() {
+  return array(
+    'answer vopros chats' => array(
+      'title' => t('Use chat'),
+      'description' => '',
+    ),
+  );
 }
 
 /**
@@ -42,6 +75,18 @@ function vopros_chat_menu() {
  */
 function vopros_chat_vopros_question_user_answer_preference() {
   return array('chat' => t('Chat'));
+}
+
+/**
+ * Implements hook_theme().
+ */
+function vopros_chat_theme() {
+  return array(
+    'vopros_chat_admin_page' => array(
+      'render element' => 'elements',
+      'template' => 'vopros-chat-admin-page',
+    ),
+  );
 }
 
 /**

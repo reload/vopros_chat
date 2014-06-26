@@ -28,20 +28,32 @@
 
   Drupal.vopros_chat.initialiseChat = function() {
     for (var chat in Drupal.settings.vopros_chat.chats) {
-      // Add a unique session id so we can spot our own messages.
-      Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
-      // Let the client join the channel.
-      Drupal.vopros_chat.addClientToChatChannel(Drupal.settings.vopros_chat.chats[chat].channel);
+      if (!Drupal.settings.vopros_chat.chats[chat].initialised) {
+        Drupal.settings.vopros_chat.chats[chat].initialised = true;
+        // Add a unique session id so we can spot our own messages.
+        Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
+        // Let the client join the channel.
+        Drupal.vopros_chat.addClientToChatChannel(Drupal.settings.vopros_chat.chats[chat].channel);
 
-      // Chat form events handling.
-      var chatID = '#vopros_chat_' + Drupal.settings.vopros_chat.chats[chat].channel;
-      chatIdsMapping[chatID] = Drupal.settings.vopros_chat.chats[chat].channel;
+        // Chat form events handling.
+        var chatID = '#vopros_chat_' + Drupal.settings.vopros_chat.chats[chat].channel;
+        chatIdsMapping[chatID] = Drupal.settings.vopros_chat.chats[chat].channel;
 
-      $(chatID + ' .form-type-textarea textarea').keyup(keyUpHandler);
+        $(chatID + ' .form-type-textarea textarea').keyup(keyUpHandler);
 
-      $(chatID + ' .form-submit').click(submitHandler);
+        $(chatID + ' .form-submit').click(submitHandler);
+      }
     }
   };
+
+  if (Drupal.ajax) {
+    /**
+     * Ajax command for reintialzing chats.
+     */
+    Drupal.ajax.prototype.commands.vopros_chat_reinitialize = function (ajax, response, status) {
+      Drupal.vopros_chat.initialiseChat();
+    }
+  }
 
   Drupal.Nodejs.connectionSetupHandlers.vopros_chat = {
     connect: function() {
