@@ -65,6 +65,7 @@ function drush_vopros_chat_package_json() {
     $package_json->version = preg_replace('/x-/', '', $info['version']);
   }
   $package_json->dependencies->drupal = '0.5.2';
+  $package_json->dependencies->hashish = '0.0.4';
 
   // Write it as our own package.json.
   file_put_contents($vopros_chat_path . '/server/package.json', drupal_json_encode($package_json));

@@ -4,7 +4,8 @@
  * Node JS Chat Server extension.
  */
 var crypto = require('crypto'),
-    drupal = require('drupal');
+    drupal = require('drupal'),
+    hashish = require('hashish');
 
 exports.setup = function (config) {
   publishMessageToChannel = config.publishMessageToChannel;
@@ -51,10 +52,17 @@ exports.setup = function (config) {
   };
 
   var connectToDatabase = function(config) {
-    options = config.settings.database;
-    // We need to rename the username property to user.
-    options.user = options.username;
-    delete options.username;
+    // Filter out empty values, and extract only the ones we need.
+    options = hashish(config.settings.database)
+      .filter(function (x) {return x !== '';})
+      .extract(['host', 'port', 'username', 'password', 'database'])
+      .compact.end;
+
+    // We use 'username', mysql class use 'user'.
+    if (options.hasOwnProperty('username')) {
+      options.user = options.username;
+      delete options.username;
+    }
 
     // Connect to the database.
     drupal.db.connect(options);
@@ -80,7 +88,11 @@ exports.setup = function (config) {
 
   var logMessageToDatabase = function(message) {
     questionId = message.channel.split('__')[1].split('_')[0];
-    drupal.db.query("INSERT INTO vopros_chat_log (timestamp, question_id, uid, name, session_id, msg) VALUES (?, ?, ?, ?, ?, ?)", [Math.floor(Date.now() / 1000), questionId, message.data.uid, message.data.name, message.data.sessionId, message.data.msg], function (err, rows) {});
+    drupal.db.query("INSERT INTO vopros_chat_log (timestamp, question_id, uid, name, session_id, msg) VALUES (?, ?, ?, ?, ?, ?)", [Math.floor(Date.now() / 1000), questionId, message.data.uid, message.data.name, message.data.sessionId, message.data.msg], function (err, rows) {
+      if (err) {
+        console.log(err);
+      }
+    });
   }
 
   process.on('client-message', function (sessionId, message) {
