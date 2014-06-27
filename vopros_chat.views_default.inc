@@ -135,6 +135,7 @@ function vopros_chat_views_default_views() {
   $handler->display->display_options['filters']['question_status']['value'] = array(
     'new' => 'new',
     'active' => 'active',
+    'assigned' => 'assigned',
   );
   $translatables['vopros_chat_question_list'] = array(
     t('Master'),
