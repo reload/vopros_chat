@@ -94,19 +94,13 @@ function vopros_chat_views_default_views() {
   $handler->display->display_options['fields']['question_id']['exclude'] = TRUE;
   $handler->display->display_options['fields']['question_id']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['question_id']['separator'] = '';
-  /* Field: Question: Question_status_reason */
-  $handler->display->display_options['fields']['question_status_reason']['id'] = 'question_status_reason';
-  $handler->display->display_options['fields']['question_status_reason']['table'] = 'vopros_question';
-  $handler->display->display_options['fields']['question_status_reason']['field'] = 'question_status_reason';
-  $handler->display->display_options['fields']['question_status_reason']['exclude'] = TRUE;
-  /* Field: Question: Question_title */
-  $handler->display->display_options['fields']['question_title']['id'] = 'question_title';
-  $handler->display->display_options['fields']['question_title']['table'] = 'vopros_question';
-  $handler->display->display_options['fields']['question_title']['field'] = 'question_title';
-  $handler->display->display_options['fields']['question_title']['label'] = 'Title';
-  $handler->display->display_options['fields']['question_title']['alter']['make_link'] = TRUE;
-  $handler->display->display_options['fields']['question_title']['alter']['path'] = 'admin/vopros/questions/[question_id]';
-  $handler->display->display_options['fields']['question_title']['hide_alter_empty'] = FALSE;
+  /* Field: Question: User_name */
+  $handler->display->display_options['fields']['user_name']['id'] = 'user_name';
+  $handler->display->display_options['fields']['user_name']['table'] = 'vopros_question';
+  $handler->display->display_options['fields']['user_name']['field'] = 'user_name';
+  $handler->display->display_options['fields']['user_name']['label'] = 'Name';
+  $handler->display->display_options['fields']['user_name']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['user_name']['alter']['path'] = 'admin/vopros/questions/[question_id]';
   /* Field: Question: Qanda_service_name */
   $handler->display->display_options['fields']['qanda_service_name']['id'] = 'qanda_service_name';
   $handler->display->display_options['fields']['qanda_service_name']['table'] = 'vopros_question';
@@ -161,8 +155,7 @@ function vopros_chat_views_default_views() {
     t('question'),
     t('Question ID'),
     t('.'),
-    t('Question_status_reason'),
-    t('Title'),
+    t('Name'),
     t('Received from'),
     t('Created'),
     t('Chat status'),
