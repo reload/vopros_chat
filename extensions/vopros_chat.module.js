@@ -26,10 +26,18 @@ exports.setup = function (config) {
       refTime = timestamp();
     }
 
+    var adminUsers = 0;
+    for (var sessionId in channel.sessionIds) {
+      if (config.channels.vopros_channel_admin_status.sessionIds.hasOwnProperty(sessionId)) {
+        adminUsers++;
+      }
+    }
+
     var message = {
       'channel': 'vopros_channel_admin_status',
       'channel_name': channelName,
       'users': Object.keys(channel.sessionIds).length,
+      'admin_users': adminUsers,
       'timestamp': channel.timestamp,
       'ref_time': refTime
     };
