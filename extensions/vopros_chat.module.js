@@ -14,7 +14,7 @@ exports.setup = function (config) {
 
   var timestamp = function() {
     return (new Date()).getTime() / 1000;
-  }
+  };
 
   var updateStatus = function(channelName, refTime) {
     var channel = channelStatus[channelName];
@@ -44,7 +44,7 @@ exports.setup = function (config) {
       config.channels[message.channel] = {'sessionIds': {}};
     }
     publishMessageToChannel(message);
-  }
+  };
 
   var connectToDatabase = function(config) {
     options = config.settings.database;
@@ -54,8 +54,25 @@ exports.setup = function (config) {
 
     // Connect to the database.
     drupal.db.connect(options);
-  }
+  };
   connectToDatabase(config);
+
+  var checkHash = function(message) {
+    // First compare hash value of question id.
+    question_id = message.channel.split('__')[1].split('_')[0];
+    question_hash_from_url = message.channel.split('__')[1].split('_')[1];
+    question_hash_calculated = crypto
+      .createHash('sha256')
+      .update(config.settings.serviceKey + question_id)
+      .digest('hex');
+
+    // Only add client to channel if hash values match.
+    if (question_hash_calculated == question_hash_from_url) {
+      return true;
+    }
+    console.log('Vopros Chat extension received wrong hash of question id.');
+    return false;
+  };
 
   var logMessageToDatabase = function(message) {
     questionId = message.channel.split('__')[1].split('_')[0];
@@ -71,26 +88,15 @@ exports.setup = function (config) {
         // When chat is initialised, user needs to be added to the chat Channel.
       case 'chat_init':
 
-        // First compare hash value of question id.
-        question_id = message.channel.split('__')[1].split('_')[0];
-        question_hash_from_url = message.channel.split('__')[1].split('_')[1];
-        question_hash_calculated = crypto
-          .createHash('sha256')
-          .update(config.settings.serviceKey + question_id)
-          .digest('hex');
-
-        // Only add client to channel if hash values match.
-        if (question_hash_calculated == question_hash_from_url) {
-          addClientToChannel(sessionId, message.channel);
-          channelStatus[message.channel] = channelStatus[message.channel] || {'users' : 0, 'timestamp': 0};
-          // channelStatus[message.channel].users++;
-          channelStatus[message.channel].timestamp = timestamp();
-          updateStatus(message.channel);
-        }
-        else {
-          console.log('Vopros Chat extension received wrong hash of question id.');
+        // Error out if hash in channel name does not validate.
+        if (!checkHash(message)) {
           return false;
         }
+
+        addClientToChannel(sessionId, message.channel);
+        channelStatus[message.channel] = channelStatus[message.channel] || {'users' : 0, 'timestamp': 0};
+        channelStatus[message.channel].timestamp = timestamp();
+        updateStatus(message.channel);
 
         // When entering a chat channel, the client might have sent a message
         // so that users know about this.
