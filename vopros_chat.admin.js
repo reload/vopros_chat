@@ -63,6 +63,7 @@
         }
         else {
           delete activeChannels[message.channel_name];
+          $(this).removeClass('idleTimer');
           if (message.admin_users > 0) {
             $(this).text(Drupal.t("Being answered"));
           }
@@ -150,7 +151,7 @@
         action: 'list_all',
       };
       Drupal.Nodejs.socket.emit('message', msg);
-}
+    }
   };
 
   $(document).ready(function() {
