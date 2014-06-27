@@ -27,7 +27,7 @@ function vopros_chat_menu() {
     'title' => 'Chat question list',
     'page callback' => 'vopros_chat_admin_page',
     'page arguments' => array(),
-    'access arguments' => 'answer vopros chats',
+    'access arguments' => array('answer vopros chats'),
     'file' => 'vopros_chat.pages.inc',
     'type' => MENU_LOCAL_TASK,
   );
@@ -36,7 +36,7 @@ function vopros_chat_menu() {
     'title' => 'AHAH callback',
     'page callback' => 'vopros_chat_channels_js',
     'delivery callback' => 'ajax_deliver',
-    'access callback' => TRUE,
+    'access arguments' => array('answer vopros chats'),
     'theme callback' => 'ajax_base_page_theme',
     'file' => 'vopros_chat.pages.inc',
     'type' => MENU_CALLBACK,
