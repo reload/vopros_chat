@@ -39,16 +39,6 @@
     return idleString + (idle % 60) + ' secs';
   };
 
-  Drupal.Nodejs.connectionSetupHandlers.vopros_chat_admin = {
-    connect: function() {
-      var msg = {
-        type: 'vopros_chat_admin',
-        action: 'subscribe',
-      };
-      Drupal.Nodejs.socket.emit('message', msg);
-    }
-  };
-
   Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
     callback: function (message) {
       // If we don't have a views row for the channel, reload the listing.
@@ -58,8 +48,8 @@
 
       var time = ((new Date()).getTime() / 1000);
       $('span[data-channel-name=' + message.channel_name + ']').each(function () {
-        // Only show counter for channels with users in it.
-        if (message.users > 0) {
+        // Only show counter for channels with users in it and no admin users.
+        if (message.users > 0 && message.admin_users < 1) {
           activeChannels[message.channel_name] = message.channel_name;
           offset = time - message.ref_time;
 
@@ -73,7 +63,12 @@
         }
         else {
           delete activeChannels[message.channel_name];
-          $(this).text("Empty");
+          if (message.admin_users > 0) {
+            $(this).text(Drupal.t("Being answered"));
+          }
+          else {
+            $(this).text(Drupal.t("Empty"));
+          }
         }
 
       });
@@ -148,7 +143,14 @@
           Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
         });
       });
-    }
+
+      // Also update list with current status.
+      var msg = {
+        type: 'vopros_chat_admin',
+        action: 'list_all',
+      };
+      Drupal.Nodejs.socket.emit('message', msg);
+}
   };
 
   $(document).ready(function() {

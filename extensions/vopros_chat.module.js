@@ -126,8 +126,8 @@ exports.setup = function (config) {
     // Messages for admin status.
     if (message.type == 'vopros_chat_admin') {
       switch (message.action) {
-      case 'subscribe':
-        addClientToChannel(sessionId, 'vopros_channel_admin_status');
+      case 'list_all':
+        addClientToChannel(sessionId, adminChannel);
         var time = timestamp();
         for (var channelId in config.channels) {
           // Only update channels we have touched.
