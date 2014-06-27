@@ -6,7 +6,7 @@
 
 (function ($) {
 
-  Drupal.vopros_chat = Drupal.vopros_chat || {'initialised' : false};
+  Drupal.vopros_chat = Drupal.vopros_chat || {};
   var chatIdsMapping = {};
   // Create an id for this browser window.
   var sessionId = Math.floor(Math.random() * 10000000000000001);
@@ -46,6 +46,12 @@
     }
   };
 
+  Drupal.vopros_chat.deinitialiseChat = function() {
+    for (var chat in Drupal.settings.vopros_chat.chats) {
+      Drupal.settings.vopros_chat.chats[chat].initialised = false;
+    }
+  };
+
   if (Drupal.ajax) {
     /**
      * Ajax command for reintialzing chats.
@@ -58,7 +64,9 @@
   Drupal.Nodejs.connectionSetupHandlers.vopros_chat = {
     connect: function() {
       Drupal.vopros_chat.initialiseChat();
-      Drupal.vopros_chat.initialised = true;
+    },
+    disconnect: function() {
+      Drupal.vopros_chat.deinitialiseChat();
     }
   };
 
