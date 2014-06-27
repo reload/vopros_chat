@@ -10,15 +10,15 @@ exports.setup = function (config) {
   publishMessageToChannel = config.publishMessageToChannel;
   addClientToChannel = config.addClientToChannel;
 
-  var channelStatus = {};
-
   var timestamp = function() {
     return (new Date()).getTime() / 1000;
   };
 
   var updateStatus = function(channelName, refTime) {
-    var channel = channelStatus[channelName];
-    if (!channel) {
+    console.log(channelName);
+    var channel = config.channels[channelName];
+    console.log(channel);
+    if (!channel || !channel.hasOwnProperty('timestamp')) {
       return;
     }
 
@@ -26,15 +26,10 @@ exports.setup = function (config) {
       refTime = timestamp();
     }
 
-    var users = 0;
-    if (config.channels[channelName]) {
-      users = Object.keys(config.channels[channelName].sessionIds).length;
-    }
-
     var message = {
       'channel': 'vopros_channel_admin_status',
       'channel_name': channelName,
-      'users': users,
+      'users': Object.keys(channel.sessionIds).length,
       'timestamp': channel.timestamp,
       'ref_time': refTime
     };
@@ -94,8 +89,10 @@ exports.setup = function (config) {
         }
 
         addClientToChannel(sessionId, message.channel);
-        channelStatus[message.channel] = channelStatus[message.channel] || {'users' : 0, 'timestamp': 0};
-        channelStatus[message.channel].timestamp = timestamp();
+
+        if (config.channels.hasOwnProperty(message.channel)) {
+          config.channels[message.channel].timestamp = timestamp();
+        }
         updateStatus(message.channel);
 
         // When entering a chat channel, the client might have sent a message
@@ -105,9 +102,11 @@ exports.setup = function (config) {
 
         // Usual message transmission.
       case 'chat_message':
-        channelStatus[message.channel] = channelStatus[message.channel] || {'users' : 0, 'timestamp': 0};
-        channelStatus[message.channel].timestamp = timestamp();
+        if (config.channels.hasOwnProperty(message.channel)) {
+          config.channels[message.channel].timestamp = timestamp();
+        }
         updateStatus(message.channel);
+
         publishMessageToChannel(message);
         logMessageToDatabase(message);
         break;
@@ -121,8 +120,11 @@ exports.setup = function (config) {
       case 'subscribe':
         addClientToChannel(sessionId, 'vopros_channel_admin_status');
         var time = timestamp();
-        for (var channelId in channelStatus) {
-          updateStatus(channelId, time);
+        for (var channelId in config.channels) {
+          // Only update channels we have touched.
+          if (config.channels[channelId].hasOwnProperty('timestamp')) {
+            updateStatus(channelId, time);
+          }
         }
         break;
       }
