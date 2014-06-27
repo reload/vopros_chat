@@ -19,7 +19,7 @@ exports.setup = function (config) {
 
   var updateStatus = function(channelName, refTime) {
     var channel = config.channels[channelName];
-    if (!channel || !channel.hasOwnProperty('timestamp')) {
+    if (!channel || !hashish(channel).has('timestamp')) {
       return;
     }
 
@@ -33,11 +33,9 @@ exports.setup = function (config) {
     }
 
     var adminUsers = 0;
-    for (var sessionId in channel.sessionIds) {
-      if (config.channels[adminChannel].sessionIds.hasOwnProperty(sessionId)) {
-        adminUsers++;
-      }
-    }
+    adminUsers = hashish(channel.sessionIds).filter(function (sessionId) {
+      return hashish(config.channels[adminChannel].sessionIds).has(sessionId);
+    }).length;
 
     var message = {
       'channel': adminChannel,
@@ -141,12 +139,12 @@ exports.setup = function (config) {
       case 'list_all':
         addClientToChannel(sessionId, adminChannel);
         var time = timestamp();
-        for (var channelId in config.channels) {
+        hashish(config.channels).forEach(function(channel, channelId) {
           // Only update channels we have touched.
-          if (config.channels[channelId].hasOwnProperty('timestamp')) {
+          if (hashish(channel).has('timestamp')) {
             updateStatus(channelId, time);
           }
-        }
+        });
         break;
       }
     }
@@ -158,21 +156,21 @@ exports.setup = function (config) {
 
     var updateChannels = [];
 
-    for (var channelId in config.channels) {
-      if (config.channels[channelId].sessionIds[sessionId]) {
+    hashish(config.channels).forEach(function (channel, channelId) {
+      if (hashish(channel.sessionIds).has(sessionId)) {
         updateChannels.push(channelId);
       }
-    }
+    });
 
     // Send the updates after a one second timeout, to give
     // cleanupSocket time to remove the socket from the channels.
     setTimeout(function(channels) {
       var time = timestamp();
-      for (var index in channels) {
-        if (channels.hasOwnProperty(index)) {
-          updateStatus(channels[index], time);
+      hashish(channels).forEach(function (channel, channelId) {
+        if (hashish(channels).has(channelId)) {
+          updateStatus(channel, time);
         }
-      }
+      });
     }, 1000, updateChannels);
   });
 };
