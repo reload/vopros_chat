@@ -1,3 +1,6 @@
+.vopros-chat {
+  padding-bottom: 12px;
+}
 .vopros-chat .chat-log {
   border: 1px solid #cccccc;
   border-width: 1px 0;
@@ -9,14 +12,14 @@
 .vopros-chat-message {
   clear: both;
 }
-.vopros-chat .chat-log .message-content {
+.vopros-chat .message-content {
   float: left;
   width: 90%;
 }
-.vopros-chat .chat-log .message-author {
+.vopros-chat .message-author {
   font-weight: bold;
 }
-.vopros-chat .chat-log .message-time {
+.vopros-chat .message-time {
   color: #858585;
   float: right;
   font-size: 12px;

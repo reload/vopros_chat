@@ -81,10 +81,22 @@ function vopros_chat_vopros_question_user_answer_preference() {
  * Implements hook_theme().
  */
 function vopros_chat_theme() {
+  $path = drupal_get_path('module', 'vopros_chat') . '/templates';
   return array(
     'vopros_chat_admin_page' => array(
       'render element' => 'elements',
+      'path' => $path,
       'template' => 'vopros-chat-admin-page',
+    ),
+    'vopros_chat_log_activity_feed' => array(
+      'render element' => 'log',
+      'path' => $path,
+      'template' => 'vopros-chat-log-activity-feed',
+    ),
+    'vopros_chat_log_activity_feed_item' => array(
+      'render element' => 'log_items',
+      'path' => $path,
+      'template' => 'vopros-chat-log-activity-feed-items',
     ),
   );
 }
@@ -117,6 +129,46 @@ function vopros_chat_views_default_views_alter(&$views) {
   }
 
 }
+
+/**
+ * Implements hook_vopros_question_activity_feed().
+ *
+ * Return renderable activity feed item for chat logs.
+ */
+function vopros_chat_vopros_question_activity_feed($question, &$feed) {
+  $feed['vopros_chat_' . $question->question_id] = array(
+    '#weight' => 1,
+    '#chatlog' => array(
+      '#weight' => 1,
+      '#log' => vopros_chat_log_load($question->question_id),
+      '#theme' => 'vopros_chat_log_activity_feed_item',
+    ),
+    '#question' => vopros_question_load($question->question_id),
+    '#theme' => 'vopros_chat_log_activity_feed',
+    '#attached' => array(
+      'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css'),
+    ),
+  );
+}
+
+/**
+ * Load a question chat log.
+ *
+ * @param int $question_id
+ *   The ID of the question to load the log for.
+ *
+ * @return array
+ *   An array of chat log object keyed by timestamp.
+ */
+function vopros_chat_log_load($question_id) {
+  return db_select('vopros_chat_log', 'vcl')
+    ->fields('vcl')
+    ->condition('question_id', $question_id)
+    ->orderBy('timestamp')
+    ->execute()
+    ->fetchAllAssoc('timestamp');
+}
+
 /**
  * Implements hook_views_data_alter().
  *
