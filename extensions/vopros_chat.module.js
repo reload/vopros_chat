@@ -10,16 +10,21 @@ exports.setup = function (config) {
   publishMessageToChannel = config.publishMessageToChannel;
   addClientToChannel = config.addClientToChannel;
 
+  var adminChannel = 'vopros_channel_admin_status';
+
   var timestamp = function() {
     return (new Date()).getTime() / 1000;
   };
 
   var updateStatus = function(channelName, refTime) {
-    console.log(channelName);
     var channel = config.channels[channelName];
-    console.log(channel);
     if (!channel || !channel.hasOwnProperty('timestamp')) {
       return;
+    }
+
+    if (!config.channels[adminChannel]) {
+      console.log("Creating admin channel.");
+      config.channels[adminChannel] = {'sessionIds': {}};
     }
 
     if (refTime === undefined) {
@@ -28,13 +33,13 @@ exports.setup = function (config) {
 
     var adminUsers = 0;
     for (var sessionId in channel.sessionIds) {
-      if (config.channels.vopros_channel_admin_status.sessionIds.hasOwnProperty(sessionId)) {
+      if (config.channels[adminChannel].sessionIds.hasOwnProperty(sessionId)) {
         adminUsers++;
       }
     }
 
     var message = {
-      'channel': 'vopros_channel_admin_status',
+      'channel': adminChannel,
       'channel_name': channelName,
       'users': Object.keys(channel.sessionIds).length,
       'admin_users': adminUsers,
@@ -42,10 +47,6 @@ exports.setup = function (config) {
       'ref_time': refTime
     };
 
-    if (!config.channels[message.channel]) {
-      console.log("Creating admin channel.");
-      config.channels[message.channel] = {'sessionIds': {}};
-    }
     publishMessageToChannel(message);
   };
 
