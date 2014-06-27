@@ -55,9 +55,10 @@ function vopros_chat_channels_js() {
  *
  * Add a channel to the page..
  */
-function vopros_chat_add_chat_js($question_id) {
+function vopros_chat_add_chat_js($question) {
   $commands = array();
-  $chat = new VoprosChat($question_id . '_' . vopros_chat_get_channel_hash_from_question_id($question_id), 'Chat');
+  // Using user name as title.
+  $chat = new VoprosChat($question->question_id . '_' . vopros_chat_get_channel_hash_from_question_id($question->question_id), $question->user_name);
   $commands[] = ajax_command_append('#vopros-chat-admin-chats', $chat->render());
   $commands[] = ajax_command_vopros_chat_reinitialize();
 
