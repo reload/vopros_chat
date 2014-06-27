@@ -56,7 +56,18 @@ function vopros_chat_channels_js() {
  * Add a channel to the page..
  */
 function vopros_chat_add_chat_js($question) {
+  global $user;
   $commands = array();
+
+  // If question is new or active, try to grab a lock and assign the question to
+  // the current user.
+  if (in_array($question->question_status, array('new', 'active')) && lock_acquire('vopros_chat_question', 5)) {
+    $question->question_status = 'assigned';
+    $question->question_status_reason = 'locked for answering';
+    $question->uid = $user->uid;
+    $question->save();
+  }
+
   // Using user name as title.
   $chat = new VoprosChat($question->question_id . '_' . vopros_chat_get_channel_hash_from_question_id($question->question_id), $question->user_name);
   $commands[] = ajax_command_append('#vopros-chat-admin-chats', $chat->render());
