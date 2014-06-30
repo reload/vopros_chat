@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * The Vopros Chat class.
+ */
 
 /**
  * Vopros Chat class
@@ -38,7 +42,6 @@ class VoprosChat {
   public function __construct($channel, $name = 'Vopros Chat') {
     // Some filtering to avoid unwanted characters on the channel_name.
     $this->channel = 'vopros_chat__' . preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
-
 
     // Check if chat channel exists.
     if (!nodejs_get_check_channel($this->channel)) {

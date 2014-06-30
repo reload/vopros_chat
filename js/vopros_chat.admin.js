@@ -25,7 +25,6 @@
       var offset = current - parseFloat($(this).attr('data-timestamp'));
       var idle = Math.floor(parseFloat($(this).attr('data-idle')) + offset);
 
-
         $(this).text("Idle: " + idleString(idle));
     });
     timer = window.setTimeout(updateCallback, 1000);

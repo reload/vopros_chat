@@ -82,7 +82,7 @@ function vopros_chat_add_chat_js($question) {
  * The 'vopros_chat_reinitialize' command instructs the client to reinitialize
  * the chats, in order to pick up newly inserted chats.
  *
- * @return
+ * @return array
  *   An array suitable for use with the ajax_render() function.
  */
 function ajax_command_vopros_chat_reinitialize() {
