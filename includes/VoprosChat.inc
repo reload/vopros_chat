@@ -128,7 +128,7 @@ class VoprosChat {
 
     $form['vopros_chat']['chat_entry_box'] = array(
       '#type' => 'textarea',
-      '#title' => t('Enter your message here: '),
+      '#title' => t('Enter your message here:'),
       '#value' => '',
       '#rows' => 2,
       '#attributes' => array(
