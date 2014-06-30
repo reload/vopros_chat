@@ -94,10 +94,34 @@ class VoprosChat {
       ),
     );
 
-    // @todo need another welcome message.
-    $form['vopros_chat']['chat_log'] = array(
-      '#markup' => '<div class="chat-log">Chat log is empty. Start writing! =): </div>',
-    );
+    // Initialize chat window with existing chat log.
+    $question_id = preg_replace('/.*__([0-9]+)_.*/', '\1', $this->channel);
+    if (is_numeric($question_id)) {
+      $path = drupal_get_path('module', 'vopros_chat') . '/templates';
+      $form['vopros_chat']['chat_log'] = array(
+        '#log' => vopros_chat_log_load($question_id),
+        '#path' => $path,
+        '#template' => 'vopros-chat-log-activity-feed-items',
+        '#theme' => 'vopros_chat_log_activity_feed_item',
+        '#prefix' => '<div class="chat-log" id="chat-log-' . $this->channel . '">',
+        '#suffix' => '</div>',
+        '#question' => vopros_question_load($question_id),
+        '#attached' => array(
+          'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css'),
+          'js' => array(
+            'chat-log' => array(
+              'type' => 'file',
+              'data' => drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_log.js',
+            ),
+          ),
+        ),
+      );
+    }
+    else {
+      $form['vopros_chat']['chat_log'] = array(
+        '#markup' => '<div class="chat-log">Chat log is empty. Start writing! =): </div>',
+      );
+    }
 
     $form['vopros_chat']['chat_entry_box'] = array(
       '#type' => 'textarea',
