@@ -163,10 +163,18 @@ class VoprosChat {
 
     // Current user settings.
     global $user;
+    $question_id = preg_replace('/.*__([0-9]+)_.*/', '\1', $this->channel);
+    if (is_numeric($question_id)) {
+      $question = vopros_question_load($question_id);
+      $username = $question->user_name;
+    }
+    else {
+      $username = t('User');
+    }
     $current_user = array(
       'uid' => $user->uid,
       // @todo Customizable names for authenticated users?
-      'name' => $user->uid ? variable_get('site_name', t('Watch')) : t('User'),
+      'name' => $user->uid ? variable_get('site_name', t('Watch')) : $username,
     );
     drupal_add_js(array('vopros_chat' => array('currentUser' => $current_user)), 'setting');
   }
