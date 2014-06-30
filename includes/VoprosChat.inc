@@ -105,7 +105,7 @@ class VoprosChat {
         '#log' => vopros_chat_log_load($question_id),
         '#path' => $path,
         '#template' => 'vopros-chat-log-activity-feed-items',
-        '#theme' => 'vopros_chat_log_activity_feed_item',
+        '#theme' => 'vopros_chat_log_activity_feed_items',
         '#prefix' => '<div class="chat-log" id="chat-log-' . $this->channel . '">',
         '#suffix' => '</div>',
         '#question' => vopros_question_load($question_id),

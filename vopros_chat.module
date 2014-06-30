@@ -113,7 +113,7 @@ function vopros_chat_theme() {
       'path' => $path,
       'template' => 'vopros-chat-log-activity-feed',
     ),
-    'vopros_chat_log_activity_feed_item' => array(
+    'vopros_chat_log_activity_feed_items' => array(
       'render element' => 'log_items',
       'path' => $path,
       'template' => 'vopros-chat-log-activity-feed-items',
