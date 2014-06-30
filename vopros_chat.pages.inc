@@ -26,10 +26,10 @@ function vopros_chat_admin_page() {
     '#attached' => array(
       'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.admin.css'),
       'js' => array(
-        drupal_get_path('module', 'vopros_chat') . '/vopros_chat.admin.js',
+        drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.admin.js',
         // Need to add the client JS so it can add the ajax command we use to
         // initialize the chat after we fetch it over AHAH.
-        drupal_get_path('module', 'vopros_chat') . '/vopros_chat.js',
+        drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js',
       ),
       'library' => array(array('system', 'drupal.ajax')),
     ),

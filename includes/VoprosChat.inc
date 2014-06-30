@@ -146,7 +146,7 @@ class VoprosChat {
    */
   public function loadAssets() {
     // Add JavaScript.
-    drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/vopros_chat.js');
+    drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js');
     // Add CSS.
     drupal_add_css(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css');
 
