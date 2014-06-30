@@ -141,7 +141,7 @@ function vopros_chat_vopros_question_activity_feed($question, &$feed) {
     '#chatlog' => array(
       '#weight' => 1,
       '#log' => vopros_chat_log_load($question->question_id),
-      '#theme' => 'vopros_chat_log_activity_feed_item',
+      '#theme' => 'vopros_chat_log_activity_feed_items',
     ),
     '#question' => vopros_question_load($question->question_id),
     '#theme' => 'vopros_chat_log_activity_feed',
