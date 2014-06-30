@@ -88,7 +88,7 @@
       // Get current date, to display the time at which the message was sent.
       var currentTime = new Date();
       var messageTime = '<span class="message-time">' + currentTime.getHours() + ':' + currentTime.getMinutes() + '</span>';
-      var messageAuthor = '<span class="message-author">' + (msg.sessionId == sessionId ? Drupal.t('Me') : msg.name) + ':</span>';
+      var messageAuthor = '<span class="message-author' + ((msg.sessionId == sessionId) ? ' message-author-me' : '') + '">' + (msg.sessionId == sessionId ? Drupal.t('Me') : msg.name) + ': </span>';
 
       // Display URLs as proper links.
       // After failing for some time with my custom regex, took one from
