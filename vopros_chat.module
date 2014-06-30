@@ -69,6 +69,26 @@ function vopros_chat_permission() {
 }
 
 /**
+ * Implements hook_entity_insert().
+ *
+ * When a new chat question is created we log the question to the chat log.
+ */
+function vopros_chat_entity_insert($entity, $type) {
+  global $user;
+  if ($type == 'vopros_question' && $entity->user_answer_preference == 'chat') {
+    $chat_log = array(
+      'timestamp' => $entity->created,
+      'question_id' => $entity->question_id,
+      'uid' => $user->uid,
+      'name' => $entity->user_name,
+      'session_id' => '',
+      'msg' => $entity->question_content,
+    );
+    drupal_write_record('vopros_chat_log', $chat_log);
+  }
+}
+
+/**
  * Implements hook_vopros_question_user_answer_preference().
  *
  * Exposes chat as an user answer preference for questions.
