@@ -299,8 +299,12 @@ function vopros_chat_create_chat_config() {
     'logLevel' => 1,
   );
 
-  global $databases;
-  $config['database'] = $databases['default']['default'];
+  $db_connection = Database::getConnection();
+  $config['database'] = $db_connection->getConnectionOptions();
+  $config['database_tables'] = array();
+  foreach (array('{vopros_chat_log}') as $table) {
+    $config['database_tables'][$table] = $db_connection->prefixTables($table);
+  };
 
   // Merge in overrides from $conf['vopros_chat_config_override'].
   $config = variable_get('vopros_chat_config_override', array()) + $config;

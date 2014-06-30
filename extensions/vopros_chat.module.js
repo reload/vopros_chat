@@ -86,7 +86,9 @@ exports.setup = function (config) {
 
   var logMessageToDatabase = function(message) {
     questionId = message.channel.split('__')[1].split('_')[0];
-    drupal.db.query("INSERT INTO vopros_chat_log (timestamp, question_id, uid, name, session_id, msg) VALUES (?, ?, ?, ?, ?, ?)", [Math.floor(Date.now() / 1000), questionId, message.data.uid, message.data.name, message.data.sessionId, message.data.msg], function (err, rows) {
+    table = config.settings.database_tables['{vopros_chat_log}'];
+    timestamp = Math.floor(Date.now() / 1000);
+    drupal.db.query("INSERT INTO `" + table + "` (timestamp, question_id, uid, name, session_id, msg) VALUES (?, ?, ?, ?, ?, ?)", [timestamp, questionId, message.data.uid, message.data.name, message.data.sessionId, message.data.msg], function (err, rows) {
       if (err) {
         console.log(err);
       }
