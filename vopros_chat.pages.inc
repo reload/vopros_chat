@@ -10,8 +10,11 @@
  *
  * Render the chat client.
  */
-function vopros_chat_client_page($chat_id, $chat_hash) {
-  $chat = new VoprosChat($chat_id . '_' . $chat_hash, 'Chat');
+function vopros_chat_client_page($question_id, $chat_hash) {
+  if (vopros_chat_get_channel_hash_from_question_id($question_id) != $chat_hash) {
+    return drupal_access_denied();
+  }
+  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question_id), 'Chat');
   return $chat->render();
 }
 
