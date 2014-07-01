@@ -40,8 +40,8 @@ class VoprosChat {
    * Basic constructor, just with the socket.io channel assigned.
    */
   public function __construct($channel, $name = 'Vopros Chat') {
-    // Some filtering to avoid unwanted characters on the channel_name.
-    $this->channel = 'vopros_chat__' . preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
+    // Channel name should be filtered, but make sure.
+    $this->channel = preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
 
     // Check if chat channel exists.
     if (!nodejs_get_check_channel($this->channel)) {

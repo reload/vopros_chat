@@ -228,7 +228,7 @@ function vopros_chat_url($question) {
  *   The name of the channel associated with the question.
  */
 function vopros_chat_get_channel_name_from_question_id($question_id) {
-  return $question_id . '_' . vopros_chat_get_channel_hash_from_question_id($question_id);
+  return 'vopros_chat__' . $question_id . '_' . preg_replace('/[^(_|a-zA-Z0-9)]/', '_', vopros_chat_get_channel_hash_from_question_id($question_id));
 }
 
 /**
