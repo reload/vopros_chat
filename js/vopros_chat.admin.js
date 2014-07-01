@@ -109,17 +109,6 @@
         Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
       });
 
-      $('#vopros-chat-admin-chats').once('voproc-chat', function() {
-        var base = $(this).attr('id');
-        var element_settings = {
-          url: '/admin/vopros/questions/chat/chat',
-          event: 'vopros-chat-admin-add-chat',
-          progress: {
-            type: 'throbber'
-          }
-        };
-        Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
-      });
     }
   };
 
