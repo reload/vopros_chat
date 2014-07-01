@@ -17,7 +17,7 @@ exports.setup = function (config) {
     return (new Date()).getTime() / 1000;
   };
 
-  var updateStatus = function(channelName, refTime) {
+  var updateStatus = function(channelName, refTime, refresh) {
     var channel = config.channels[channelName];
     if (channelName == adminChannel ||
         !channel ||
@@ -30,9 +30,12 @@ exports.setup = function (config) {
       config.channels[adminChannel] = {'sessionIds': {}};
     }
 
-    if (refTime === undefined) {
+    if (!refTime) {
       refTime = timestamp();
     }
+
+    // Ensure boolean.
+    refresh = refresh ? true : false;
 
     var adminUsers = 0;
     adminUsers = hashish(channel.sessionIds).filter(function (sessionId) {
@@ -45,7 +48,8 @@ exports.setup = function (config) {
       'users': Object.keys(channel.sessionIds).length,
       'admin_users': adminUsers,
       'timestamp': channel.timestamp,
-      'ref_time': refTime
+      'ref_time': refTime,
+      'refresh': refresh
     };
 
     publishMessageToChannel(message);
@@ -116,7 +120,7 @@ exports.setup = function (config) {
         if (config.channels.hasOwnProperty(message.channel)) {
           config.channels[message.channel].timestamp = timestamp();
         }
-        updateStatus(message.channel);
+        updateStatus(message.channel, null, true);
 
         // When entering a chat channel, the client might have sent a message
         // so that users know about this.
@@ -132,16 +136,6 @@ exports.setup = function (config) {
 
         publishMessageToChannel(message);
         logMessageToDatabase(message);
-        break;
-
-        // Close message.
-      case 'chat_close':
-        if (config.channels.hasOwnProperty(message.channel)) {
-          config.channels[message.channel].timestamp = timestamp();
-        }
-        updateStatus(message.channel);
-
-        publishMessageToChannel(message);
         break;
 
       }
@@ -186,5 +180,18 @@ exports.setup = function (config) {
         }
       });
     }, 1000, updateChannels);
+  });
+
+  // Sadly, messages originating in Drupal trigger completely
+  // different events.
+  process.on('message-published', function(message) {
+    // Trigger an channel refresh in admin page when chats are closed
+    // by Drupal.
+    if (message.type == 'vopros_chat' && message.action == 'chat_close') {
+      if (config.channels.hasOwnProperty(message.channel)) {
+        config.channels[message.channel].timestamp = timestamp();
+      }
+      updateStatus(message.channel, null, true);
+    }
   });
 };

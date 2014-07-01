@@ -40,8 +40,8 @@
 
   Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
     callback: function (message) {
-      // If we don't have a views row for the channel, reload the listing.
-      if ($('span[data-channel-name=' + message.channel_name + ']').length === 0) {
+      // Refresh the channel listing if so instructed by the server.
+      if (message.refresh) {
         $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
       }
 
