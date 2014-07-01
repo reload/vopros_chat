@@ -11,10 +11,11 @@
  * Render the chat client.
  */
 function vopros_chat_client_page($question_id, $chat_hash) {
-  if (vopros_chat_get_channel_hash_from_question_id($question_id) != $chat_hash) {
+  if (vopros_chat_get_channel_hash_from_question_id($question_id) != $chat_hash || !($question = vopros_question_load($question_id))) {
     return drupal_access_denied();
   }
-  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question_id), 'Chat');
+
+  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question_id), 'Chat', in_array($question->question_status, array('new', 'active')));
   return $chat->render();
 }
 

@@ -39,7 +39,7 @@ class VoprosChat {
   /**
    * Basic constructor, just with the socket.io channel assigned.
    */
-  public function __construct($channel, $name = 'Vopros Chat') {
+  public function __construct($channel, $name = 'Vopros Chat', $active = TRUE) {
     // Channel name should be filtered, but make sure.
     $this->channel = preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
 
@@ -59,6 +59,8 @@ class VoprosChat {
 
     // Set the chat name.
     $this->name = $name;
+
+    $this->active = $active;
   }
 
   /**
@@ -126,20 +128,22 @@ class VoprosChat {
       );
     }
 
-    $form['vopros_chat']['chat_entry_box'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Enter your message here:'),
-      '#value' => '',
-      '#rows' => 2,
-      '#attributes' => array(
-        'id' => 'chat-entry-box',
-      ),
-    );
+    if ($this->active) {
+      $form['vopros_chat']['chat_entry_box'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Enter your message here:'),
+        '#value' => '',
+        '#rows' => 2,
+        '#attributes' => array(
+          'id' => 'chat-entry-box',
+        ),
+      );
 
-    $form['vopros_chat']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Send Message'),
-    );
+      $form['vopros_chat']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Send Message'),
+      );
+    }
 
     return $form;
   }
@@ -148,8 +152,11 @@ class VoprosChat {
    * Add the assert needed to the page.
    */
   public function loadAssets() {
-    // Add JavaScript.
-    drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js');
+    if ($this->active) {
+      // Add JavaScript.
+      drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js');
+    }
+
     // Add CSS.
     drupal_add_css(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css');
 
