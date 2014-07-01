@@ -19,7 +19,9 @@ exports.setup = function (config) {
 
   var updateStatus = function(channelName, refTime) {
     var channel = config.channels[channelName];
-    if (!channel || !hashish(channel).has('timestamp')) {
+    if (channelName == adminChannel ||
+        !channel ||
+        !hashish(channel).has('timestamp')) {
       return;
     }
 
