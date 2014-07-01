@@ -253,7 +253,7 @@ function vopros_chat_get_channel_hash_from_question_id($question_id) {
  *   File name of the generated config file.
  */
 function vopros_chat_create_chat_config() {
-  $vopros_chat_extension_path = _vopros_chat_relative_path(drupal_get_path('module', 'nodejs'), drupal_get_path('module', 'vopros_chat') . '/extensions/vopros_chat.module.js');
+  $vopros_chat_extension_path = _vopros_chat_relative_path(drupal_get_path('module', 'nodejs'), drupal_get_path('module', 'vopros_chat') . '/extensions');
 
   global $is_https;
 
@@ -290,7 +290,10 @@ function vopros_chat_create_chat_config() {
     'toggleDebugUrl' => 'debug/toggle',
     'contentTokenUrl' => 'content/token',
     'publishMessageToContentChannelUrl' => 'content/token/message',
-    'extensions' => array($vopros_chat_extension_path),
+    'extensions' => array(
+      $vopros_chat_extension_path . '/vopros_chat.module.js',
+      $vopros_chat_extension_path . '/ssl_passphrase_dialog.js',
+    ),
     'clientsCanWriteToChannels' => TRUE,
     'clientsCanWriteToClients' => TRUE,
     'transports' => array('websocket', 'polling'),
