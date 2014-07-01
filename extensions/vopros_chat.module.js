@@ -134,6 +134,16 @@ exports.setup = function (config) {
         logMessageToDatabase(message);
         break;
 
+        // Close message.
+      case 'chat_close':
+        if (config.channels.hasOwnProperty(message.channel)) {
+          config.channels[message.channel].timestamp = timestamp();
+        }
+        updateStatus(message.channel);
+
+        publishMessageToChannel(message);
+        break;
+
       }
     }
 

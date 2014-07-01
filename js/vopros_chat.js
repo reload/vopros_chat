@@ -112,6 +112,14 @@
     }
   };
 
+  Drupal.Nodejs.callbacks.closeChannelHandler = {
+    callback: function(message) {
+    // Disable the input field.
+    var chatID = '#vopros_chat_' + message.channel;
+      $(chatID + ' .form-type-textarea textarea').attr('disabled', 'disabled');
+    }
+  };
+
   Drupal.vopros_chat.addClientToChatChannel = function(channelId) {
     var msg = {
       type: 'vopros_chat',

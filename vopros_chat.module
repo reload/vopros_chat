@@ -346,3 +346,57 @@ function _vopros_chat_relative_path($from, $to, $ps = DIRECTORY_SEPARATOR) {
   }
   return str_pad('', count($ar_from) * 3, '..' . $ps) . implode($ps, $ar_to);
 }
+
+/**
+ * Admimintrator chat action buttons.
+ */
+function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
+  $form['question_id'] = array(
+    '#type' => 'value',
+    '#value' => $question->question_id,
+  );
+
+  $form['spam'] = array(
+    '#type' => 'submit',
+    '#value' => t('Close as spam'),
+    '#ajax' => array(
+      'callback' => 'vopros_chat_admin_chat_actions_spam_submit',
+      'wrapper' => 'vopros-chat-admin-' . $question->question_id,
+    ),
+  );
+
+  return $form;
+}
+
+/**
+ * Submit handler.
+ *
+ * Close question with spam state.
+ *
+ * @see vopros_chat_admin_chat_actions().
+ */
+function vopros_chat_admin_chat_actions_spam_submit($form, &$form_state) {
+  $question = vopros_question_load($form_state['values']['question_id']);
+  if ($question) {
+    // Change status.
+    $question->question_status = 'closed';
+    $question->question_status_reason = 'spam';
+    $question->save();
+
+    // Send message to the client to disable input.
+    $message = (object) array(
+      'type' => 'vopros_chat',
+      'action' => 'chat_close',
+      'channel' => vopros_chat_get_channel_name_from_question_id($question->question_id),
+      'callback' => 'closeChannelHandler',
+    );
+    nodejs_send_message($message);
+  }
+
+  // Contrary to what the docs say, ajax_command_remove() doesn't use the
+  // wrapper set on the triggering element.
+  $commands = array(
+    ajax_command_remove('#vopros-chat-admin-' . $form_state['values']['question_id']),
+  );
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
