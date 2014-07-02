@@ -28,13 +28,26 @@
     Drupal.vopros_chat.processMessageArea(e);
   };
 
+  var appendToLog = function(channel, messageContent) {
+    var currentTime = new Date();
+    var messageTime = '<span class="message-time">' + currentTime.getHours() + ':' + currentTime.getMinutes() + '</span>';
+
+    // Assemble the markup for the message.
+    var messageMarkUp = '<div class="vopros-chat-message"><div class="message-content"> ' + messageContent + '</div>' + messageTime + '</div>';
+
+
+    $('#' + channel + ' .chat-log').append(messageMarkUp);
+
+    // Scroll to the last line. TODO: This has to be improved, to avoid
+    // auto-scrolling when a user is reading the comments log. Checking if the
+    // chat-log div is focused might be enough.
+    $('#' + channel + ' .chat-log')[0].scrollTop = $('#' + channel + ' .chat-log')[0].scrollHeight;
+  };
+
   Drupal.vopros_chat.initialiseChat = function() {
     for (var chatId in Drupal.settings.vopros_chat.chats) {
       var chat = Drupal.settings.vopros_chat.chats[chatId];
-      console.dir(chat);
-      console.dir(chat.initialised);
       if (!chat.initialised) {
-        console.log('here');
         chat.initialised = true;
         // Add a unique session id so we can spot our own messages.
         Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
@@ -86,9 +99,6 @@
     callback: function(message) {
       var msg = message.data;
 
-      // Get current date, to display the time at which the message was sent.
-      var currentTime = new Date();
-      var messageTime = '<span class="message-time">' + currentTime.getHours() + ':' + currentTime.getMinutes() + '</span>';
       var messageAuthor = '<span class="message-author' + ((msg.sessionId == sessionId) ? ' message-author-me' : '') + '">' + (msg.sessionId == sessionId ? Drupal.t('Me') : msg.name) + ': </span>';
 
       // Display URLs as proper links.
@@ -100,16 +110,8 @@
 
       var messageText = '<span class="message-text">' + parsedText + '</span>';
 
-      // Assemble the markup for the message.
-      var messageMarkUp = '<div class="vopros-chat-message"><div class="message-content"> ' + messageAuthor + messageText + '</div>' + messageTime + '</div>';
-
       // Finally, add it to the chat log.
-      $('#' + message.channel + ' .chat-log').append(messageMarkUp);
-
-      // Scroll to the last comment. TODO: This has to be improved, to avoid
-      // auto-scrolling when a user is reading the comments log. Checking if the
-      // chat-log div is focused might be enough.
-      $('#' + message.channel + ' .chat-log')[0].scrollTop = $('#' + message.channel + ' .chat-log')[0].scrollHeight;
+      appendToLog(message.channel, messageAuthor + messageText);
     }
   };
 
