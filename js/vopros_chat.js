@@ -4,6 +4,8 @@
  * Node JS Callbacks and general Javascript code for the Vopros Chat module.
  */
 
+/* global jQuery */
+
 (function ($) {
 
   Drupal.vopros_chat = Drupal.vopros_chat || {};
@@ -27,21 +29,22 @@
   };
 
   Drupal.vopros_chat.initialiseChat = function() {
-    for (var chat in Drupal.settings.vopros_chat.chats) {
-      if (!Drupal.settings.vopros_chat.chats[chat].initialised) {
-        Drupal.settings.vopros_chat.chats[chat].initialised = true;
+    for (var chatId in Drupal.settings.vopros_chat.chats) {
+      var chat = Drupal.settings.vopros_chat.chats[chatId];
+      console.dir(chat);
+      console.dir(chat.initialised);
+      if (!chat.initialised) {
+        console.log('here');
+        chat.initialised = true;
         // Add a unique session id so we can spot our own messages.
         Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
         // Let the client join the channel.
-        Drupal.vopros_chat.addClientToChatChannel(Drupal.settings.vopros_chat.chats[chat].channel);
+        Drupal.vopros_chat.addClientToChatChannel(chat.channel);
 
         // Chat form events handling.
-        var chatID = '#vopros_chat_' + Drupal.settings.vopros_chat.chats[chat].channel;
-        chatIdsMapping[chatID] = Drupal.settings.vopros_chat.chats[chat].channel;
+        $('#' + chat.channel + ' .form-type-textarea textarea').keyup(keyUpHandler);
 
-        $(chatID + ' .form-type-textarea textarea').keyup(keyUpHandler);
-
-        $(chatID + ' .form-submit').click(submitHandler);
+        $('#' + chat.channel + ' .form-submit').click(submitHandler);
       }
     }
   };
@@ -56,9 +59,9 @@
     /**
      * Ajax command for reintialzing chats.
      */
-    Drupal.ajax.prototype.commands.vopros_chat_reinitialize = function (ajax, response, status) {
+    Drupal.ajax.prototype.commands.vopros_chat_reinitialize = function () {
       Drupal.vopros_chat.initialiseChat();
-    }
+    };
   }
 
   Drupal.Nodejs.connectionSetupHandlers.vopros_chat = {
@@ -73,8 +76,7 @@
   Drupal.Nodejs.callbacks.voprosChatUserOnlineHandler = {
     callback: function (message) {
       if (message.data.user.sessionId != sessionId) {
-        var chatID = '#vopros_chat_' + message.channel;
-        $(chatID + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' joined</div>');
+        $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' joined</div>');
       }
 
     }
@@ -83,7 +85,6 @@
   Drupal.Nodejs.callbacks.voprosChatMessageHandler = {
     callback: function(message) {
       var msg = message.data;
-      var chatID = '#vopros_chat_' + message.channel;
 
       // Get current date, to display the time at which the message was sent.
       var currentTime = new Date();
@@ -103,20 +104,19 @@
       var messageMarkUp = '<div class="vopros-chat-message"><div class="message-content"> ' + messageAuthor + messageText + '</div>' + messageTime + '</div>';
 
       // Finally, add it to the chat log.
-      $(chatID + ' .chat-log').append(messageMarkUp);
+      $('#' + message.channel + ' .chat-log').append(messageMarkUp);
 
       // Scroll to the last comment. TODO: This has to be improved, to avoid
       // auto-scrolling when a user is reading the comments log. Checking if the
       // chat-log div is focused might be enough.
-      $(chatID + ' .chat-log')[0].scrollTop = $(chatID + ' .chat-log')[0].scrollHeight;
+      $('#' + message.channel + ' .chat-log')[0].scrollTop = $('#' + message.channel + ' .chat-log')[0].scrollHeight;
     }
   };
 
   Drupal.Nodejs.callbacks.closeChannelHandler = {
     callback: function(message) {
-    // Disable the input field.
-    var chatID = '#vopros_chat_' + message.channel;
-      $(chatID + ' .form-type-textarea textarea').attr('disabled', 'disabled');
+      // Disable the input field.
+      $('#' + message.channel + ' .form-type-textarea textarea').attr('disabled', 'disabled');
     }
   };
 
@@ -134,13 +134,11 @@
     Drupal.Nodejs.socket.emit('message', msg);
   };
 
-  Drupal.vopros_chat.postMessage = function(message, channelDomId) {
-    var channelId = chatIdsMapping[channelDomId];
-
+  Drupal.vopros_chat.postMessage = function(message, channel) {
     var msg = {
       type: 'vopros_chat',
       action: 'chat_message',
-      channel: channelId,
+      channel: channel,
       callback: 'voprosChatMessageHandler',
       data: {
         uid: Drupal.settings.vopros_chat.currentUser.uid,
@@ -153,11 +151,11 @@
   };
 
   Drupal.vopros_chat.processMessageArea = function(e) {
-    var domChatID = '#' + $(e.target).closest('.vopros-chat').attr('id');
-    var messageText = $('<div></div>').text($(domChatID + ' .form-type-textarea textarea').val()).html().replace(/^\s+$/g, '');
+    var channel = $(e.target).closest('.vopros-chat').attr('id');
+    var messageText = $('<div></div>').text($('#' + channel + ' .form-type-textarea textarea').val()).html().replace(/^\s+$/g, '');
     if (messageText) {
-      Drupal.vopros_chat.postMessage(messageText, domChatID);
-      $(domChatID + ' .form-type-textarea textarea').val('').focus();
+      Drupal.vopros_chat.postMessage(messageText, channel);
+      $('#' + channel + ' .form-type-textarea textarea').val('').focus();
     }
   };
 

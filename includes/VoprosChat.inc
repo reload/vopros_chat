@@ -92,7 +92,7 @@ class VoprosChat {
       '#title' => $this->name,
       '#attributes' => array(
          // Assuming channel comes transliterated as a valid CSS ID.
-        'id' => 'vopros_chat_' . $this->channel,
+        'id' => $this->channel,
         'class' => array(
           'vopros-chat',
         ),
