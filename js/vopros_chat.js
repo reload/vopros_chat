@@ -4,6 +4,9 @@
  * Node JS Callbacks and general Javascript code for the Vopros Chat module.
  */
 
+/* Tell jshint that we use these globals. */
+/* global jQuery, window */
+
 (function ($) {
 
   Drupal.vopros_chat = Drupal.vopros_chat || {};
@@ -56,9 +59,16 @@
     /**
      * Ajax command for reintialzing chats.
      */
-    Drupal.ajax.prototype.commands.vopros_chat_reinitialize = function (ajax, response, status) {
+    Drupal.ajax.prototype.commands.vopros_chat_reinitialize = function () {
       Drupal.vopros_chat.initialiseChat();
-    }
+    };
+
+    /**
+     * Ajax command for opening an url in a new window..
+     */
+    Drupal.ajax.prototype.commands.vopros_chat_window_open = function (ajax, response) {
+      window.open(response.url, '_blank');
+    };
   }
 
   Drupal.Nodejs.connectionSetupHandlers.vopros_chat = {

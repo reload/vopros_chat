@@ -416,3 +416,36 @@ function vopros_chat_admin_chat_actions_button_submit($form, &$form_state) {
   );
   return array('#type' => 'ajax', '#commands' => $commands);
 }
+
+/**
+ * Creates a Drupal Ajax 'vopros_chat_reinitialize' command.
+ *
+ * The 'vopros_chat_reinitialize' command instructs the client to reinitialize
+ * the chats, in order to pick up newly inserted chats.
+ *
+ * @return array
+ *   An array suitable for use with the ajax_render() function.
+ */
+function ajax_command_vopros_chat_reinitialize() {
+  return array(
+    'command' => 'vopros_chat_reinitialize',
+  );
+}
+
+/**
+ * Creates a Drupal Ajax 'vopros_chat_window_open' command.
+ *
+ * Opens the given URL in a new window.
+ *
+ * @param string $url
+ *   The URL to open.
+ *
+ * @return array
+ *   An array suitable for use with the ajax_render() function.
+ */
+function ajax_command_vopros_window_open($url) {
+  return array(
+    'command' => 'vopros_chat_window_open',
+    'url' => $url,
+  );
+}
