@@ -351,18 +351,33 @@ function _vopros_chat_relative_path($from, $to, $ps = DIRECTORY_SEPARATOR) {
  * Admimintrator chat action buttons.
  */
 function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
+  // We're saving the question id and reloading the question, as this form can
+  // be quite long-lived, and the question might be changed in the meantime.
   $form['question_id'] = array(
     '#type' => 'value',
     '#value' => $question->question_id,
+  );
+
+  $form['close'] = array(
+    '#type' => 'submit',
+    '#value' => t('Close as answered'),
+    '#ajax' => array(
+      'callback' => 'vopros_chat_admin_chat_actions_button_submit',
+      'wrapper' => 'vopros-chat-admin-' . $question->question_id,
+    ),
+    '#question_status' => 'answered',
+    '#question_status_reason' => '',
   );
 
   $form['spam'] = array(
     '#type' => 'submit',
     '#value' => t('Close as spam'),
     '#ajax' => array(
-      'callback' => 'vopros_chat_admin_chat_actions_spam_submit',
+      'callback' => 'vopros_chat_admin_chat_actions_button_submit',
       'wrapper' => 'vopros-chat-admin-' . $question->question_id,
     ),
+    '#question_status' => 'closed',
+    '#question_status_reason' => 'spam',
   );
 
   return $form;
@@ -375,12 +390,13 @@ function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
  *
  * @see vopros_chat_admin_chat_actions().
  */
-function vopros_chat_admin_chat_actions_spam_submit($form, &$form_state) {
+function vopros_chat_admin_chat_actions_button_submit($form, &$form_state) {
+  $button = $form_state['triggering_element'];
   $question = vopros_question_load($form_state['values']['question_id']);
   if ($question) {
     // Change status.
-    $question->question_status = 'closed';
-    $question->question_status_reason = 'spam';
+    $question->question_status = $button['#question_status'];
+    $question->question_status_reason = $button['#question_status_reason'];
     $question->save();
 
     // Send message to the client to disable input.
