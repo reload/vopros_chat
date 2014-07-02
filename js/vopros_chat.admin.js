@@ -98,6 +98,11 @@
   Drupal.behaviors.vopros_chat_admin = {
     attach: function(context, settings) {
       $('#vopros-chat-admin-channel-list').once('voproc-chat', function() {
+        if (typeof Drupal.Nodejs.socket.emit == 'undefined') {
+          // No socket, which usuallay means no server. Print a message.
+          $(this).append(Drupal.t('Could not communicate with chat server.'));
+          return;
+        }
         var base = $(this).attr('id');
         var element_settings = {
           url: '/admin/vopros/questions/chat/channels',
@@ -117,6 +122,7 @@
    */
   Drupal.behaviors.vopros_chat_admin_links = {
     attach: function(context, settings) {
+      var loadListing = false;
       $('.view-vopros-chat-question-list').once('voproc-chat', function() {
         $('a', this).each(function() {
           var question_id = $(this).attr('href').split('/').pop();
@@ -131,14 +137,17 @@
           };
           Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
         });
+        loadListing = true;
       });
 
-      // Also update list with current status.
-      var msg = {
-        type: 'vopros_chat_admin',
-        action: 'list_all',
-      };
-      Drupal.Nodejs.socket.emit('message', msg);
+      if (loadListing) {
+        // Also update list with current status.
+        var msg = {
+          type: 'vopros_chat_admin',
+          action: 'list_all',
+        };
+        Drupal.Nodejs.socket.emit('message', msg);
+      }
     }
   };
 
