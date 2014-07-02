@@ -18,6 +18,15 @@ function vopros_chat_install() {
 }
 
 /**
+ * Implements hook_uninstall().
+ *
+ * Delete configuration variables.
+ */
+function vopros_chat_uninstall() {
+  variable_del('vopros_chat_closed_message');
+}
+
+/**
  * Implements hook_enable().
  *
  * Add chat question filter to filter list on overridden views. Unmodified views

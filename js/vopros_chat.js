@@ -117,6 +117,9 @@
 
   Drupal.Nodejs.callbacks.closeChannelHandler = {
     callback: function(message) {
+      var messageText = '<span class="message-server-message">' + message.data.msg + '</span>';
+
+      appendToLog(message.channel, messageText);
       // Disable the input field.
       $('#' + message.channel + ' .form-type-textarea textarea').attr('disabled', 'disabled');
     }

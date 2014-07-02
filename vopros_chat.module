@@ -53,6 +53,21 @@ function vopros_chat_menu() {
     'type' => MENU_CALLBACK,
   );
 
+  // Administrative pages.
+  $items['admin/vopros/config/chat'] = array(
+    'title' => 'Chat settings',
+    'description' => 'Configure chat settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vopros_chat_setting_form'),
+    'access arguments' => array('administer vopros_chat'),
+    'file' => 'vopros_chat.admin.inc',
+  );
+
+  $items['admin/vopros/config/chat/settings'] = array(
+    'title' => 'Settings',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
   return $items;
 }
 
@@ -61,6 +76,10 @@ function vopros_chat_menu() {
  */
 function vopros_chat_permission() {
   return array(
+    'administer vopros_chat' => array(
+      'title' => t('Administer chat settings'),
+      'description' => '',
+    ),
     'answer vopros chats' => array(
       'title' => t('Use chat'),
       'description' => '',
@@ -405,6 +424,9 @@ function vopros_chat_admin_chat_actions_button_submit($form, &$form_state) {
       'action' => 'chat_close',
       'channel' => vopros_chat_get_channel_name_from_question_id($question->question_id),
       'callback' => 'closeChannelHandler',
+      'data' => array(
+        'msg' => variable_get('vopros_chat_closed_message', 'Chat closed'),
+      ),
     );
     nodejs_send_message($message);
   }
