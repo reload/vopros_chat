@@ -8,8 +8,12 @@ var crypto = require('crypto'),
     hashish = require('hashish');
 
 exports.setup = function (config) {
+  publishMessageToClient = config.publishMessageToClient;
   publishMessageToChannel = config.publishMessageToChannel;
   addClientToChannel = config.addClientToChannel;
+
+  // Global open/closed status for the chat.
+  var openStatus = false;
 
   var adminChannel = 'vopros_channel_admin_status';
 
@@ -99,7 +103,35 @@ exports.setup = function (config) {
         console.log(err);
       }
     });
-  }
+  };
+
+  var sendStatus = function(sessionId) {
+    var message = {
+      'callback': 'voprosChatStatus',
+      'open': openStatus
+    };
+
+    // Always use the last known status if explicitly requested.
+    if (sessionId) {
+      publishMessageToClient(sessionId, message);
+    }
+
+    var adminUsers = 0;
+    if (config.channels[adminChannel]) {
+      adminUsers = hashish(config.channels[adminChannel].sessionIds).length;
+    }
+
+    var status = adminUsers > 0 ? true : false;
+    message.open = status;
+
+    // Only send update if the status changed.
+    if (status != openStatus) {
+      config.io.sockets.json.send(message);
+    }
+
+    // Set the new status as the effective.
+    openStatus = status;
+  };
 
   process.on('client-message', function (sessionId, message) {
     // Check message type. Prevents the extension from forwarding any message
@@ -138,6 +170,10 @@ exports.setup = function (config) {
         logMessageToDatabase(message);
         break;
 
+        // Chat status request.
+      case 'chat_status':
+        sendStatus(sessionId);
+        break;
       }
     }
 
@@ -146,6 +182,8 @@ exports.setup = function (config) {
       switch (message.action) {
       case 'list_all':
         addClientToChannel(sessionId, adminChannel);
+        // Update chat online status, if needed.
+        sendStatus();
         var time = timestamp();
         hashish(config.channels).forEach(function(channel, channelId) {
           // Only update channels we have touched.
