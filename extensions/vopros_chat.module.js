@@ -17,7 +17,7 @@ exports.setup = function (config) {
     return (new Date()).getTime() / 1000;
   };
 
-  var updateStatus = function(channelName, refTime, refresh) {
+  var updateChannelStatus = function(channelName, refTime, refresh) {
     var channel = config.channels[channelName];
     if (channelName == adminChannel ||
         !channel ||
@@ -120,7 +120,7 @@ exports.setup = function (config) {
         if (config.channels.hasOwnProperty(message.channel)) {
           config.channels[message.channel].timestamp = timestamp();
         }
-        updateStatus(message.channel, null, true);
+        updateChannelStatus(message.channel, null, true);
 
         // When entering a chat channel, the client might have sent a message
         // so that users know about this.
@@ -132,7 +132,7 @@ exports.setup = function (config) {
         if (config.channels.hasOwnProperty(message.channel)) {
           config.channels[message.channel].timestamp = timestamp();
         }
-        updateStatus(message.channel);
+        updateChannelStatus(message.channel);
 
         publishMessageToChannel(message);
         logMessageToDatabase(message);
@@ -150,7 +150,7 @@ exports.setup = function (config) {
         hashish(config.channels).forEach(function(channel, channelId) {
           // Only update channels we have touched.
           if (hashish(channel).has('timestamp')) {
-            updateStatus(channelId, time);
+            updateChannelStatus(channelId, time);
           }
         });
         break;
@@ -176,7 +176,7 @@ exports.setup = function (config) {
       var time = timestamp();
       hashish(channels).forEach(function (channel, channelId) {
         if (hashish(channels).has(channelId)) {
-          updateStatus(channel, time);
+          updateChannelStatus(channel, time);
         }
       });
     }, 1000, updateChannels);
@@ -191,7 +191,7 @@ exports.setup = function (config) {
       if (config.channels.hasOwnProperty(message.channel)) {
         config.channels[message.channel].timestamp = timestamp();
       }
-      updateStatus(message.channel, null, true);
+      updateChannelStatus(message.channel, null, true);
     }
   });
 };
