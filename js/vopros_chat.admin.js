@@ -4,6 +4,8 @@
  * Node JS callbacks and general admin Javascript code for Vopro Chat.
  */
 
+/* global jQuery */
+
 (function($) {
   /**
    * Variable to keep track of time offset to the server time.
@@ -100,7 +102,7 @@
       $('#vopros-chat-admin-channel-list').once('voproc-chat', function() {
         if (typeof Drupal.Nodejs.socket.emit == 'undefined') {
           // No socket, which usuallay means no server. Print a message.
-          $(this).append(Drupal.t('Could not communicate with chat server.'));
+          $(this).append(Drupal.t('Could not communicate with chat server. Reload page to try again.'));
           return;
         }
         var base = $(this).attr('id');
@@ -151,7 +153,10 @@
     }
   };
 
-  $(document).ready(function() {
-    $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
-  });
+  Drupal.Nodejs.connectionSetupHandlers.vopros_chat_admin = {
+    connect: function() {
+      // Update the channel listing when nodejs (re)connects.
+      $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
+    }
+  };
 })(jQuery);
