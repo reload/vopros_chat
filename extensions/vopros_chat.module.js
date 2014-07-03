@@ -3,6 +3,9 @@
  *
  * Node JS Chat Server extension.
  */
+
+/* global exports */
+
 var crypto = require('crypto'),
     drupal = require('drupal'),
     hashish = require('hashish');
@@ -179,7 +182,7 @@ exports.setup = function (config) {
           notification = {
             string: 'User joined: @user_name',
             args: {'@user_name': message.data.user.name}
-          }
+          };
         }
 
         updateChannelStatus(message.channel, null, true, notification);
