@@ -170,16 +170,18 @@ exports.setup = function (config) {
       }
     });
 
-    // Send the updates after a one second timeout, to give
+    // Send the updates after completion of this tick, to give
     // cleanupSocket time to remove the socket from the channels.
-    setTimeout(function(channels) {
+    process.nextTick(
+      function(channels) {
       var time = timestamp();
       hashish(channels).forEach(function (channel, channelId) {
         if (hashish(channels).has(channelId)) {
           updateChannelStatus(channel, time);
         }
       });
-    }, 1000, updateChannels);
+      sendStatus();
+    });
   });
 
   // Sadly, messages originating in Drupal trigger completely
