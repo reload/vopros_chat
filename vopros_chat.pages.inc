@@ -34,8 +34,15 @@ function vopros_chat_admin_page() {
         // Need to add the client JS so it can add the ajax command we use to
         // initialize the chat after we fetch it over AHAH.
         drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js',
+        array(
+          'type' => 'setting',
+          'data' => array(
+            'voprosChatNotificationConfig' => vopros_chat_notification_config_options(),
+          ),
+        ),
       ),
       'library' => array(array('system', 'drupal.ajax')),
+      'libraries_load' => array(array('jgrowl')),
     ),
   );
 
@@ -106,5 +113,20 @@ function vopros_chat_add_chat_js($question) {
 function ajax_command_vopros_chat_reinitialize() {
   return array(
     'command' => 'vopros_chat_reinitialize',
+  );
+}
+
+/**
+ * Helper to find configuration options for jGrowl notifications.
+ *
+ * @return array
+ *   An array of configuration options.
+ */
+function vopros_chat_notification_config_options() {
+  $options = variable_get('vopros_chat_notification_config_options', array());
+  // Return options and merge in module defaults.
+  return $options + array(
+    'sticky' => TRUE,
+    'closerTemplate' => t('<div>[ close all ]</div>'),
   );
 }

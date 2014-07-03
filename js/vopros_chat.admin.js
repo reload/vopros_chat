@@ -47,6 +47,11 @@
         $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
       }
 
+      // Notify admins of the joined user.
+      if (message.notification) {
+        notify(message.notification);
+      }
+
       var time = ((new Date()).getTime() / 1000);
       $('span[data-channel-name=' + message.channel_name + ']').each(function () {
         // Only show counter for channels with users in it and no admin users.
@@ -159,4 +164,16 @@
       $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
     }
   };
+
+  /**
+   * Show notification to admins via jGrowl.
+   */
+  var notify = function(notification) {
+    var message = Drupal.t(notification.string, notification.args);
+    jQuery.jGrowl(message, Drupal.settings.voprosChatNotificationConfig);
+  };
+
+  $(document).ready(function() {
+    $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
+  });
 })(jQuery);

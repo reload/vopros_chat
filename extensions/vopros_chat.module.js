@@ -21,7 +21,7 @@ exports.setup = function (config) {
     return (new Date()).getTime() / 1000;
   };
 
-  var updateChannelStatus = function(channelName, refTime, refresh) {
+  var updateChannelStatus = function(channelName, refTime, refresh, notification) {
     var channel = config.channels[channelName];
     if (channelName == adminChannel ||
         !channel ||
@@ -53,7 +53,8 @@ exports.setup = function (config) {
       'admin_users': adminUsers,
       'timestamp': channel.timestamp,
       'ref_time': refTime,
-      'refresh': refresh
+      'refresh': refresh,
+      'notification': notification
     };
 
     publishMessageToChannel(message);
@@ -152,7 +153,18 @@ exports.setup = function (config) {
         if (config.channels.hasOwnProperty(message.channel)) {
           config.channels[message.channel].timestamp = timestamp();
         }
-        updateChannelStatus(message.channel, null, true);
+
+        // Notify admins if this is an anonymous user (non-anonymous
+        // users are admins).
+        var notification = false;
+        if (message.data.user.uid === 0) {
+          notification = {
+            string: 'User joined: @user_name',
+            args: {'@user_name': message.data.user.name}
+          }
+        }
+
+        updateChannelStatus(message.channel, null, true, notification);
 
         // When entering a chat channel, the client might have sent a message
         // so that users know about this.
