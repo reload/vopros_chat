@@ -373,7 +373,7 @@ function vopros_chat_create_chat_config() {
   $db_connection = Database::getConnection();
   $config['database'] = $db_connection->getConnectionOptions();
   $config['database_tables'] = array();
-  foreach (array('{vopros_chat_log}') as $table) {
+  foreach (array('{vopros_chat_log}', '{variable}') as $table) {
     $config['database_tables'][$table] = $db_connection->prefixTables($table);
   };
 

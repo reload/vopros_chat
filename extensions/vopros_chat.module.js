@@ -107,31 +107,49 @@ exports.setup = function (config) {
   };
 
   var sendStatus = function(sessionId) {
-    var message = {
-      'callback': 'voprosChatStatus',
-      'open': openStatus
-    };
+    getDrupalStatus(function (drupalStatus) {
+      var message = {
+        'callback': 'voprosChatStatus',
+        'open': openStatus && drupalStatus
+      };
 
-    // Always use the last known status if explicitly requested.
-    if (sessionId) {
-      publishMessageToClient(sessionId, message);
-    }
+      // Always use the last known status if explicitly requested.
+      if (sessionId) {
+        publishMessageToClient(sessionId, message);
+      }
 
-    var adminUsers = 0;
-    if (config.channels[adminChannel]) {
-      adminUsers = hashish(config.channels[adminChannel].sessionIds).length;
-    }
+      var adminUsers = 0;
+      if (config.channels[adminChannel]) {
+        adminUsers = hashish(config.channels[adminChannel].sessionIds).length;
+      }
 
-    var status = adminUsers > 0 ? true : false;
-    message.open = status;
+      // Open if Drupal is and we have editors connected.
+      var status = adminUsers > 0 ? drupalStatus : false;
+      message.open = status;
 
-    // Only send update if the status changed.
-    if (status != openStatus) {
-      config.io.sockets.json.send(message);
-    }
+      // Only send update if the status changed.
+      if (status != openStatus) {
+        config.io.sockets.json.send(message);
+      }
 
-    // Set the new status as the effective.
-    openStatus = status;
+      // Set the new status as the effective.
+      openStatus = status;
+    });
+  };
+
+  var getDrupalStatus = function(callback) {
+    var table = config.settings.database_tables['{variable}'];
+    drupal.db.query("SELECT value FROM `" + table + "` WHERE name = \'vopros_chat_open\'", function (err, rows) {
+      var status = false;
+      if (err) {
+        console.log(err);
+      }
+      else if (rows.length) {
+        status = rows[0].value.match(/open/) !== null;
+      }
+
+      return callback(status);
+    });
   };
 
   process.on('client-message', function (sessionId, message) {
