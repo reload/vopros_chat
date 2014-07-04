@@ -172,8 +172,4 @@
     var message = Drupal.t(notification.string, notification.args);
     jQuery.jGrowl(message, Drupal.settings.voprosChatNotificationConfig);
   };
-
-  $(document).ready(function() {
-    $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
-  });
 })(jQuery);
