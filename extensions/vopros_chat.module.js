@@ -18,12 +18,18 @@ exports.setup = function (config) {
   // Global open/closed status for the chat.
   var openStatus = false;
 
-  var adminChannel = 'vopros_channel_admin_status';
+  var adminChannel = 'vopros_admin_status';
 
+  /**
+   * Return a unix timestamp for the current time.
+   */
   var timestamp = function() {
     return (new Date()).getTime() / 1000;
   };
 
+  /**
+   * Send notification about channel activity to admin users.
+   */
   var updateChannelStatus = function(channelName, refTime, refresh, notification) {
     var channel = config.channels[channelName];
     if (channelName === adminChannel ||
@@ -50,6 +56,7 @@ exports.setup = function (config) {
     }).length;
 
     var message = {
+      'callback': 'voprosChatAdminChannelStatus',
       'channel': adminChannel,
       'channel_name': channelName,
       'users': Object.keys(channel.sessionIds).length,
@@ -58,6 +65,44 @@ exports.setup = function (config) {
       'ref_time': refTime,
       'refresh': refresh,
       'notification': notification
+    };
+
+    publishMessageToChannel(message);
+
+    // Also trigger updating of chat status in the admin bar.
+    updateAdminStatus();
+  };
+
+  /**
+   * Send overall chat status notification to admin users.
+   */
+  var updateAdminStatus = function () {
+    var channelsWithAdmins = 0;
+    var adminSessionIds = hashish(config.channels[adminChannel].sessionIds).values;
+    console.dir(adminSessionIds);
+    var channelCount = hashish(config.channels).filter(function (channel, channelId) {
+      // Ignore the admin channel.
+      if (channelId == adminChannel) {
+        return false;
+      }
+      // And empty channels.
+      if (channel.sessionIds.length < 1) {
+        return false;
+      }
+      if (hashish(channel).has('timestamp')) {
+        if (hashish(channel.sessionIds).has(adminSessionIds)) {
+          channelsWithAdmins++;
+        }
+        return true;
+      }
+    }).length;
+    console.dir(config.channels);
+console.log('');
+    var message = {
+      'callback': 'voprosChatAdminStatus',
+      'channel': adminChannel,
+      'channels': channelCount,
+      'channels_with_admins': channelsWithAdmins
     };
 
     publishMessageToChannel(message);
@@ -192,6 +237,22 @@ exports.setup = function (config) {
         publishMessageToChannel(message);
         break;
 
+        // Leave channel.
+      case 'chat_part':
+        // nodejs.modules server.js doesn't provide any methods to
+        // remove a session from a channel, so we'll have to do it by
+        // hand.
+        if (config.channels[message.channel]) {
+          if (config.channels[message.channel].sessionIds[sessionId]) {
+            delete config.channels[message.channel].sessionIds[sessionId];
+          }
+          updateChannelStatus(message.channel, null);
+
+          // Also publish the message, so other users see the parting.
+          publishMessageToChannel(message);
+        }
+        break;
+
         // Usual message transmission.
       case 'chat_message':
         if (config.channels.hasOwnProperty(message.channel)) {
@@ -225,6 +286,11 @@ exports.setup = function (config) {
           }
         });
         break;
+
+      case 'admin_status':
+        addClientToChannel(sessionId, adminChannel);
+        // Trigger status update.
+        updateAdminStatus();
       }
     }
   });

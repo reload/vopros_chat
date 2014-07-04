@@ -51,7 +51,7 @@
     timer = window.setTimeout(updateCallback, 1000);
   };
 
-  Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
+  Drupal.Nodejs.callbacks.voprosChatAdminChannelStatus = {
     callback: function (message) {
       // Refresh the channel listing if so instructed by the server.
       if (message.refresh) {

@@ -43,6 +43,28 @@
     $('#' + channel + ' .chat-log')[0].scrollTop = $('#' + channel + ' .chat-log')[0].scrollHeight;
   };
 
+  /**
+   * Leave channel when the chat is removed from the page.
+   */
+  Drupal.behaviors.vopros_chat_leave_channel = {
+    detach: function(context) {
+      $('.vopros-chat', context).each(function () {
+        var channelId = $(this).attr('id');
+        var msg = {
+          type: 'vopros_chat',
+          action: 'chat_part',
+          channel: channelId,
+          // Set the callback so all users know a new user has entered the chat.
+          callback: 'voprosChatUserOfflineHandler',
+          data: {
+            user: Drupal.settings.vopros_chat.currentUser
+          }
+        };
+        Drupal.Nodejs.socket.emit('message', msg);
+      });
+    }
+  };
+
   Drupal.voprosChat.initialiseChat = function() {
     for (var chatId in Drupal.settings.vopros_chat.chats) {
       if (Drupal.settings.vopros_chat.chats.hasOwnProperty(chatId)) {
@@ -93,6 +115,15 @@
     callback: function (message) {
       if (message.data.user.sessionId !== sessionId) {
         $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' joined</div>');
+      }
+
+    }
+  };
+
+  Drupal.Nodejs.callbacks.voprosChatUserOfflineHandler = {
+    callback: function (message) {
+      if (message.data.user.sessionId != sessionId) {
+        $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' left</div>');
       }
 
     }
