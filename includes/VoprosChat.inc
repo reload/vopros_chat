@@ -134,9 +134,6 @@ class VoprosChat {
         '#title' => t('Enter your message here:'),
         '#value' => '',
         '#rows' => 2,
-        '#attributes' => array(
-          'id' => 'chat-entry-box',
-        ),
       );
 
       $form['vopros_chat']['submit'] = array(
