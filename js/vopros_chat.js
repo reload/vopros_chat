@@ -30,7 +30,7 @@
 
   var appendToLog = function(channel, messageContent) {
     var currentTime = new Date();
-    var messageTime = '<span class="message-time">' + currentTime.getHours() + ':' + currentTime.getMinutes() + '</span>';
+    var messageTime = '<span class="message-time">' + currentTime.format('H:i') + '</span>';
 
     // Assemble the markup for the message.
     var messageMarkUp = '<div class="vopros-chat-message"><div class="message-content"> ' + messageContent + '</div>' + messageTime + '</div>';

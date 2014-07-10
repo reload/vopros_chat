@@ -118,6 +118,17 @@ function vopros_chat_libraries_info() {
         ),
       ),
     ),
+    'date_format' => array(
+      'name' => 'date.format',
+      'vendor url' => 'https://github.com/jacwright/date.format',
+      'download url' => 'https://raw.githubusercontent.com/jacwright/date.format/8f74b32d065bdcc5ffbc547985c576ef78e1d148/date.format.js',
+      'version' => '8f74b32d065bdcc5ffbc547985c576ef78e1d148',
+      'files' => array(
+        'js' => array(
+          'date.format.js',
+        ),
+      ),
+    ),
   );
 }
 

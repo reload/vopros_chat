@@ -119,6 +119,7 @@ class VoprosChat {
               'data' => drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_log.js',
             ),
           ),
+          'libraries_load' => array(array('date_format')),
         ),
       );
     }
