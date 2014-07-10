@@ -35,7 +35,6 @@
     // Assemble the markup for the message.
     var messageMarkUp = '<div class="vopros-chat-message"><div class="message-content"> ' + messageContent + '</div>' + messageTime + '</div>';
 
-
     $('#' + channel + ' .chat-log').append(messageMarkUp);
 
     // Scroll to the last line. TODO: This has to be improved, to avoid
