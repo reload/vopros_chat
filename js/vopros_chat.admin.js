@@ -171,5 +171,13 @@
   var notify = function(notification) {
     var message = Drupal.t(notification.string, notification.args);
     jQuery.jGrowl(message, Drupal.settings.voprosChatNotificationConfig);
+    jQuery.playSound(Drupal.settings.voprosChatNotificationSound);
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+    n = new Notification(message, {
+      body: message,
+      icon: Drupal.settings.voprosChatNotificationNotificationJsPath + '/star.ico'
+    });
   };
 })(jQuery);

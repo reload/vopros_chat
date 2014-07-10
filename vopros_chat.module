@@ -129,6 +129,28 @@ function vopros_chat_libraries_info() {
         ),
       ),
     ),
+    'playsound' => array(
+      'name' => 'jQuery playSound',
+      'vendor url' => 'https://github.com/admsev/jquery-play-sound',
+      'download url' => 'https://raw.githubusercontent.com/admsev/jquery-play-sound/ed002a306b473c7a57d8e51a8a1a73705a09222c/jquery.playSound.js',
+      'version' => 'ed002a306b473c7a57d8e51a8a1a73705a09222c',
+      'files' => array(
+        'js' => array(
+          'jquery.playSound.js',
+        ),
+      ),
+    ),
+    'notificationjs' => array(
+      'name' => 'notification.js',
+      'vendor url' => 'http://adodson.com/notification.js/',
+      'download url' => 'https://raw.githubusercontent.com/MrSwitch/notification.js/38217ab84bd9ddc4ba0fef565a188bbbde6e930f/notification.js',
+      'version' => '38217ab84bd9ddc4ba0fef565a188bbbde6e930f',
+      'files' => array(
+        'js' => array(
+          'notification.js',
+        ),
+      ),
+    ),
   );
 }
 

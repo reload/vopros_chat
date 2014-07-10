@@ -38,11 +38,17 @@ function vopros_chat_admin_page() {
           'type' => 'setting',
           'data' => array(
             'voprosChatNotificationConfig' => vopros_chat_notification_config_options(),
+            'voprosChatNotificationSound' => url(drupal_get_path('module', 'vopros_chat') . '/sounds/notify'),
+            'voprosChatNotificationNotificationJsPath' => url(libraries_get_path('notificationjs')),
           ),
         ),
       ),
       'library' => array(array('system', 'drupal.ajax')),
-      'libraries_load' => array(array('jgrowl')),
+      'libraries_load' => array(
+        array('jgrowl'),
+        array('playsound'),
+        array('notificationjs'),
+      ),
     ),
   );
 
