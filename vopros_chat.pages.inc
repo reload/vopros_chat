@@ -34,6 +34,7 @@ function vopros_chat_admin_page() {
         // Need to add the client JS so it can add the ajax command we use to
         // initialize the chat after we fetch it over AHAH.
         drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js',
+        drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.polyfills.js',
         array(
           'type' => 'setting',
           'data' => array(
