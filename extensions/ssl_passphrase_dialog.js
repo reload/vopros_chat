@@ -8,9 +8,9 @@
  *
  * SSLPassPhraseDialog exec:/path/to/script
  */
-var sh = require('execSync');
+var exec = require('sync-exec');
 exports.settingsAlter = function(settings) {
   if (settings.sslPassPhraseDialog) {
-    settings.sslPassPhrase = sh.exec(settings.sslPassPhraseDialog).stdout.trim();
+    settings.sslPassPhrase = exec(settings.sslPassPhraseDialog).stdout.trim();
   }
 }
