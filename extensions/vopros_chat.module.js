@@ -245,14 +245,14 @@ exports.setup = function (config) {
     // cleanupSocket time to remove the socket from the channels.
     process.nextTick(
       function(channels) {
-      var time = timestamp();
-      hashish(channels).forEach(function (channel, channelId) {
-        if (hashish(channels).has(channelId)) {
-          updateChannelStatus(channel, time);
-        }
+        var time = timestamp();
+        hashish(channels).forEach(function (channel, channelId) {
+          if (hashish(channels).has(channelId)) {
+            updateChannelStatus(channel, time);
+          }
+        });
+        sendStatus();
       });
-      sendStatus();
-    });
   });
 
   // Sadly, messages originating in Drupal trigger completely
