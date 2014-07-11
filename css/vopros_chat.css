@@ -17,7 +17,7 @@
   width: 90%;
 }
 .vopros-chat .message-author,
-.vopros-chat .message-server-message{
+.vopros-chat .message-server-message {
   font-weight: bold;
 }
 .vopros-chat .message-time {
