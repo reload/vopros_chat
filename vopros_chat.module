@@ -99,20 +99,20 @@ function vopros_chat_libraries_info() {
       'version' => '1.3.0',
       'files' => array(
         'js' => array(
-          'jquery.jgrowl.js'
+          'jquery.jgrowl.js',
         ),
         'css' => array(
-          'jquery.jgrowl.css'
+          'jquery.jgrowl.css',
         ),
       ),
       'variants' => array(
         'minified' => array(
           'files' => array(
             'js' => array(
-              'jquery.jgrowl.min.js'
+              'jquery.jgrowl.min.js',
             ),
             'css' => array(
-              'jquery.jgrowl.min.css'
+              'jquery.jgrowl.min.css',
             ),
           ),
         ),

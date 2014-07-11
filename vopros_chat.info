@@ -1,5 +1,6 @@
 name = Vopros Chat
 description = Implements chat for Vopros.
+configure = admin/vopros/config/chat
 core = 7.x
 package = Vopros
 version = 7.x-1.0
