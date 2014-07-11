@@ -4,6 +4,8 @@
  * Node JS Chat Server extension.
  */
 
+/*eslint-env node*/
+
 /* global exports */
 
 var crypto = require('crypto'),
@@ -11,9 +13,9 @@ var crypto = require('crypto'),
     hashish = require('hashish');
 
 exports.setup = function (config) {
-  publishMessageToClient = config.publishMessageToClient;
-  publishMessageToChannel = config.publishMessageToChannel;
-  addClientToChannel = config.addClientToChannel;
+  var publishMessageToClient = config.publishMessageToClient;
+  var publishMessageToChannel = config.publishMessageToChannel;
+  var addClientToChannel = config.addClientToChannel;
 
   // Global open/closed status for the chat.
   var openStatus = false;
@@ -26,14 +28,14 @@ exports.setup = function (config) {
 
   var updateChannelStatus = function(channelName, refTime, refresh, notification) {
     var channel = config.channels[channelName];
-    if (channelName == adminChannel ||
+    if (channelName === adminChannel ||
         !channel ||
         !hashish(channel).has('timestamp')) {
       return;
     }
 
     if (!config.channels[adminChannel]) {
-      console.log("Creating admin channel.");
+      console.log('Creating admin channel.');
       config.channels[adminChannel] = {'sessionIds': {}};
     }
 
@@ -65,7 +67,7 @@ exports.setup = function (config) {
 
   var connectToDatabase = function(config) {
     // Filter out empty values, and extract only the ones we need.
-    options = hashish(config.settings.database)
+    var options = hashish(config.settings.database)
       .filter(function (x) {return x !== '';})
       .extract(['host', 'port', 'username', 'password', 'database'])
       .compact.end;
@@ -83,15 +85,15 @@ exports.setup = function (config) {
 
   var checkHash = function(message) {
     // First compare hash value of question id.
-    question_id = message.channel.split('__')[1].split('_')[0];
-    question_hash_from_url = message.channel.split('__')[1].split('_')[1];
-    question_hash_calculated = crypto
+    var questionId = message.channel.split('__')[1].split('_')[0];
+    var questionHashFromUrl = message.channel.split('__')[1].split('_')[1];
+    var questionHashCalculated = crypto
       .createHash('sha256')
-      .update(config.settings.serviceKey + question_id)
+      .update(config.settings.serviceKey + questionId)
       .digest('hex');
 
     // Only add client to channel if hash values match.
-    if (question_hash_calculated == question_hash_from_url) {
+    if (questionHashCalculated === questionHashFromUrl) {
       return true;
     }
     console.log('Vopros Chat extension received wrong hash of question id.');
@@ -102,10 +104,25 @@ exports.setup = function (config) {
     var questionId = message.channel.split('__')[1].split('_')[0];
     var table = config.settings.database_tables['{vopros_chat_log}'];
     var timestamp = Math.floor(Date.now() / 1000);
-    drupal.db.query("INSERT INTO `" + table + "` (timestamp, question_id, uid, name, session_id, msg) VALUES (?, ?, ?, ?, ?, ?)", [timestamp, questionId, message.data.uid, message.data.name, message.data.sessionId, message.data.msg], function (err, rows) {
+    drupal.db.query('INSERT INTO `' + table + '` (timestamp, question_id, uid, name, session_id, msg) VALUES (?, ?, ?, ?, ?, ?)', [timestamp, questionId, message.data.uid, message.data.name, message.data.sessionId, message.data.msg], function (err, rows) {
       if (err) {
         console.log(err);
       }
+    });
+  };
+
+  var getDrupalStatus = function(callback) {
+    var table = config.settings.database_tables['{variable}'];
+    drupal.db.query('SELECT value FROM `' + table + '` WHERE name = "vopros_chat_open"', function (err, rows) {
+      var status = false;
+      if (err) {
+        console.log(err);
+      }
+      else if (rows.length) {
+        status = rows[0].value.match(/open/) !== null;
+      }
+
+      return callback(status);
     });
   };
 
@@ -131,7 +148,7 @@ exports.setup = function (config) {
       message.open = status;
 
       // Only send update if the status changed.
-      if (status != openStatus) {
+      if (status !== openStatus) {
         config.io.sockets.json.send(message);
       }
 
@@ -140,25 +157,10 @@ exports.setup = function (config) {
     });
   };
 
-  var getDrupalStatus = function(callback) {
-    var table = config.settings.database_tables['{variable}'];
-    drupal.db.query("SELECT value FROM `" + table + "` WHERE name = \'vopros_chat_open\'", function (err, rows) {
-      var status = false;
-      if (err) {
-        console.log(err);
-      }
-      else if (rows.length) {
-        status = rows[0].value.match(/open/) !== null;
-      }
-
-      return callback(status);
-    });
-  };
-
   process.on('client-message', function (sessionId, message) {
     // Check message type. Prevents the extension from forwarding any message
     // that is not from the vopros_chat module.
-    if (message.type == 'vopros_chat') {
+    if (message.type === 'vopros_chat') {
       console.log('Vopros Chat extension received a "client-message" event. Action: ' + message.action);
       switch (message.action) {
         // When chat is initialised, user needs to be added to the chat Channel.
@@ -211,7 +213,7 @@ exports.setup = function (config) {
     }
 
     // Messages for admin status.
-    if (message.type == 'vopros_chat_admin') {
+    if (message.type === 'vopros_chat_admin') {
       switch (message.action) {
       case 'list_all':
         addClientToChannel(sessionId, adminChannel);
@@ -260,7 +262,7 @@ exports.setup = function (config) {
   process.on('message-published', function(message) {
     // Trigger an channel refresh in admin page when chats are closed
     // by Drupal.
-    if (message.type == 'vopros_chat' && message.action == 'chat_close') {
+    if (message.type === 'vopros_chat' && message.action === 'chat_close') {
       if (config.channels.hasOwnProperty(message.channel)) {
         config.channels[message.channel].timestamp = timestamp();
       }
