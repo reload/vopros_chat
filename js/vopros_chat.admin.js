@@ -7,11 +7,6 @@
 /* global jQuery, Drupal, window, Notification */
 
 (function($) {
-  /**
-   * Variable to keep track of time offset to the server time.
-   */
-  var offset = 0;
-
   // Keeps track of channels with users, that is, active.
   var activeChannels = {};
 
@@ -68,12 +63,10 @@
         notify(message.notification);
       }
 
-      var time = ((new Date()).getTime() / 1000);
       $('span[data-channel-name=' + message.channel_name + ']').each(function () {
         // Only show counter for channels with users in it and no admin users.
         if (message.users > 0 && message.admin_users < 1) {
           activeChannels[message.channel_name] = message.channel_name;
-          offset = time - message.ref_time;
 
           var idle = Math.floor(message.ref_time - message.timestamp);
 
@@ -118,7 +111,7 @@
   /**
    * Behavior to attach ajax loading to channel list and chats.
    */
-  Drupal.behaviors.vopros_chat_admin = {
+  Drupal.behaviors.voprosChatAdmin = {
     attach: function(context, settings) {
       $('#vopros-chat-admin-channel-list').once('voproc-chat', function() {
         if (typeof Drupal.Nodejs.socket.emit === 'undefined') {
@@ -127,14 +120,14 @@
           return;
         }
         var base = $(this).attr('id');
-        var element_settings = {
+        var elementSettings = {
           url: '/admin/vopros/questions/chat/channels',
           event: 'vopros-chat-admin-refresh-channels',
           progress: {
             type: 'throbber'
           }
         };
-        Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
+        Drupal.ajax[base] = new Drupal.ajax(base, this, elementSettings);
       });
 
     }
@@ -143,7 +136,7 @@
   /**
    * Behaviour to make question links open a chat.
    */
-  Drupal.behaviors.vopros_chat_admin_links = {
+  Drupal.behaviors.voprosChatAdminLinks = {
     attach: function(context, settings) {
       var loadListing = false;
       $('.view-vopros-chat-question-list').once('voproc-chat', function() {
@@ -151,14 +144,14 @@
           var questionId = $(this).attr('href').split('/').pop();
           var base = 'vopros-chat-' + questionId;
           $(this).attr('id', base);
-          var element_settings = {
+          var elementSettings = {
             url: '/admin/vopros/questions/chat/add/' + questionId,
             event: 'click',
             progress: {
               type: 'throbber'
             }
           };
-          Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
+          Drupal.ajax[base] = new Drupal.ajax(base, this, elementSettings);
         });
         loadListing = true;
       });
@@ -174,7 +167,7 @@
     }
   };
 
-  Drupal.Nodejs.connectionSetupHandlers.vopros_chat_admin = {
+  Drupal.Nodejs.connectionSetupHandlers.voprosChatAdmin = {
     connect: function() {
       // Update the channel listing when nodejs (re)connects.
       $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');

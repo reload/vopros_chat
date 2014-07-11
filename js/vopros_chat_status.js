@@ -13,7 +13,7 @@
     }
   };
 
-  Drupal.Nodejs.connectionSetupHandlers.vopros_chat_status = {
+  Drupal.Nodejs.connectionSetupHandlers.voprosChatStatus = {
     connect: function() {
       // Request that the server sends us an update immediately.
       var msg = {

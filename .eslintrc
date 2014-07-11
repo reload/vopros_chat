@@ -1,0 +1,8 @@
+---
+  rules:
+    quotes:
+      - 2
+      - single
+    no-unused-vars:
+      - 2
+      - args: none

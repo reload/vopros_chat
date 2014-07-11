@@ -109,9 +109,9 @@ function vopros_chat_add_chat_js($question) {
 }
 
 /**
- * Creates a Drupal Ajax 'vopros_chat_reinitialize' command.
+ * Creates a Drupal Ajax 'voprosChatReinitialize' command.
  *
- * The 'vopros_chat_reinitialize' command instructs the client to reinitialize
+ * The 'voprosChatReinitialize' command instructs the client to reinitialize
  * the chats, in order to pick up newly inserted chats.
  *
  * @return array
@@ -119,7 +119,7 @@ function vopros_chat_add_chat_js($question) {
  */
 function ajax_command_vopros_chat_reinitialize() {
   return array(
-    'command' => 'vopros_chat_reinitialize',
+    'command' => 'voprosChatReinitialize',
   );
 }
 
