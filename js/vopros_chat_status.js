@@ -18,10 +18,10 @@
       // Request that the server sends us an update immediately.
       var msg = {
         type: 'vopros_chat',
-        action: 'chat_status',
+        action: 'chat_status'
       };
       Drupal.Nodejs.socket.emit('message', msg);
-    },
+    }
   };
 
 })(jQuery);

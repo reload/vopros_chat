@@ -4,7 +4,7 @@
  * Node JS callbacks and general admin Javascript code for Vopro Chat.
  */
 
-/* global jQuery */
+/* global jQuery, Drupal, window, Notification */
 
 (function($) {
   /**
@@ -21,15 +21,20 @@
 
   var timer = null;
 
-  var updateCallback = function() {
-    $('.idleTimer').each(function() {
-      var current = timestamp();
-      var offset = current - parseFloat($(this).attr('data-timestamp'));
-      var idle = Math.floor(parseFloat($(this).attr('data-idle')) + offset);
-
-        $(this).text("Idle: " + idleString(idle));
+  /**
+   * Show notification to admins via jGrowl.
+   */
+  var notify = function(notification) {
+    var message = Drupal.t(notification.string, notification.args);
+    $.jGrowl(message, Drupal.settings.voprosChatNotificationConfig);
+    $.playSound(Drupal.settings.voprosChatNotificationSound);
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+    var n = new Notification(message, {
+      body: message,
+      icon: Drupal.settings.voprosChatNotificationNotificationJsPath + '/star.ico'
     });
-    timer = window.setTimeout(updateCallback, 1000);
   };
 
   var idleString = function(idle) {
@@ -38,6 +43,17 @@
       idleString = Math.floor(idle / 60) + ' min ';
     }
     return idleString + (idle % 60) + ' secs';
+  };
+
+  var updateCallback = function() {
+    $('.idleTimer').each(function() {
+      var current = timestamp();
+      var offset = current - parseFloat($(this).attr('data-timestamp'));
+      var idle = Math.floor(parseFloat($(this).attr('data-idle')) + offset);
+
+      $(this).text("Idle: " + idleString(idle));
+    });
+    timer = window.setTimeout(updateCallback, 1000);
   };
 
   Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
@@ -163,21 +179,5 @@
       // Update the channel listing when nodejs (re)connects.
       $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
     }
-  };
-
-  /**
-   * Show notification to admins via jGrowl.
-   */
-  var notify = function(notification) {
-    var message = Drupal.t(notification.string, notification.args);
-    $.jGrowl(message, Drupal.settings.voprosChatNotificationConfig);
-    $.playSound(Drupal.settings.voprosChatNotificationSound);
-    if (Notification.permission !== 'granted') {
-      Notification.requestPermission();
-    }
-    n = new Notification(message, {
-      body: message,
-      icon: Drupal.settings.voprosChatNotificationNotificationJsPath + '/star.ico'
-    });
   };
 })(jQuery);

@@ -1,3 +1,5 @@
+/* global jQuery, Drupal */
+
 (function ($) {
   Drupal.behaviors.voprosChat = {
     attach: function(context, settings) {
@@ -7,5 +9,5 @@
         log.scrollTop(log.height());
       }
     }
-  }
+  };
 })(jQuery);

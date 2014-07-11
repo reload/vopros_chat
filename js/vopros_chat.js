@@ -4,7 +4,7 @@
  * Node JS Callbacks and general Javascript code for the Vopros Chat module.
  */
 
-/* global jQuery */
+/* global jQuery, Drupal */
 
 (function ($) {
 

@@ -29,7 +29,7 @@ if (!Array.prototype.indexOf) {
     for (; fromIndex < length; fromIndex++) {
       if (this[fromIndex] === searchElement) {
         return fromIndex;
-        }
+      }
     }
 
     return -1;
