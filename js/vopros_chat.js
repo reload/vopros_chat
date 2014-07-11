@@ -14,7 +14,7 @@
   var sessionId = Math.floor(Math.random() * 10000000000000001);
 
   var keyUpHandler = function(e) {
-    if (e.keyCode == 13 && !e.shiftKey && !e.ctrlKey) {
+    if (e.keyCode === 13 && !e.shiftKey && !e.ctrlKey) {
       Drupal.vopros_chat.processMessageArea(e);
     }
     else {
@@ -87,7 +87,7 @@
 
   Drupal.Nodejs.callbacks.voprosChatUserOnlineHandler = {
     callback: function (message) {
-      if (message.data.user.sessionId != sessionId) {
+      if (message.data.user.sessionId !== sessionId) {
         $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' joined</div>');
       }
 
@@ -98,14 +98,14 @@
     callback: function(message) {
       var msg = message.data;
 
-      var messageAuthor = '<span class="message-author' + ((msg.sessionId == sessionId) ? ' message-author-me' : '') + '">' + (msg.sessionId == sessionId ? Drupal.t('Me') : msg.name) + ': </span>';
+      var messageAuthor = '<span class="message-author' + ((msg.sessionId === sessionId) ? ' message-author-me' : '') + '">' + (msg.sessionId === sessionId ? Drupal.t('Me') : msg.name) + ': </span>';
 
       // Display URLs as proper links.
       // After failing for some time with my custom regex, took one from
       // http://kroltech.com/2013/05/quick-tip-regex-to-convert-urls-in-text-to-links-javascript/,
       // because I'm no man of honor.
       var regexp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      var parsedText = msg.msg.replace(regexp, "<a href='$1' target='_blank'>$1</a>");
+      var parsedText = msg.msg.replace(regexp, '<a href="$1" target="_blank">$1</a>');
 
       var messageText = '<span class="message-text">' + parsedText + '</span>';
 

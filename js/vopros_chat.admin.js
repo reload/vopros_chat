@@ -51,7 +51,7 @@
       var offset = current - parseFloat($(this).attr('data-timestamp'));
       var idle = Math.floor(parseFloat($(this).attr('data-idle')) + offset);
 
-      $(this).text("Idle: " + idleString(idle));
+      $(this).text('Idle: ' + idleString(idle));
     });
     timer = window.setTimeout(updateCallback, 1000);
   };
@@ -81,16 +81,16 @@
           $(this).attr('data-timestamp', timestamp());
           $(this).attr('data-idle', idle);
 
-          $(this).text("Idle: " + idleString(idle));
+          $(this).text('Idle: ' + idleString(idle));
         }
         else {
           delete activeChannels[message.channel_name];
           $(this).removeClass('idleTimer');
           if (message.admin_users > 0) {
-            $(this).text(Drupal.t("Being answered"));
+            $(this).text(Drupal.t('Being answered'));
           }
           else {
-            $(this).text(Drupal.t("Empty"));
+            $(this).text(Drupal.t('Empty'));
           }
         }
 
@@ -121,7 +121,7 @@
   Drupal.behaviors.vopros_chat_admin = {
     attach: function(context, settings) {
       $('#vopros-chat-admin-channel-list').once('voproc-chat', function() {
-        if (typeof Drupal.Nodejs.socket.emit == 'undefined') {
+        if (typeof Drupal.Nodejs.socket.emit === 'undefined') {
           // No socket, which usuallay means no server. Print a message.
           $(this).append(Drupal.t('Could not communicate with chat server. Reload page to try again.'));
           return;
@@ -148,11 +148,11 @@
       var loadListing = false;
       $('.view-vopros-chat-question-list').once('voproc-chat', function() {
         $('a', this).each(function() {
-          var question_id = $(this).attr('href').split('/').pop();
-          var base = 'vopros-chat-' + question_id;
+          var questionId = $(this).attr('href').split('/').pop();
+          var base = 'vopros-chat-' + questionId;
           $(this).attr('id', base);
           var element_settings = {
-            url: '/admin/vopros/questions/chat/add/' + question_id,
+            url: '/admin/vopros/questions/chat/add/' + questionId,
             event: 'click',
             progress: {
               type: 'throbber'
@@ -167,7 +167,7 @@
         // Also update list with current status.
         var msg = {
           type: 'vopros_chat_admin',
-          action: 'list_all',
+          action: 'list_all'
         };
         Drupal.Nodejs.socket.emit('message', msg);
       }
