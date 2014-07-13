@@ -4,8 +4,6 @@
  * Node JS Chat Server extension.
  */
 
-/*eslint-env node*/
-
 /* global exports */
 
 var crypto = require('crypto'),

@@ -9,8 +9,6 @@
  * SSLPassPhraseDialog exec:/path/to/script
  */
 
-/*eslint-env node*/
-
 var exec = require('sync-exec');
 exports.settingsAlter = function(settings) {
   if (settings.sslPassPhraseDialog) {
