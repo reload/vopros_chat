@@ -5,8 +5,10 @@
     attach: function(context, settings) {
       // Scroll chat logs to the bottom.
       for (var channel in Drupal.settings.vopros_chat.chats) {
-        var $log = $('#chat-log-' + channel);
-        $log.scrollTop($log.height());
+        if (Drupal.settings.vopros_chat.chats.hasOwnProperty(channel)) {
+          var $log = $('#chat-log-' + channel);
+          $log.scrollTop($log.height());
+        }
       }
     }
   };

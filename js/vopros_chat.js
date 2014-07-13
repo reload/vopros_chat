@@ -45,25 +45,29 @@
 
   Drupal.voprosChat.initialiseChat = function() {
     for (var chatId in Drupal.settings.vopros_chat.chats) {
-      var chat = Drupal.settings.vopros_chat.chats[chatId];
-      if (!chat.initialised) {
-        chat.initialised = true;
-        // Add a unique session id so we can spot our own messages.
-        Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
-        // Let the client join the channel.
-        Drupal.voprosChat.addClientToChatChannel(chat.channel);
+      if (Drupal.settings.vopros_chat.chats.hasOwnProperty(chatId)) {
+        var chat = Drupal.settings.vopros_chat.chats[chatId];
+        if (!chat.initialised) {
+          chat.initialised = true;
+          // Add a unique session id so we can spot our own messages.
+          Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
+          // Let the client join the channel.
+          Drupal.voprosChat.addClientToChatChannel(chat.channel);
 
-        // Chat form events handling.
-        $('#' + chat.channel + ' .form-type-textarea textarea').keyup(keyUpHandler);
+          // Chat form events handling.
+          $('#' + chat.channel + ' .form-type-textarea textarea').keyup(keyUpHandler);
 
-        $('#' + chat.channel + ' .form-submit').click(submitHandler);
+          $('#' + chat.channel + ' .form-submit').click(submitHandler);
+        }
       }
     }
   };
 
   Drupal.voprosChat.deinitialiseChat = function() {
     for (var chat in Drupal.settings.vopros_chat.chats) {
-      Drupal.settings.vopros_chat.chats[chat].initialised = false;
+      if (Drupal.settings.vopros_chat.chats.hasOwnProperty(chat)) {
+        Drupal.settings.vopros_chat.chats[chat].initialised = false;
+      }
     }
   };
 
