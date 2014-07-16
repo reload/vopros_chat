@@ -1,6 +1,3 @@
-.vopros-chat {
-  padding-bottom: 12px;
-}
 .vopros-chat .chat-log {
   border: 1px solid #cccccc;
   border-width: 1px 0;
@@ -10,21 +7,22 @@
   padding-right: 5px;
 }
 .vopros-chat-message {
-  clear: both;
+  position: relative;
+  min-height: 1ex;
 }
 .vopros-chat-message p {
   display: inline;
 }
-.vopros-chat .message-content {
-  float: left;
-  width: 90%;
+.message-content {
+  padding-right: 6em;
 }
 .vopros-chat .message-author,
 .vopros-chat .message-server-message {
   font-weight: bold;
 }
-.vopros-chat .message-time {
+.message-time {
   color: #858585;
-  float: right;
-  font-size: 12px;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
