@@ -12,6 +12,9 @@
 .vopros-chat-message {
   clear: both;
 }
+.vopros-chat-message p {
+  display: inline;
+}
 .vopros-chat .message-content {
   float: left;
   width: 90%;

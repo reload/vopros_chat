@@ -4,7 +4,7 @@
  * Node JS Callbacks and general Javascript code for the Vopros Chat module.
  */
 
-/* global jQuery, Drupal */
+/* global jQuery, Drupal, Autolinker */
 
 (function ($) {
 
@@ -104,12 +104,12 @@
 
       var messageAuthor = '<span class="message-author' + ((msg.sessionId === sessionId) ? ' message-author-me' : '') + '">' + (msg.sessionId === sessionId ? Drupal.t('Me') : msg.name) + ': </span>';
 
-      // Display URLs as proper links.
-      // After failing for some time with my custom regex, took one from
-      // http://kroltech.com/2013/05/quick-tip-regex-to-convert-urls-in-text-to-links-javascript/,
-      // because I'm no man of honor.
-      var regexp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      var parsedText = msg.msg.replace(regexp, '<a href="$1" target="_blank">$1</a>');
+      // Auto link URLs and mail addresses. Don't auto link Twitter
+      // handles because Drupals text filter won't do that.
+      var parsedText = Autolinker.link(msg.msg, {stripPrefix: false, twitter: false});
+
+      // Render new lines as <br />.
+      parsedText = parsedText.replace(/\n/g, '<br/>');
 
       var messageText = '<span class="message-text">' + parsedText + '</span>';
 

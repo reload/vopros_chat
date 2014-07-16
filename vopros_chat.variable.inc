@@ -6,6 +6,20 @@
  * module (if used).
  */
 
+/**
+ * Implements hook_variable_group_info().
+ */
+function vopros_chat_variable_group_info() {
+  $groups = array();
+
+  $groups['vopros_chat'] = array(
+    'title' => t('Vopros Chat settings'),
+    'description' => t('Vopros Chat settings'),
+    'access' => 'administer site configuration',
+  );
+
+  return $groups;
+}
 
 /**
  * Implements hook_variable_info().
@@ -14,6 +28,7 @@
  */
 function vopros_chat_variable_info($options) {
   $variable = array();
+
   $view = views_get_view('vopros_question_list');
   if (!empty($view) && is_numeric($view->vid)) {
     $effect = t('Will have no effect because Question List is an overridden view.');
@@ -27,6 +42,22 @@ function vopros_chat_variable_info($options) {
     'access' => 'administer views',
     'default' => TRUE,
     'type' => 'boolean',
+    'group' => 'vopros_chat',
+  );
+
+  $options = array();
+  $formats = filter_formats();
+  foreach ($formats as $format) {
+    $options[$format->format] = $format->name;
+  }
+  $variable['vopros_chat_log_format_id'] = array(
+    'title' => t('Vopros Chat Log Format'),
+    'description' => t('The format used for displaying chat log entries.'),
+    'access' => 'administer filters',
+    'default' => filter_default_format(),
+    'type' => 'select',
+    'options' => $options,
+    'group' => 'vopros_chat',
   );
 
   return $variable;

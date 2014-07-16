@@ -3,6 +3,11 @@ core = 7.x
 
 ;;; Libraries
 
+libraries[autolinker][download][type] = get
+libraries[autolinker][download][url] = https://github.com/gregjacobs/Autolinker.js/archive/0.11.0.zip
+libraries[autolinker][directory_name] = autolinker
+libraries[autolinker][destination] = libraries
+
 libraries[date_format][download][type] = get
 libraries[date_format][download][url] = https://raw.githubusercontent.com/jacwright/date.format/8f74b32d065bdcc5ffbc547985c576ef78e1d148/date.format.js
 libraries[date_format][directory_name] = date_format

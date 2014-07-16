@@ -92,6 +92,17 @@ function vopros_chat_permission() {
  */
 function vopros_chat_libraries_info() {
   return array(
+    'autolinker' => array(
+      'name' => 'Autolinker.js',
+      'vendor url' => 'https://github.com/gregjacobs/Autolinker.js',
+      'download url' => 'https://github.com/gregjacobs/Autolinker.js/archive/0.11.0.zip',
+      'version' => '0.11.0',
+      'files' => array(
+        'js' => array(
+          'src/Autolinker.js',
+        ),
+      ),
+    ),
     'jgrowl' => array(
       'name' => 'jGrowl',
       'vendor url' => 'https://github.com/stanlemon/jGrowl',
@@ -249,12 +260,40 @@ function vopros_chat_vopros_question_activity_feed($question, &$feed) {
       '#log' => vopros_chat_log_load($question->question_id),
       '#theme' => 'vopros_chat_log_activity_feed_items',
     ),
+    '#pre_render' => array('vopros_chat_log_activity_feed_items_pre_render'),
     '#question' => vopros_question_load($question->question_id),
     '#theme' => 'vopros_chat_log_activity_feed',
     '#attached' => array(
       'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css'),
     ),
   );
+}
+
+/**
+ * Pre render chat logs.
+ *
+ * We use it to prettify the chat logs by running each message though a text
+ * format. We need it i.e. for:
+ *  - Convert line breaks to <br /> tags.
+ *  - Convert hyper links to links.
+ *
+ * @param array $element
+ *   The render array containing chat log items.
+ *
+ * @return array
+ *   The pre rendered render array.
+ *
+ * @see vopros_chat_vopros_question_activity_feed()
+ */
+function vopros_chat_log_activity_feed_items_pre_render(array $element) {
+  if (!empty($element['#chatlog']['#log'])) {
+    $format_id = variable_get('vopros_chat_log_format_id', NULL);
+    foreach ($element['#chatlog']['#log'] as &$item) {
+      $item->msg = check_markup($item->msg, $format_id);
+    }
+  }
+
+  return $element;
 }
 
 /**

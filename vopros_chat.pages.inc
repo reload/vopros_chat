@@ -46,6 +46,7 @@ function vopros_chat_admin_page() {
       ),
       'library' => array(array('system', 'drupal.ajax')),
       'libraries_load' => array(
+        array('autolinker'),
         array('jgrowl'),
         array('playsound'),
         array('notificationjs'),
