@@ -10,6 +10,6 @@
                '!date' => format_date($variables['log']['#question']->created, 'short'),
              )) ?></div>
   <div class="log-content vopros-chat">
-    <?php echo render($variables['log']['#chatlog']) ?>
+    <?php echo render($variables['log']['log_items']) ?>
   </div>
 </div>

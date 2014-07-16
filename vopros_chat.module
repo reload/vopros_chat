@@ -255,12 +255,12 @@ function vopros_chat_views_default_views_alter(&$views) {
 function vopros_chat_vopros_question_activity_feed($question, &$feed) {
   $feed['vopros_chat_' . $question->question_id] = array(
     '#weight' => 1,
-    '#chatlog' => array(
+    'log_items' => array(
       '#weight' => 1,
       '#log' => vopros_chat_log_load($question->question_id),
       '#theme' => 'vopros_chat_log_activity_feed_items',
+      '#pre_render' => array('vopros_chat_log_activity_feed_items_pre_render'),
     ),
-    '#pre_render' => array('vopros_chat_log_activity_feed_items_pre_render'),
     '#question' => vopros_question_load($question->question_id),
     '#theme' => 'vopros_chat_log_activity_feed',
     '#attached' => array(
@@ -286,9 +286,9 @@ function vopros_chat_vopros_question_activity_feed($question, &$feed) {
  * @see vopros_chat_vopros_question_activity_feed()
  */
 function vopros_chat_log_activity_feed_items_pre_render(array $element) {
-  if (!empty($element['#chatlog']['#log'])) {
+  if (!empty($element['#log'])) {
     $format_id = variable_get('vopros_chat_log_format_id', NULL);
-    foreach ($element['#chatlog']['#log'] as &$item) {
+    foreach ($element['#log'] as &$item) {
       $item->msg = check_markup($item->msg, $format_id);
     }
   }
