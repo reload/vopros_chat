@@ -122,7 +122,7 @@
 
   Drupal.Nodejs.callbacks.voprosChatUserOfflineHandler = {
     callback: function (message) {
-      if (message.data.user.sessionId != sessionId) {
+      if (message.data.user.sessionId !== sessionId) {
         $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' left</div>');
       }
 
