@@ -85,7 +85,6 @@ exports.setup = function (config) {
   var updateAdminStatus = function (sessionId) {
     var channelsWithAdmins = 0;
     var adminSessionIds = hashish(config.channels[adminChannel].sessionIds).values;
-    console.dir(adminSessionIds);
     var channelCount = hashish(config.channels).filter(function (channel, channelId) {
       // Ignore the admin channel.
       if (channelId === adminChannel) {
@@ -102,9 +101,10 @@ exports.setup = function (config) {
         return true;
       }
     }).length;
-    console.dir(config.channels);
-    console.log('');
+
     if (sessionId || activeChannels !== channelCount || activeChannelsWithAdmin !== channelsWithAdmins) {
+      activeChannels = channelCount;
+      activeChannelsWithAdmin = channelsWithAdmins;
       var message = {
         'callback': 'voprosChatAdminStatus',
         'channel': adminChannel,
