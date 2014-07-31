@@ -18,6 +18,12 @@ exports.setup = function (config) {
   // Global open/closed status for the chat.
   var openStatus = false;
 
+  // Number of active channels.
+  var activeChannels = 0;
+
+  // Number of active channels with an admin.
+  var activeChannelsWithAdmin = 0;
+
   var adminChannel = 'vopros_admin_status';
 
   /**
@@ -76,13 +82,13 @@ exports.setup = function (config) {
   /**
    * Send overall chat status notification to admin users.
    */
-  var updateAdminStatus = function () {
+  var updateAdminStatus = function (sessionId) {
     var channelsWithAdmins = 0;
     var adminSessionIds = hashish(config.channels[adminChannel].sessionIds).values;
     console.dir(adminSessionIds);
     var channelCount = hashish(config.channels).filter(function (channel, channelId) {
       // Ignore the admin channel.
-      if (channelId == adminChannel) {
+      if (channelId === adminChannel) {
         return false;
       }
       // And empty channels.
@@ -97,15 +103,22 @@ exports.setup = function (config) {
       }
     }).length;
     console.dir(config.channels);
-console.log('');
-    var message = {
-      'callback': 'voprosChatAdminStatus',
-      'channel': adminChannel,
-      'channels': channelCount,
-      'channels_with_admins': channelsWithAdmins
-    };
+    console.log('');
+    if (sessionId || activeChannels !== channelCount || activeChannelsWithAdmin !== channelsWithAdmins) {
+      var message = {
+        'callback': 'voprosChatAdminStatus',
+        'channel': adminChannel,
+        'channels': channelCount,
+        'channels_with_admins': channelsWithAdmins
+      };
 
-    publishMessageToChannel(message);
+      if (sessionId) {
+        publishMessageToClient(sessionId, message);
+      }
+      else {
+        publishMessageToChannel(message);
+      }
+    }
   };
 
   var connectToDatabase = function(config) {
@@ -290,7 +303,7 @@ console.log('');
       case 'admin_status':
         addClientToChannel(sessionId, adminChannel);
         // Trigger status update.
-        updateAdminStatus();
+        updateAdminStatus(sessionId);
       }
     }
   });
