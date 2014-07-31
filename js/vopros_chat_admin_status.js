@@ -22,8 +22,8 @@
       .addClass('vopros-chat-admin-status')
       .append(
       $('<a>')
-          .text(Drupal.t('Chat: @channels/@admins', {'@channels': vars.channels, '@admins': vars.channels_with_admins}))
-          .attr('href', '/'));
+          .text(Drupal.t('Chat: @admins/@channels', {'@channels': vars.channels, '@admins': vars.channels_with_admins}))
+          .attr('href', Drupal.settings.vopros_chat.chat_path));
   };
 
   /**

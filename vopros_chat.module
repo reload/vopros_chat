@@ -15,6 +15,7 @@ include_once 'vopros_chat.features.inc';
  */
 function vopros_chat_init() {
   if (user_access('answer vopros chats')) {
+    drupal_add_js(array('vopros_chat' => array('chat_path' => url('admin/vopros/questions/chat'))), 'setting');
     drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_admin_status.js');
   }
 }
