@@ -18,6 +18,9 @@ exports.setup = function (config) {
   // Global open/closed status for the chat.
   var openStatus = false;
 
+  // Timestamp of last status update.
+  var lastStatusTime = 0;
+
   // Number of active channels.
   var activeChannels = 0;
 
@@ -34,91 +37,89 @@ exports.setup = function (config) {
   };
 
   /**
-   * Send notification about channel activity to admin users.
+   * Send status updates to admins.
    */
-  var updateChannelStatus = function(channelName, refTime, refresh, notification) {
-    var channel = config.channels[channelName];
-    if (channelName === adminChannel ||
-        !channel ||
-        !hashish(channel).has('timestamp')) {
+  var sendAdminStatusUpdate = function(socketId) {
+    // No need to do anything if admin channel doesn't exist or is empty.
+    if (!config.channels[adminChannel] ||
+        hashish(config.channels[adminChannel].sessionIds).length < 1) {
       return;
     }
 
-    if (!config.channels[adminChannel]) {
-      console.log('Creating admin channel.');
-      config.channels[adminChannel] = {'sessionIds': {}};
-    }
-
-    if (!refTime) {
-      refTime = timestamp();
-    }
-
-    // Ensure boolean.
-    refresh = refresh ? true : false;
-
-    var adminUsers = 0;
-    adminUsers = hashish(channel.sessionIds).filter(function (sessionId) {
-      return hashish(config.channels[adminChannel].sessionIds).has(sessionId);
-    }).length;
-
-    var message = {
-      'callback': 'voprosChatAdminChannelStatus',
-      'channel': adminChannel,
-      'channel_name': channelName,
-      'users': Object.keys(channel.sessionIds).length,
-      'admin_users': adminUsers,
-      'timestamp': channel.timestamp,
-      'ref_time': refTime,
-      'refresh': refresh,
-      'notification': notification
-    };
-
-    publishMessageToChannel(message);
-
-    // Also trigger updating of chat status in the admin bar.
-    updateAdminStatus();
-  };
-
-  /**
-   * Send overall chat status notification to admin users.
-   */
-  var updateAdminStatus = function (sessionId) {
+    var time = (new Date()).getTime();
+    var channels = 0;
     var channelsWithAdmins = 0;
+
     var adminSessionIds = hashish(config.channels[adminChannel].sessionIds).values;
-    var channelCount = hashish(config.channels).filter(function (channel, channelId) {
+
+    var adminUsers;
+
+    hashish(config.channels).forEach(function (channel, channelName) {
       // Ignore the admin channel.
-      if (channelId === adminChannel) {
-        return false;
+      if (channelName === adminChannel) {
+        return;
       }
-      // And empty channels.
-      if (channel.sessionIds.length < 1) {
-        return false;
-      }
+
       if (hashish(channel).has('timestamp')) {
-        if (hashish(channel.sessionIds).has(adminSessionIds)) {
+        if (hashish(channel.sessionIds).length > 0) {
+          channels++;
+        }
+
+        adminUsers = hashish(channel.sessionIds).filter(function (sessionId) {
+          return hashish(config.channels[adminChannel].sessionIds).has(sessionId);
+        }).length;
+
+        if (adminUsers > 1) {
           channelsWithAdmins++;
         }
-        return true;
-      }
-    }).length;
+        // Update status for channel if it's been changed since last
+        // run, or a socketId was given
+        if (channel.timestamp > lastStatusTime || socketId) {
+          // send update for channel.
+          var message = {
+            'callback': 'voprosChatAdminChannelStatus',
+            'channel': adminChannel,
+            'channel_name': channelName,
+            'users': Object.keys(channel.sessionIds).length,
+            'admin_users': adminUsers,
+            'timestamp': Math.floor(channel.timestamp / 1000),
+            'ref_time': Math.floor(time / 1000),
+            'refresh': channel.last_timestamp ? false : true,
+            'notification': channel.notification
+          };
+          channel.last_timestamp = channel.timestamp;
 
-    if (sessionId || activeChannels !== channelCount || activeChannelsWithAdmin !== channelsWithAdmins) {
-      activeChannels = channelCount;
+          if (socketId) {
+            publishMessageToClient(socketId, message);
+          }
+          else {
+            delete channel.notification;
+            publishMessageToChannel(message);
+          }
+        }
+      }
+    });
+
+    // General channels/taken channels status.
+    if (socketId || activeChannels !== channels || activeChannelsWithAdmin !== channelsWithAdmins) {
+      activeChannels = channels;
       activeChannelsWithAdmin = channelsWithAdmins;
       var message = {
         'callback': 'voprosChatAdminStatus',
         'channel': adminChannel,
-        'channels': channelCount,
+        'channels': channels,
         'channels_with_admins': channelsWithAdmins
       };
 
-      if (sessionId) {
-        publishMessageToClient(sessionId, message);
+      if (socketId) {
+        publishMessageToClient(socketId, message);
       }
       else {
         publishMessageToChannel(message);
       }
     }
+
+    lastStatusTime = time;
   };
 
   var connectToDatabase = function(config) {
@@ -230,7 +231,7 @@ exports.setup = function (config) {
         addClientToChannel(sessionId, message.channel);
 
         if (config.channels.hasOwnProperty(message.channel)) {
-          config.channels[message.channel].timestamp = timestamp();
+          config.channels[message.channel].timestamp = (new Date()).getTime();
         }
 
         // Notify admins if this is an anonymous user (non-anonymous
@@ -242,8 +243,8 @@ exports.setup = function (config) {
             args: {'@user_name': message.data.user.name}
           };
         }
-
-        updateChannelStatus(message.channel, null, true, notification);
+        config.channels[message.channel].notification = notification;
+        sendAdminStatusUpdate();
 
         // When entering a chat channel, the client might have sent a message
         // so that users know about this.
@@ -259,7 +260,7 @@ exports.setup = function (config) {
           if (config.channels[message.channel].sessionIds[sessionId]) {
             delete config.channels[message.channel].sessionIds[sessionId];
           }
-          updateChannelStatus(message.channel, null);
+          sendAdminStatusUpdate();
 
           // Also publish the message, so other users see the parting.
           publishMessageToChannel(message);
@@ -268,10 +269,12 @@ exports.setup = function (config) {
 
         // Usual message transmission.
       case 'chat_message':
-        if (config.channels.hasOwnProperty(message.channel)) {
-          config.channels[message.channel].timestamp = timestamp();
+        if (message.channel !== adminChannel) {
+          if (config.channels.hasOwnProperty(message.channel)) {
+            config.channels[message.channel].timestamp = (new Date()).getTime();
+          }
+          sendAdminStatusUpdate();
         }
-        updateChannelStatus(message.channel);
 
         publishMessageToChannel(message);
         logMessageToDatabase(message);
@@ -291,19 +294,13 @@ exports.setup = function (config) {
         addClientToChannel(sessionId, adminChannel);
         // Update chat online status, if needed.
         sendStatus();
-        var time = timestamp();
-        hashish(config.channels).forEach(function(channel, channelId) {
-          // Only update channels we have touched.
-          if (hashish(channel).has('timestamp')) {
-            updateChannelStatus(channelId, time);
-          }
-        });
+        sendAdminStatusUpdate(sessionId);
         break;
 
       case 'admin_status':
         addClientToChannel(sessionId, adminChannel);
         // Trigger status update.
-        updateAdminStatus(sessionId);
+        sendAdminStatusUpdate(sessionId);
       }
     }
   });
@@ -324,13 +321,8 @@ exports.setup = function (config) {
     // cleanupSocket time to remove the socket from the channels.
     process.nextTick(
       function(channels) {
-        var time = timestamp();
-        hashish(channels).forEach(function (channel, channelId) {
-          if (hashish(channels).has(channelId)) {
-            updateChannelStatus(channel, time);
-          }
-        });
         sendStatus();
+        sendAdminStatusUpdate();
       });
   });
 
@@ -341,9 +333,9 @@ exports.setup = function (config) {
     // by Drupal.
     if (message.type === 'vopros_chat' && message.action === 'chat_close') {
       if (config.channels.hasOwnProperty(message.channel)) {
-        config.channels[message.channel].timestamp = timestamp();
+        config.channels[message.channel].timestamp = (new Date()).getTime();
       }
-      updateChannelStatus(message.channel, null, true);
+      sendAdminStatusUpdate();
     }
   });
 };
