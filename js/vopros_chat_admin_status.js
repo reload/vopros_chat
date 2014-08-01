@@ -49,7 +49,6 @@
    */
   Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
     callback: function (message) {
-      console.log(message);
       $('.vopros-chat-admin-status').replaceWith(Drupal.theme('voprosChatAdminStatus', message));
     }
   };
