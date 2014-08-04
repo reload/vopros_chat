@@ -323,6 +323,13 @@ exports.setup = function (config) {
       function(channels) {
         sendStatus();
         sendAdminStatusUpdate();
+
+        // Clean up channels without users.
+        hashish(config.channels).forEach(function (channel, channelId) {
+          if (hashish(channel).has('timestamp') && hashish(channel.sessionIds).length < 1) {
+            delete config.channels[channelId];
+          }
+        });
       });
   });
 
