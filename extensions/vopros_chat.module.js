@@ -30,13 +30,6 @@ exports.setup = function (config) {
   var adminChannel = 'vopros_admin_status';
 
   /**
-   * Return a unix timestamp for the current time.
-   */
-  var timestamp = function() {
-    return (new Date()).getTime() / 1000;
-  };
-
-  /**
    * Send status updates to admins.
    */
   var sendAdminStatusUpdate = function(socketId) {
