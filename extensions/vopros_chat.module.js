@@ -170,13 +170,26 @@ exports.setup = function (config) {
 
   var getDrupalStatus = function(callback) {
     var table = config.settings.database_tables['{variable}'];
-    drupal.db.query('SELECT value FROM `' + table + '` WHERE name = "vopros_chat_open"', function (err, rows) {
+    drupal.db.query('SELECT value FROM `' + table + '` WHERE name = "vopros_chat_hours"', function (err, rows) {
       var status = false;
       if (err) {
         console.log(err);
       }
       else if (rows.length) {
-        status = rows[0].value.match(/open/) !== null;
+        var rx = rows[0].value.match(/^s:\d+:"(.*)";$/);
+        var hours;
+        if (rx && (hours = JSON.parse(rx[1]))) {
+          var time = new Date();
+          var today = hours[time.getDay()];
+          var minutes = (time.getHours() * 60) + time.getMinutes();
+          // If neither of open or close is set, we're closed.
+          if (today.open || today.close) {
+            if ((!today.open || today.open <= minutes) &&
+                (!today.close || today.close > minutes)) {
+              status = true;
+            }
+          }
+        }
       }
 
       return callback(status);

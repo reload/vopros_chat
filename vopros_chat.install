@@ -25,6 +25,7 @@ function vopros_chat_install() {
 function vopros_chat_uninstall() {
   variable_del('vopros_chat_closed_message');
   variable_del('vopros_chat_open');
+  variable_del('vopros_chat_hours');
 }
 
 /**
@@ -121,4 +122,11 @@ function vopros_chat_schema() {
   );
 
   return $schema;
+}
+
+/**
+ * Remove unused variable.
+ */
+function vopros_chat_update_7001() {
+  variable_del('vopros_chat_open');
 }

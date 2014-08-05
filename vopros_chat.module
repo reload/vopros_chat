@@ -228,6 +228,10 @@ function vopros_chat_theme() {
       'path' => $path,
       'template' => 'vopros-chat-log-activity-feed-items',
     ),
+    'vopros_chat_admin_hours' => array(
+      'render element' => 'elements',
+      'file' => 'vopros_chat.admin.inc',
+    ),
   );
 }
 
