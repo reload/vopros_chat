@@ -535,6 +535,17 @@ function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
     '#question_status_reason' => '',
   );
 
+  $form['later'] = array(
+    '#type' => 'submit',
+    '#value' => t('Answer later'),
+    '#ajax' => array(
+      'callback' => 'vopros_chat_admin_chat_actions_button_submit',
+      'wrapper' => 'vopros-chat-admin-' . $question->question_id,
+    ),
+    '#question_status' => 'assigned',
+    '#question_status_reason' => '',
+  );
+
   $form['spam'] = array(
     '#type' => 'submit',
     '#value' => t('Close as spam'),
@@ -563,6 +574,12 @@ function vopros_chat_admin_chat_actions_button_submit($form, &$form_state) {
     // Change status.
     $question->question_status = $button['#question_status'];
     $question->question_status_reason = $button['#question_status_reason'];
+
+    // The question is still open, change the answer preference to allow editors
+    // to contact the user by mail later.
+    if ($question->question_status == 'assigned') {
+      $question->user_answer_preference = 'mail';
+    }
     $question->save();
 
     // Send message to the client to disable input.
