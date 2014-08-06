@@ -176,9 +176,9 @@ exports.setup = function (config) {
           var today = hours[time.getDay()];
           var minutes = (time.getHours() * 60) + time.getMinutes();
           // If neither of open or close is set, we're closed.
-          if (today.open || today.close) {
-            if ((!today.open || today.open <= minutes) &&
-                (!today.close || today.close > minutes)) {
+          if (today.open !== null || today.close !== null ) {
+            if ((today.open === null || today.open <= minutes) &&
+                (today.close === null || today.close > minutes)) {
               status = true;
             }
           }
