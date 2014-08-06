@@ -7,12 +7,31 @@
 /* global jQuery, Drupal */
 
 (function ($) {
+  /**
+   * Nodejs callback to update the chat status.
+   */
   Drupal.Nodejs.callbacks.voprosChatStatus = {
     callback: function(message) {
-      $('.vopros-chat-status').text(message.open ? Drupal.t('Open') : Drupal.t('Closed'));
+      if (message.open) {
+        // Remove the disabled attribute from the chat radio.
+        $('.vopros-chat-status-radio').attr('disabled', false);
+        // And remove the form-disabled class.
+        $('.vopros-chat-status-radio').parents('.form-type-radio').removeClass('form-disabled');
+        // Ensure the submit button is enabled.
+        $('.chat-submit').attr('disabled', false);
+      }
+      else {
+        // Do the reverse of the above.
+        $('.vopros-chat-status-radio').attr('disabled', true);
+        $('.vopros-chat-status-radio').parents('.form-type-radio').addClass('form-disabled');
+        $('.chat-submit').attr('disabled', true);
+      }
     }
   };
 
+  /**
+   * Subscribe to chat status updates.
+   */
   Drupal.Nodejs.connectionSetupHandlers.voprosChatStatus = {
     connect: function() {
       // Request that the server sends us an update immediately.
