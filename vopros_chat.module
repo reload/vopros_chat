@@ -199,6 +199,17 @@ function vopros_chat_entity_insert($entity, $type) {
 }
 
 /**
+ * Implements hook_vopros_question_presave().
+ *
+ * Update the question title when it is answered, if it is still the default.
+ */
+function vopros_chat_vopros_question_presave($question) {
+  if ($question->user_answer_preference == 'chat' && $question->question_status == 'answered' && $question->question_title == t('New question')) {
+    $question->question_title = t('Answered chat question');
+  }
+}
+
+/**
  * Implements hook_vopros_question_user_answer_preference().
  *
  * Exposes chat as an user answer preference for questions.
