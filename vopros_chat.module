@@ -179,20 +179,20 @@ function vopros_chat_libraries_info() {
 }
 
 /**
- * Implements hook_entity_insert().
+ * Implements hook_vopros_question_insert().
  *
  * When a new chat question is created we log the question to the chat log.
  */
-function vopros_chat_entity_insert($entity, $type) {
+function vopros_chat_vopros_question_insert($question) {
   global $user;
-  if ($type == 'vopros_question' && $entity->user_answer_preference == 'chat') {
+  if ($question->user_answer_preference == 'chat') {
     $chat_log = array(
-      'timestamp' => $entity->created,
-      'question_id' => $entity->question_id,
+      'timestamp' => $question->created,
+      'question_id' => $question->question_id,
       'uid' => $user->uid,
-      'name' => $entity->user_name,
+      'name' => $question->user_name,
       'session_id' => '',
-      'msg' => $entity->question_content,
+      'msg' => $question->question_content,
     );
     drupal_write_record('vopros_chat_log', $chat_log);
   }
