@@ -21,11 +21,8 @@ exports.setup = function (config) {
   // Timestamp of last status update.
   var lastStatusTime = 0;
 
-  // Number of active channels.
-  var activeChannels = 0;
-
-  // Number of active channels with an admin.
-  var activeChannelsWithAdmin = 0;
+  // Number of channels with users but no admins.
+  var clientsInQueue = 0;
 
   // Channel for channel updates.
   var adminChannel = 'vopros_admin_status';
@@ -41,7 +38,8 @@ exports.setup = function (config) {
     var channels = 0;
     var channelsWithAdmins = 0;
 
-    var adminUsers;
+    var inQueue = 0;
+    var adminUsers = 0;
 
     hashish(config.channels).forEach(function (channel, channelName) {
       // Ignore the admin channel.
@@ -54,13 +52,16 @@ exports.setup = function (config) {
           channels++;
         }
 
-        adminUsers = hashish(channel.sessionIds).filter(function (sessionId) {
-          return hashish(config.channels[adminChannel].sessionIds).has(sessionId);
-        }).length;
-
-        if (adminUsers > 1) {
-          channelsWithAdmins++;
+        if (config.channels[adminChannel]) {
+          adminUsers = hashish(channel.sessionIds).filter(function (sessionId) {
+            return hashish(config.channels[adminChannel].sessionIds).has(sessionId);
+          }).length;
         }
+
+        if (hashish(channel.sessionIds).length > 0 && adminUsers < 1) {
+          inQueue++;
+        }
+
         // Only send channel status updates when there's anyone listening.
         if (config.channels[adminChannel] &&
             hashish(config.channels[adminChannel].sessionIds).length > 0) {
@@ -98,14 +99,13 @@ exports.setup = function (config) {
     if (config.channels[statusChannel] &&
         hashish(config.channels[statusChannel].sessionIds).length > 0) {
       // General channels/taken channels status.
-      if (socketId || activeChannels !== channels || activeChannelsWithAdmin !== channelsWithAdmins) {
-        activeChannels = channels;
-        activeChannelsWithAdmin = channelsWithAdmins;
+      if (socketId || inQueue !== clientsInQueue) {
+        clientsInQueue = inQueue;
+
         var message = {
           'callback': 'voprosChatAdminStatus',
           'channel': statusChannel,
-          'channels': channels,
-          'channels_with_admins': channelsWithAdmins
+          'queue': inQueue
         };
 
         if (socketId) {
