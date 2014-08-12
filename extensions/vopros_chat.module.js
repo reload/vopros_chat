@@ -115,6 +115,9 @@ exports.setup = function (config) {
     lastStatusTime = time;
   };
 
+  /**
+   * Create a database connection.
+   */
   var connectToDatabase = function(config) {
     // Filter out empty values, and extract only the ones we need.
     var options = hashish(config.settings.database)
@@ -133,6 +136,9 @@ exports.setup = function (config) {
   };
   connectToDatabase(config);
 
+  /**
+   * Check that a channel hash is valid.
+   */
   var checkHash = function(message) {
     // First compare hash value of question id.
     var questionId = message.channel.split('__')[1].split('_')[0];
@@ -150,6 +156,9 @@ exports.setup = function (config) {
     return false;
   };
 
+  /**
+   * Log a chat message to the Drupal database.
+   */
   var logMessageToDatabase = function(message) {
     var questionId = message.channel.split('__')[1].split('_')[0];
     var table = config.settings.database_tables['{vopros_chat_log}'];
@@ -161,6 +170,9 @@ exports.setup = function (config) {
     });
   };
 
+  /**
+   * Return the open status of Drupal.
+   */
   var getDrupalStatus = function(callback) {
     var table = config.settings.database_tables['{variable}'];
     drupal.db.query('SELECT value FROM `' + table + '` WHERE name = "vopros_chat_hours"', function (err, rows) {
@@ -189,6 +201,9 @@ exports.setup = function (config) {
     });
   };
 
+  /**
+   * Send simple chat status to admin clients.
+   */
   var sendStatus = function(sessionId) {
     getDrupalStatus(function (drupalStatus) {
       var message = {
