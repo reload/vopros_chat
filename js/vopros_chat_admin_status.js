@@ -9,7 +9,7 @@
 (function ($) {
   $(document).ready(function() {
     $('.toolbar-shortcuts ul').once('vopros-chat-admin-status', function() {
-      $(this).append(Drupal.theme('voprosChatAdminStatus', {channels: 0, channels_with_admins: 0}));
+      $(this).append(Drupal.theme('voprosChatAdminStatus', {queue: 0}));
     });
   });
 
@@ -22,7 +22,7 @@
       .addClass('vopros-chat-admin-status')
       .append(
       $('<a>')
-          .text(Drupal.t('Chat: @admins/@channels', {'@channels': vars.channels, '@admins': vars.channels_with_admins}))
+          .text(Drupal.t('In queue: @queue', {'@queue': vars.queue}))
           .attr('href', Drupal.settings.vopros_chat.chat_path));
   };
 
