@@ -199,6 +199,7 @@ exports.setup = function (config) {
       // Always use the last known status if explicitly requested.
       if (sessionId) {
         publishMessageToClient(sessionId, message);
+        return;
       }
 
       var adminUsers = 0;
