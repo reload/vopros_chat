@@ -40,7 +40,7 @@ function vopros_chat_menu() {
     'title' => 'Chat question list',
     'page callback' => 'vopros_chat_admin_page',
     'page arguments' => array(),
-    'access arguments' => array('answer vopros chats'),
+    'access callback' => 'vopros_chat_access',
     'file' => 'vopros_chat.pages.inc',
     'type' => MENU_LOCAL_TASK,
   );
@@ -49,7 +49,7 @@ function vopros_chat_menu() {
     'title' => 'AHAH callback',
     'page callback' => 'vopros_chat_channels_js',
     'delivery callback' => 'ajax_deliver',
-    'access arguments' => array('answer vopros chats'),
+    'access callback' => 'vopros_chat_access',
     'theme callback' => 'ajax_base_page_theme',
     'file' => 'vopros_chat.pages.inc',
     'type' => MENU_CALLBACK,
@@ -85,6 +85,22 @@ function vopros_chat_menu() {
 }
 
 /**
+ * Access callback.
+ *
+ * Grants access if the user have either administer chat or answer chat
+ * permission.
+ */
+function vopros_chat_access() {
+  if (user_access('administer vopros_chat') ||
+    user_access('answer vopros chats')) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+
+/**
  * Implements hook_permission().
  */
 function vopros_chat_permission() {
@@ -94,7 +110,7 @@ function vopros_chat_permission() {
       'description' => '',
     ),
     'answer vopros chats' => array(
-      'title' => t('Use chat'),
+      'title' => t('Answer chats'),
       'description' => '',
     ),
   );

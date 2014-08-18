@@ -63,8 +63,8 @@ exports.setup = function (config) {
         }
 
         // Only send channel status updates when there's anyone listening.
-        if (config.channels[adminChannel] &&
-            hashish(config.channels[adminChannel].sessionIds).length > 0) {
+        if (config.channels[statusChannel] &&
+            hashish(config.channels[statusChannel].sessionIds).length > 0) {
 
           // Update status for channel if it's been changed since last
           // run, or a socketId was given
@@ -72,7 +72,7 @@ exports.setup = function (config) {
             // send update for channel.
             var message = {
               'callback': 'voprosChatAdminChannelStatus',
-              'channel': adminChannel,
+              'channel': statusChannel,
               'channel_name': channelName,
               'users': Object.keys(channel.sessionIds).length,
               'admin_users': adminUsers,
@@ -318,8 +318,12 @@ exports.setup = function (config) {
     // Messages for admin status.
     if (message.type === 'vopros_chat_admin') {
       switch (message.action) {
-      case 'list_all':
+      case 'admin_signin':
         addClientToChannel(sessionId, adminChannel);
+        break;
+
+      case 'list_all':
+        addClientToChannel(sessionId, statusChannel);
         // Update chat online status, if needed.
         sendStatus();
         sendAdminStatusUpdate(sessionId);

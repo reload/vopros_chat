@@ -171,6 +171,15 @@
     connect: function() {
       // Update the channel listing when nodejs (re)connects.
       $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
+
+      if (Drupal.settings.vopros_chat.admin_signin) {
+        //  When connecting to the server, notify that we're an admin.
+        var msg = {
+          type: 'vopros_chat_admin',
+          action: 'admin_signin'
+        };
+        Drupal.Nodejs.socket.emit('message', msg);
+      }
     }
   };
 })(jQuery);

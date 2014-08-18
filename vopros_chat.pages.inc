@@ -38,6 +38,9 @@ function vopros_chat_admin_page() {
         array(
           'type' => 'setting',
           'data' => array(
+            'vopros_chat' => array(
+              'admin_signin' => user_access('answer vopros chats'),
+            ),
             'voprosChatNotificationConfig' => vopros_chat_notification_config_options(),
             'voprosChatNotificationSound' => url(drupal_get_path('module', 'vopros_chat') . '/sounds/notify'),
             'voprosChatNotificationNotificationJsPath' => url(libraries_get_path('notificationjs')),
