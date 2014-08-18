@@ -544,6 +544,14 @@ function _vopros_chat_relative_path($from, $to, $ps = DIRECTORY_SEPARATOR) {
  * Admimintrator chat action buttons.
  */
 function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
+  $rebuild = FALSE;
+  if (!empty($form_state['values']['question_id'])) {
+    $rebuild = TRUE;
+    $question = vopros_question_load($form_state['values']['question_id']);
+  }
+
+  $form['#id'] = 'vopros-chat-admin-buttons-' . $question->question_id;
+
   // We're saving the question id and reloading the question, as this form can
   // be quite long-lived, and the question might be changed in the meantime.
   $form['question_id'] = array(
@@ -551,41 +559,80 @@ function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
     '#value' => $question->question_id,
   );
 
-  $form['close'] = array(
-    '#type' => 'submit',
-    '#value' => t('Close as answered'),
-    '#ajax' => array(
-      'callback' => 'vopros_chat_admin_chat_actions_button_submit',
-      'wrapper' => 'vopros-chat-admin-' . $question->question_id,
-    ),
-    '#question_status' => 'answered',
-    '#question_status_reason' => '',
-  );
+  if ($rebuild) {
+    $form['title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+    );
 
-  $form['later'] = array(
-    '#type' => 'submit',
-    '#value' => t('Answer later'),
-    '#ajax' => array(
-      'callback' => 'vopros_chat_admin_chat_actions_button_submit',
-      'wrapper' => 'vopros-chat-admin-' . $question->question_id,
-    ),
-    '#question_status' => 'assigned',
-    '#question_status_reason' => '',
-  );
+    $form['later'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save'),
+      '#ajax' => array(
+        'callback' => 'vopros_chat_admin_chat_actions_button_submit',
+        'wrapper' => 'vopros-chat-admin-' . $question->question_id,
+      ),
+      '#question_status' => 'assigned',
+      '#question_status_reason' => '',
+    );
+  }
+  else {
+    $form['close'] = array(
+      '#type' => 'submit',
+      '#value' => t('Close as answered'),
+      '#ajax' => array(
+        'callback' => 'vopros_chat_admin_chat_actions_button_submit',
+        'wrapper' => 'vopros-chat-admin-' . $question->question_id,
+      ),
+      '#question_status' => 'answered',
+      '#question_status_reason' => '',
+    );
 
-  $form['spam'] = array(
-    '#type' => 'submit',
-    '#value' => t('Close as spam'),
-    '#ajax' => array(
-      'callback' => 'vopros_chat_admin_chat_actions_button_submit',
-      'wrapper' => 'vopros-chat-admin-' . $question->question_id,
-    ),
-    '#question_status' => 'closed',
-    '#question_status_reason' => 'spam',
-  );
+    // This button only reloads the form.
+    $form['later'] = array(
+      '#type' => 'submit',
+      '#value' => t('Answer later'),
+      '#ajax' => array(
+        'callback' => 'vopros_chat_admin_chat_actions_button_later_callback',
+        'wrapper' => 'vopros-chat-admin-buttons-' . $question->question_id,
+      ),
+      '#submit' => array('vopros_chat_admin_chat_actions_button_submit_later'),
+    );
+
+    $form['spam'] = array(
+      '#type' => 'submit',
+      '#value' => t('Close as spam'),
+      '#ajax' => array(
+        'callback' => 'vopros_chat_admin_chat_actions_button_submit',
+        'wrapper' => 'vopros-chat-admin-' . $question->question_id,
+      ),
+      '#question_status' => 'closed',
+      '#question_status_reason' => 'spam',
+    );
+  }
 
   return $form;
 }
+
+/**
+ * Submit handler for the 'answer later' button.
+ *
+ * Triggers rebuilding the form with title setting form.
+ */
+function vopros_chat_admin_chat_actions_button_submit_later($form, &$form_state) {
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ *
+ */
+function vopros_chat_admin_chat_actions_button_later_callback($form, &$form_state) {
+  $commands = array(
+    ajax_command_replace('#vopros-chat-admin-buttons-' . $form_state['values']['question_id'], render($form)),
+  );
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
+
 
 /**
  * Submit handler.
@@ -606,6 +653,9 @@ function vopros_chat_admin_chat_actions_button_submit($form, &$form_state) {
     // to contact the user by mail later.
     if ($question->question_status == 'assigned') {
       $question->user_answer_preference = 'mail';
+    }
+    if (isset($form_state['values']['title'])) {
+      $question->question_title = $form_state['values']['title'];
     }
     $question->save();
 
