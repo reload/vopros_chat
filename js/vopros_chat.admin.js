@@ -21,14 +21,15 @@
    */
   var notify = function(notification) {
     var message = Drupal.t(notification.string, notification.args);
-    $.jGrowl(message, Drupal.settings.voprosChatNotificationConfig);
-    $.playSound(Drupal.settings.voprosChatNotificationSound);
+    var notification_settings = Drupal.settings.vopros_chat.notification;
+    $.jGrowl(message, notification_settings.config);
+    $.playSound(notification_settings.sound);
     if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
     var n = new Notification(message, {
       body: message,
-      icon: Drupal.settings.voprosChatNotificationNotificationJsPath + '/star.ico'
+      icon: notification_settings.jsPath + '/star.ico'
     });
   };
 

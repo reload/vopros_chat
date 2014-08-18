@@ -40,10 +40,12 @@ function vopros_chat_admin_page() {
           'data' => array(
             'vopros_chat' => array(
               'admin_signin' => user_access('answer vopros chats'),
+              'notification' => array(
+                'config' => vopros_chat_notification_config_options(),
+                'sound' => url(drupal_get_path('module', 'vopros_chat') . '/sounds/notify'),
+                'jsPath' => url(libraries_get_path('notificationjs')),
+              ),
             ),
-            'voprosChatNotificationConfig' => vopros_chat_notification_config_options(),
-            'voprosChatNotificationSound' => url(drupal_get_path('module', 'vopros_chat') . '/sounds/notify'),
-            'voprosChatNotificationNotificationJsPath' => url(libraries_get_path('notificationjs')),
           ),
         ),
       ),
