@@ -30,6 +30,9 @@ exports.setup = function (config) {
   // Channel for overall status updates.
   var statusChannel = 'vopros_status';
 
+  // Val from setInterval().
+  var ticker;
+
   /**
    * Send status updates to admins.
    */
@@ -241,7 +244,26 @@ exports.setup = function (config) {
     });
   };
 
+  /**
+   * Heartbeat.
+   *
+   * Periodically checks whether the chat is open.
+   */
+  var heartbeat = function () {
+    if (config.io.sockets.sockets.length > 0) {
+      sendStatus();
+    }
+    else {
+      clearInterval(ticker);
+      ticker = null;
+    }
+  };
+
   process.on('client-message', function (sessionId, message) {
+    if (!ticker) {
+      // Update chat status every 30 seconds when someone is online.
+      ticker = setInterval(heartbeat, 30000);
+    }
     // Check message type. Prevents the extension from forwarding any message
     // that is not from the vopros_chat module.
     if (message.type === 'vopros_chat') {
