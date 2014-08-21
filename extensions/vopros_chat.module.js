@@ -207,7 +207,7 @@ exports.setup = function (config) {
   };
 
   /**
-   * Send simple chat status to admin clients.
+   * Send simple chat status to clients.
    */
   var sendStatus = function(sessionId) {
     getDrupalStatus(function (drupalStatus) {
@@ -231,7 +231,7 @@ exports.setup = function (config) {
       var status = adminUsers > 0 ? drupalStatus : false;
       message.open = status;
 
-      // Only send update if the status changed.
+      // Only broadcast update if the status changed. Everyone will get this.
       if (status !== openStatus) {
         config.io.sockets.json.send(message);
       }
