@@ -96,7 +96,7 @@ function vopros_chat_add_chat_js($question) {
   $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question->question_id), $question->user_name);
 
   $chat_box = array(
-    '#prefix' => '<div id="vopros-chat-admin-' . $question->question_id . '">',
+    '#prefix' => '<div id="vopros-chat-admin-' . $question->question_id . '" class="vopros-chat-admin">',
     '#suffix' => '</div>',
   );
 

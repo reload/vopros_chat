@@ -145,6 +145,13 @@
           var questionId = $(this).attr('href').split('/').pop();
           var base = 'vopros-chat-' + questionId;
           $(this).attr('id', base);
+          $(this).addClass('vopros-chat-admin-' + questionId + '-on');
+          // Add an hidden element with the same text as the link,
+          // which will be shown instead of the link when the chat is
+          // loaded. See Drupal.behaviors.voprosChatAdminDisableLinks.
+          var no_link = $('<span></span>').text($(this).text()).addClass('vopros-chat-admin-' + questionId + '-off');
+          no_link.hide();
+          $(this).after(no_link);
           var elementSettings = {
             url: '/admin/vopros/questions/chat/add/' + questionId,
             event: 'click',
@@ -165,6 +172,32 @@
         };
         Drupal.Nodejs.socket.emit('message', msg);
       }
+    }
+  };
+
+  /**
+   * Behavior to disable the link for opening the chat when the chat
+   * is open.
+   */
+  Drupal.behaviors.voprosChatAdminDisableLinks = {
+    // Not using the context, as jQuery wont find .vopros-chat-admin
+    // when it's set on the topmost element of the context. As the
+    // attach and detatch functions are idempotent. Also, it has the
+    // nice side effect of ensuring the listing is in sync with
+    // whatever chats are currently visible on the page.
+    attach: function() {
+      $('.vopros-chat-admin').each(function () {
+        var chatId = $(this).attr('id');
+        $('.' + chatId + '-on').hide();
+        $('.' + chatId + '-off').show();
+      });
+    },
+    detach: function() {
+      $('.vopros-chat-admin').each(function () {
+        var chatId = $(this).attr('id');
+        $('.' + chatId + '-on').show();
+        $('.' + chatId + '-off').hide();
+      });
     }
   };
 
