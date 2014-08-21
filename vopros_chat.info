@@ -1,6 +1,5 @@
 name = Vopros Chat
 description = Implements chat for Vopros.
-configure = admin/vopros/config/chat
 core = 7.x
 package = Vopros
 version = 7.x-1.0
@@ -9,6 +8,7 @@ dependencies[] = libraries
 dependencies[] = nodejs
 dependencies[] = views
 dependencies[] = vopros_embed
+configure = admin/vopros/config/chat
 features[ctools][] = views:views_default:3.0
 features[features_api][] = api:2
 features[views_view][] = vopros_chat_question_list
