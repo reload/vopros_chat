@@ -344,8 +344,8 @@ function vopros_chat_log_activity_feed_items_pre_render(array $element) {
  * Implements hook_form_FORM_ID_alter().
  */
 function vopros_chat_form_vopros_embed_question_alter(&$form, $form_state) {
-  $form['answer_type']['user_answer_preference']['#after_build'] = array('vopros_chat_user_answer_preference_after_build');
-  $form['answer_type']['user_answer_preference']['#attached'] = array(
+  $form['user_answer_preference']['#after_build'] = array('vopros_chat_user_answer_preference_after_build');
+  $form['user_answer_preference']['#attached'] = array(
     'js' => array(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_status.js'),
   );
 
