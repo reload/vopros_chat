@@ -379,7 +379,7 @@ function vopros_chat_log_load($question_id) {
     ->condition('question_id', $question_id)
     ->orderBy('timestamp')
     ->execute()
-    ->fetchAllAssoc('timestamp');
+    ->fetchAll();
 }
 
 /**
