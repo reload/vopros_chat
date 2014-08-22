@@ -559,10 +559,16 @@ function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
     '#value' => $question->question_id,
   );
 
+  // If rebuilding, it's the answer later form.
   if ($rebuild) {
     $form['title'] = array(
       '#type' => 'textfield',
       '#title' => t('Title'),
+    );
+
+    $form['keep'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Keep question'),
     );
 
     $form['later'] = array(
@@ -572,7 +578,7 @@ function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
         'callback' => 'vopros_chat_admin_chat_actions_button_callback',
         'wrapper' => 'vopros-chat-admin-' . $question->question_id,
       ),
-      '#question_status' => 'assigned',
+      '#question_status' => 'active',
       '#question_status_reason' => '',
     );
   }
@@ -655,9 +661,18 @@ function vopros_chat_admin_chat_actions_button_callback($form, &$form_state) {
 
     // The question is still open, change the answer preference to allow editors
     // to contact the user by mail later.
-    if ($question->question_status == 'assigned') {
+    if ($question->question_status == 'active') {
       $question->user_answer_preference = 'mail';
     }
+
+    if ($form_state['values']['keep']) {
+      $question->question_status = 'assigned';
+    }
+    else {
+      // Release the question.
+      $question->uid = 0;
+    }
+
     if (isset($form_state['values']['title'])) {
       $question->question_title = $form_state['values']['title'];
     }
