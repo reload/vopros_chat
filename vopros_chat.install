@@ -53,6 +53,9 @@ function vopros_chat_enable() {
     }
     $view->save();
   }
+
+  // Add chat log to search index.
+  _vopros_chat_add_search_api_field();
 }
 
 /**
@@ -71,6 +74,9 @@ function vopros_chat_disable() {
     }
     $view->save();
   }
+
+  // Remove chat log to search index.
+  _vopros_chat_remove_search_api_field();
 }
 
 /**

@@ -8,6 +8,28 @@
 include_once 'vopros_chat.features.inc';
 
 /**
+ * Implements hook_modules_enabled().
+ *
+ * Add chat session to search index, when vopros_chat is enabled.
+ */
+function vopros_chat_modules_enabled($modules) {
+  if (in_array('vopros_search', $modules)) {
+    _vopros_chat_add_search_api_field();
+  }
+}
+
+/**
+ * Implements hook_modules_disabled().
+ *
+ * Remove chat session from search index, when vopros_chat is enabled.
+ */
+function vopros_chat_modules_disabled($modules) {
+  if (in_array('vopros_search', $modules)) {
+    _vopros_chat_remove_search_api_field();
+  }
+}
+
+/**
  * Implements hook_init().
  *
  * Add JavaScript for chat status in the shortcut bar to the page if the user is
@@ -192,6 +214,40 @@ function vopros_chat_libraries_info() {
       ),
     ),
   );
+}
+
+/**
+ * Implements hook_entity_property_info_alter().
+ *
+ * Add the chat session as a property on question entities.
+ */
+function vopros_chat_entity_property_info_alter(&$info) {
+  $info['vopros_question']['properties']['chat_session'] = array(
+    'label' => t('Chat session'),
+    'type' => 'text',
+    'description' => t("The chat session of a chat question."),
+    'getter callback' => 'vopros_chat_get_properties',
+  );
+}
+
+/**
+ * Property getter function.
+ */
+function vopros_chat_get_properties($question, $options, $name, $entity_type) {
+  switch ($name) {
+    case 'chat_session':
+      if (empty($question->question_id)) {
+        return NULL;
+      }
+      // Build the log just as for the admin.
+      $build = array();
+      $build['log_items'] = array(
+        '#log' => vopros_chat_log_load($question->question_id),
+        '#theme' => 'vopros_chat_log_activity_feed_items',
+        '#pre_render' => array('vopros_chat_log_activity_feed_items_pre_render'),
+      );
+      return drupal_render($build);
+  }
 }
 
 /**
@@ -697,4 +753,34 @@ function vopros_chat_admin_chat_actions_button_callback($form, &$form_state) {
     ajax_command_remove('#vopros-chat-admin-' . $form_state['values']['question_id']),
   );
   return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+/**
+ * Add chat session to search index.
+ */
+function _vopros_chat_add_search_api_field() {
+  if (module_exists('search_api')) {
+    $index_name = 'vopros_answer_question';
+    $indexes = search_api_index_load_multiple(FALSE, array('machine_name' => $index_name));
+    if ($indexes[$index_name]) {
+      $indexes[$index_name]->options['fields']['question:chat_session'] = array(
+        'type' => 'text',
+      );
+      $indexes[$index_name]->save();
+    }
+  }
+}
+
+/**
+ * Remove chat session from search index.
+ */
+function _vopros_chat_remove_search_api_field() {
+  if (module_exists('search_api')) {
+    $index_name = 'vopros_answer_question';
+    $indexes = search_api_index_load_multiple(FALSE, array('machine_name' => $index_name));
+    if ($indexes[$index_name]) {
+      unset($indexes[$index_name]->options['fields']['question:chat_session']);
+      $indexes[$index_name]->save();
+    }
+  }
 }
