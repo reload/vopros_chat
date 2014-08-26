@@ -15,6 +15,11 @@ class VoprosChat {
   protected $options;
 
   /**
+   * Whether there was an error initializing.
+   */
+  protected $error = NULL;
+
+  /**
    * A chat needs at least a channel to (send / receive) messages (to / from).
    *
    * The channel should be generated within the class, instead of passing it
@@ -25,11 +30,6 @@ class VoprosChat {
    * chat on the page.
    */
   protected $channel;
-
-  /**
-   * Users on the chat, stored as User IDs
-   */
-  protected $userIds;
 
   /**
    * Chat render array
@@ -56,30 +56,31 @@ class VoprosChat {
       'active' => TRUE,
       'welcome message' => '',
     );
+
+    $this->options = $options;
+
     // Channel name should be filtered, but make sure.
     $this->channel = preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
 
     // Check if chat channel exists.
     if (!nodejs_get_check_channel($this->channel)) {
       // It doesn't, so try to add it.
-      if (nodejs_get_add_channel($this->channel)) {
-        drupal_set_message(t('Chat channel created successfully'));
-      }
-      // In case of error, let the caller know.
-      // @todo this is broken, you cannot return false from a constructor.
-      else {
-        drupal_set_message(t("The Chat channel couldn\'t be created"), 'error');
-        return FALSE;
+      if (!nodejs_get_add_channel($this->channel)) {
+        $this->error = TRUE;
       }
     }
-
-    $this->options = $options;
   }
 
   /**
    * Wrapper function to call sequential steps to render a functional chat.
    */
   public function render() {
+    if ($this->error) {
+      $error = array(
+        '#markup' => t('There was an error trying to start the chat. Please try again later.'),
+      );
+      return drupal_render($error);
+    }
     // Generate form.
     $this->form = $this->renderArray();
     // Add assets to the page.
