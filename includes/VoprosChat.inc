@@ -43,13 +43,18 @@ class VoprosChat {
    *   The name of the channel to open.
    * @param array $options
    *   Options for this chat. Keys used:
-   *   'title': The title for the fieldset.
-   *   'active': Whether the chat is rendered active.
+   *   'title':
+   *     The title for the fieldset.
+   *   'active':
+   *     Whether the chat is rendered active.
+   *   'welcome message':
+   *     Message printed at top of chat.
    */
   public function __construct($channel, $options = array()) {
     $options += array(
       'title' => 'Vopros Chat',
       'active' => TRUE,
+      'welcome message' => '',
     );
     // Channel name should be filtered, but make sure.
     $this->channel = preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
@@ -113,6 +118,7 @@ class VoprosChat {
       $path = drupal_get_path('module', 'vopros_chat') . '/templates';
       $form['vopros_chat']['chat_log'] = array(
         '#log' => vopros_chat_log_load($question_id),
+        '#welcome_message' => $this->options['welcome message'],
         '#path' => $path,
         '#template' => 'vopros-chat-log-activity-feed-items',
         '#theme' => 'vopros_chat_log_activity_feed_items',

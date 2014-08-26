@@ -5,6 +5,13 @@
  */
 global $user;
 ?>
+<?php if (!empty($variables['log_items']['#welcome_message'])) : ?>
+<div class="vopros-chat-message">
+  <div class="message-content">
+    <span class="message-text"><?php echo $variables['log_items']['#welcome_message'] ?></span>
+  </div>
+</div>
+<?php endif; ?>
 <?php foreach ($variables['log_items']['#log'] as $item): ?>
 <div class="vopros-chat-message">
   <div class="message-content">

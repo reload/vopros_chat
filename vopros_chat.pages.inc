@@ -96,8 +96,16 @@ function vopros_chat_add_chat_js($question) {
     $question->save();
   }
 
-  // Using user name as title.
-  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question->question_id), array('title' => $question->user_name));
+  $options = array(
+    // Using user name as title.
+    'title' => $question->user_name,
+    // Ensure that the email of the user is part of the welcome message.
+    'welcome message' => check_plain(t('Talking to @name <@mail>', array(
+                         '@name' => $question->user_name,
+                         '@mail' => $question->user_email,
+                       ))),
+  );
+  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question->question_id), $options);
 
   $chat_box = array(
     '#prefix' => '<div id="vopros-chat-admin-' . $question->question_id . '" class="vopros-chat-admin">',
