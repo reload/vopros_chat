@@ -15,7 +15,11 @@ function vopros_chat_client_page($question_id, $chat_hash) {
     return drupal_access_denied();
   }
 
-  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question_id), 'Chat', in_array($question->question_status, array('new', 'active')));
+  $options = array(
+    'title' => 'Chat',
+    'active' => in_array($question->question_status, array('new', 'active')),
+  );
+  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question_id), $options);
   return $chat->render();
 }
 
@@ -77,7 +81,7 @@ function vopros_chat_channels_js() {
 /**
  * Ajax page callback.
  *
- * Add a channel to the page..
+ * Add a channel to the page.
  */
 function vopros_chat_add_chat_js($question) {
   global $user;
@@ -93,7 +97,7 @@ function vopros_chat_add_chat_js($question) {
   }
 
   // Using user name as title.
-  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question->question_id), $question->user_name);
+  $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question->question_id), array('title' => $question->user_name));
 
   $chat_box = array(
     '#prefix' => '<div id="vopros-chat-admin-' . $question->question_id . '" class="vopros-chat-admin">',

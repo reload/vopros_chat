@@ -10,9 +10,9 @@
 class VoprosChat {
 
   /**
-   * Chat Name. Human name to be displayed as markup (e.g the chat Title).
+   * Options for this chat.
    */
-  protected $name;
+  protected $options;
 
   /**
    * A chat needs at least a channel to (send / receive) messages (to / from).
@@ -38,8 +38,19 @@ class VoprosChat {
 
   /**
    * Basic constructor, just with the socket.io channel assigned.
+   *
+   * @param string $channel
+   *   The name of the channel to open.
+   * @param array $options
+   *   Options for this chat. Keys used:
+   *   'title': The title for the fieldset.
+   *   'active': Whether the chat is rendered active.
    */
-  public function __construct($channel, $name = 'Vopros Chat', $active = TRUE) {
+  public function __construct($channel, $options = array()) {
+    $options += array(
+      'title' => 'Vopros Chat',
+      'active' => TRUE,
+    );
     // Channel name should be filtered, but make sure.
     $this->channel = preg_replace('/[^(_|a-zA-Z0-9)]/', '_', $channel);
 
@@ -57,10 +68,7 @@ class VoprosChat {
       }
     }
 
-    // Set the chat name.
-    $this->name = $name;
-
-    $this->active = $active;
+    $this->options = $options;
   }
 
   /**
@@ -89,7 +97,7 @@ class VoprosChat {
 
     $form['vopros_chat'] = array(
       '#type' => 'fieldset',
-      '#title' => $this->name,
+      '#title' => $this->options['title'],
       '#attributes' => array(
          // Assuming channel comes transliterated as a valid CSS ID.
         'id' => $this->channel,
@@ -130,7 +138,7 @@ class VoprosChat {
       );
     }
 
-    if ($this->active) {
+    if ($this->options['active']) {
       $form['vopros_chat']['chat_entry_box'] = array(
         '#type' => 'textarea',
         '#title' => t('Enter your message here:'),
@@ -151,7 +159,7 @@ class VoprosChat {
    * Add the assert needed to the page.
    */
   public function loadAssets() {
-    if ($this->active) {
+    if ($this->options['active']) {
       // Add JavaScript.
       drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js');
     }
