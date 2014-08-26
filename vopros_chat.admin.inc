@@ -76,6 +76,13 @@ function vopros_chat_setting_form($form, &$form_state) {
     '#default_value' => variable_get('vopros_chat_closed_message', 'Chat closed'),
   );
 
+  $form['vopros_chat_welcome_message'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Welcome message'),
+    '#description' => t('First message to the user when starting the chat.'),
+    '#default_value' => variable_get('vopros_chat_welcome_message', 'Welcome. Please wait.'),
+  );
+
   return system_settings_form($form);
 }
 
