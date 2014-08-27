@@ -83,6 +83,13 @@ function vopros_chat_setting_form($form, &$form_state) {
     '#default_value' => variable_get('vopros_chat_welcome_message', 'Welcome. Please wait.'),
   );
 
+  $form['vopros_chat_standard_messages'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Standard messages'),
+    '#description' => t('Standard messages in group|title|message format. Group can be left out.'),
+    '#default_value' => variable_get('vopros_chat_standard_messages', ''),
+  );
+
   return system_settings_form($form);
 }
 

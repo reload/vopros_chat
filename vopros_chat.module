@@ -315,8 +315,69 @@ function vopros_chat_theme() {
       'render element' => 'elements',
       'file' => 'vopros_chat.admin.inc',
     ),
+    'vopros_chat_standard_messages' => array(
+      'render element' => 'elements',
+    ),
+    'vopros_chat_standard_message' => array(
+      'variables' => array('title' => NULL, 'content' => NULL),
+    ),
   );
 }
+
+/**
+ * Returns HTML for standard messages.
+ */
+function theme_vopros_chat_standard_messages(&$variables) {
+  $element = &$variables['elements'];
+  if (empty($element['#messages'])) {
+    return '';
+  }
+
+  $output = theme('vopros_chat_standard_message', array('title' => t('Standard messages'), 'content' => $element['#messages']));
+
+  // #attached won't work here.
+  drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_standard_messages.js');
+
+  return $output;
+}
+
+/**
+ * Returns HTML for one standard message.
+ */
+function theme_vopros_chat_standard_message($variables) {
+  $rendered_content = '';
+  $sub_menu = FALSE;
+  if (is_array($variables['content'])) {
+    $sub_menu = TRUE;
+    $rendered_content = '<div class="content">';
+    foreach ($variables['content'] as $title => $content) {
+      $rendered_content .= theme('vopros_chat_standard_message', array('title' => $title, 'content' => $content));
+    }
+    $rendered_content .= '</div>';
+  }
+  else {
+    $rendered_content = ' - <span class="text">' . $variables['content'] . '</span>';
+  }
+  $output = '<div class="standard-message"><a class="' . ($sub_menu ? 'title' : 'message') . '" href=#>' . $variables['title'] . '</a>' . $rendered_content . '</div>';
+
+  return $output;
+}
+
+/**
+ * Implements hook_element_info().
+ */
+function vopros_chat_element_info() {
+  $types = array();
+
+  $types['standard_messages'] = array(
+    '#theme' => 'vopros_chat_standard_messages',
+    '#input' => FALSE,
+    '#messages' => array(),
+  );
+
+  return $types;
+}
+
 
 /**
  * Implements hook_views_default_views_alter().
@@ -783,4 +844,24 @@ function _vopros_chat_remove_search_api_field() {
       $indexes[$index_name]->save();
     }
   }
+}
+
+/**
+ * Standard messages for editors.
+ */
+function _vopros_chat_standard_messages() {
+  $text = variable_get('vopros_chat_standard_messages', '');
+  $messages = array();
+  foreach (explode("\n", $text) as $line) {
+    $parts = explode('|', trim($line));
+    if (count($parts) > 2) {
+      if (!empty($parts[0])) {
+        $messages[$parts[0]][$parts[1]] = $parts[2];
+      }
+      else {
+        $messages[$parts[1]] = $parts[2];
+      }
+    }
+  }
+  return $messages;
 }

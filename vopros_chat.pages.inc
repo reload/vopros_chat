@@ -107,6 +107,7 @@ function vopros_chat_add_chat_js($question) {
                          '@mail' => $question->user_email,
                        ))),
     'log' => vopros_chat_log_load($question->question_id),
+    'standard messages' => _vopros_chat_standard_messages(),
   );
   $chat = new VoprosChat(vopros_chat_get_channel_name_from_question_id($question->question_id), $options);
 

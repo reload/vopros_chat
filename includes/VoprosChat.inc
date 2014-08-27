@@ -140,6 +140,12 @@ class VoprosChat {
     );
 
     if ($this->options['active']) {
+      $form['vopros_chat']['messages'] = array(
+        '#type' => 'standard_messages',
+        '#title' => t('Standard messages'),
+        '#messages' => $this->options['standard messages'],
+      );
+
       $form['vopros_chat']['chat_entry_box'] = array(
         '#type' => 'textarea',
         '#title' => t('Enter your message here:'),
