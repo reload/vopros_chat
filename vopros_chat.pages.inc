@@ -31,6 +31,14 @@ function vopros_chat_client_page($question_id, $chat_hash) {
  * Render the admin page.
  */
 function vopros_chat_admin_page() {
+  // Check that server is running, and try to start it if it's not the case.
+  if (!_vopros_chat_server_running()) {
+    // Use flood control.
+    if (flood_is_allowed('vopros_chat_start_server', 3, 300, 'server')) {
+      _vopros_chat_start_stop_server(TRUE, 'daemon', 'shell_exec');
+      flood_register_event('vopros_chat_start_server', 300, 'server');
+    }
+  }
   $build = array(
     '#theme' => 'vopros_chat_admin_page',
     '#attached' => array(

@@ -5,6 +5,8 @@
  * Vopros chat module.
  */
 
+define('VOPROS_CHAT_PIDFILE', '/tmp/vopros_chat.pid');
+
 include_once 'vopros_chat.features.inc';
 
 /**
@@ -864,4 +866,77 @@ function _vopros_chat_standard_messages() {
     }
   }
   return $messages;
+}
+
+/**
+ * Check whether the server is running.
+ */
+function _vopros_chat_server_running() {
+  if (file_exists(VOPROS_CHAT_PIDFILE) &&
+    $pid = trim(file_get_contents(VOPROS_CHAT_PIDFILE))) {
+    // Kill -0 doesn't actually send a signal, but does all the preflight
+    // checking. So it'll check that the process is running and that we're
+    // allowed to signal it.
+    exec('kill 2>&1 -0 ' . escapeshellarg($pid), $output, $return_code);
+    if ($return_code == 0) {
+      // Success, all good.
+      return TRUE;
+    }
+    elseif (strpos(implode("\n", $output), 'not permitted')) {
+      // Failure, but the output indicated that we're not allowed to signal the
+      // process, which means that it's runnning. So we'll call that a success
+      // too.
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Start or stop the server.
+ */
+function _vopros_chat_start_stop_server($start = TRUE, $method = 'node', $exec = 'shell_exec', $debug = FALSE) {
+  $node_bin = '/usr/bin/node';
+  // Stop implies daemon.
+  if ($method == 'daemon' || !$start) {
+    $node_bin = '/sbin/start-stop-daemon --' . ($start ? 'start' : 'stop') .
+      ' --oknodo --make-pidfile --pidfile ' .
+      escapeshellarg(VOPROS_CHAT_PIDFILE) . ' ' .
+      ($start ? '--background' : '') . ' --exec ' . $node_bin . ' -- ';
+  }
+  elseif ($method == 'nodemon') {
+    $node_bin = 'nodemon';
+  }
+
+  $nodejs_path = getcwd() . '/' . drupal_get_path('module', 'nodejs');
+  $vopros_chat_path = getcwd() . '/' . drupal_get_path('module', 'vopros_chat');
+
+  $old_dir = getcwd();
+  chdir(drupal_get_path('module', 'vopros_chat') . '/server');
+  $config_file = vopros_chat_create_chat_config();
+
+  $command_parts = array();
+
+  if ($debug) {
+    $command_parts[] = 'DEBUG=*';
+  }
+
+  $command_parts[] = 'NODE_PATH=' .
+    escapeshellarg($vopros_chat_path . '/server/node_modules');
+
+  $command_parts[] = $node_bin;
+  $command_parts[] = escapeshellarg($nodejs_path . '/server.js');
+  $command_parts[] = escapeshellarg($config_file);
+
+  $command = implode(' ', $command_parts);
+
+  $exec($command);
+
+  chdir($old_dir);
+  if (!$start) {
+    // start-stop-daemon doesn't remove the pid file when stopping, so we do.
+    unlink('/tmp/vopros_chat.pid');
+  }
+
+  return $command;
 }
