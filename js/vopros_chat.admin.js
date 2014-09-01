@@ -201,6 +201,30 @@
     }
   };
 
+  /**
+   * Behavior to show loading bar.
+   */
+  Drupal.behaviors.voprosChatAdminServerLoading = {
+    attach: function() {
+      $('.vopros-chat-server-loading').each(function () {
+        // Create a progress bar that fills over 5 seconds and then
+        // reload the page. Should give the server enuogh time to boot
+        // up.
+        var progress = 0;
+        var progressBar = new Drupal.progressBar('vopros-chat-server-loading');
+        $(this).append(progressBar.element);
+        progressBar.setProgress(-1, Drupal.t('Starting server, one moment please.'));
+        setInterval(function () {
+          progress = progress + 1;
+          progressBar.setProgress(progress * 2);
+          if (progress >= 50) {
+            window.location.reload();
+          }
+        }, 100);
+      });
+    }
+  };
+
   Drupal.Nodejs.connectionSetupHandlers.voprosChatAdmin = {
     connect: function() {
       // Update the channel listing when nodejs (re)connects.
