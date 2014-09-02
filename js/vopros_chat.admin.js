@@ -214,10 +214,11 @@
         var progressBar = new Drupal.progressBar('vopros-chat-server-loading');
         $(this).append(progressBar.element);
         progressBar.setProgress(-1, Drupal.t('Starting server, one moment please.'));
-        setInterval(function () {
+        var interval = setInterval(function () {
           progress = progress + 1;
           progressBar.setProgress(progress * 2);
           if (progress >= 50) {
+            clearInterval(interval);
             window.location.reload();
           }
         }, 100);
