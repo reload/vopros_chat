@@ -3,3 +3,38 @@
   width: 50%;
   float: left;
 }
+
+/* Standard messages. */
+
+.standard-group {
+  border: 1px solid #ccc;
+  padding: 0 0 0 0; /* LTR */
+}
+
+.standard-group .standard-group {
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin-top: 0.5em;
+}
+
+.standard-group a {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #0074BD;
+  text-decoration: none;
+}
+
+.standard-group .title {
+  display: block;
+  width: 100%;
+  text-indent: 17px;
+  padding: 0.5em 0;
+}
+
+.standard-message {
+  padding: 0.5em 0;
+}
+
+.standard-message .message {
+  margin-left: 17px;
+}

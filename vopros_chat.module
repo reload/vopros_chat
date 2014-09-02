@@ -360,7 +360,7 @@ function theme_vopros_chat_standard_message($variables) {
   else {
     $rendered_content = ' - <span class="text">' . $variables['content'] . '</span>';
   }
-  $output = '<div class="standard-message"><a class="' . ($sub_menu ? 'title' : 'message') . '" href=#>' . $variables['title'] . '</a>' . $rendered_content . '</div>';
+  $output = '<div class="standard-' . ($sub_menu ? 'group' : 'message') . '"><a class="' . ($sub_menu ? 'title' : 'message') . '" href=#>' . $variables['title'] . '</a>' . $rendered_content . '</div>';
 
   return $output;
 }
