@@ -58,10 +58,16 @@
       if (message.refresh) {
         $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
       }
-
       // Notify admins of the joined user.
-      if (message.notification) {
-        notify(message.notification);
+      if (typeof message.notification !== 'undefined') {
+        try {
+          notify(message.notification);
+        }
+        catch (e) {
+          if (console) {
+            console.dir(e);
+          }
+        }
       }
 
       $('span[data-channel-name=' + message.channel_name + ']').each(function () {
