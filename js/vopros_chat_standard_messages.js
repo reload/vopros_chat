@@ -2,7 +2,7 @@
 (function ($) {
   Drupal.behaviors.voprosChatStandardMessages = {
     attach: function (context, settings) {
-      $('.standard-message').once('standard-message-processed', function() {
+      $('.standard-message').once('standard-message', function() {
         var content = $('> .content', $(this));
         content.hide();
         $('> .title', $(this)).click(function (e) {
