@@ -33,7 +33,7 @@ function vopros_chat_client_page($question_id, $chat_hash) {
 function vopros_chat_admin_page() {
   // Check that server is running, and try to start it if it's not the case, but
   // only if start-stop-daemon is available.
-  if (file_exists('/sbin/start-stop-daemon') || !_vopros_chat_server_running()) {
+  if (file_exists('/sbin/start-stop-daemon') && !_vopros_chat_server_running()) {
     // Use flood control.
     if (flood_is_allowed('vopros_chat_start_server', 3, 300, 'server')) {
       _vopros_chat_start_stop_server(TRUE, 'daemon', 'shell_exec');
