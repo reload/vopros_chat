@@ -17,6 +17,8 @@
         $('.vopros-chat-status-radio').attr('disabled', false);
         // And remove the form-disabled class.
         $('.vopros-chat-status-radio').parents('.form-type-radio').removeClass('form-disabled');
+        // Add "disabled" class to support IE8.
+        $('.vopros-chat-status-radio').parents().removeClass('disabled_answer_type');
         // Ensure the submit button is enabled.
         $('.chat-submit').attr('disabled', false);
       }
@@ -24,6 +26,7 @@
         // Do the reverse of the above.
         $('.vopros-chat-status-radio').attr('disabled', true);
         $('.vopros-chat-status-radio').parents('.form-type-radio').addClass('form-disabled');
+        $('.vopros-chat-status-radio').parents().addClass('disabled_answer_type');
         $('.chat-submit').attr('disabled', true);
       }
     }
