@@ -125,7 +125,7 @@ class VoprosChat {
       '#theme' => 'vopros_chat_log_activity_feed_items',
       '#prefix' => '<div class="chat-log" id="chat-log-' . $this->channel . '">',
       '#suffix' => '</div>',
-      '#question' => vopros_question_load($question_id),
+      '#question' => vopros_question_load($this->options['question_id']),
       '#pre_render' => array('vopros_chat_log_activity_feed_items_pre_render'),
       '#attached' => array(
         'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css'),
