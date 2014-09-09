@@ -33,6 +33,9 @@ exports.setup = function (config) {
   // Val from setInterval().
   var ticker;
 
+  // Keep track of the names of the user from sockets.
+  var nicks = {};
+
   /**
    * Send status updates to admins.
    */
@@ -276,6 +279,9 @@ exports.setup = function (config) {
           return false;
         }
 
+        // Note user for later.
+        nicks[sessionId] = message.data.user;
+
         addClientToChannel(sessionId, message.channel);
 
         if (config.channels.hasOwnProperty(message.channel)) {
@@ -367,6 +373,18 @@ exports.setup = function (config) {
     hashish(config.channels).forEach(function (channel, channelId) {
       if (hashish(channel.sessionIds).has(sessionId)) {
         updateChannels.push(channelId);
+        // Send part message to channel.
+        var msg = {
+          type: 'vopros_chat',
+          action: 'chat_part',
+          channel: channelId,
+          callback: 'voprosChatUserOfflineHandler',
+          data: {
+            user: nicks[sessionId]
+          }
+        };
+
+        publishMessageToChannel(msg);
       }
     });
 
