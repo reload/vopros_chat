@@ -394,9 +394,15 @@ exports.setup = function (config) {
     if (message.type === 'vopros_chat' && message.action === 'chat_close') {
       if (config.channels.hasOwnProperty(message.channel)) {
         config.channels[message.channel].timestamp = (new Date()).getTime();
-        // Boot all users from the channel.
+        // The lack of last_timestamp triggers a channel refresh by
+        // sendadminstatusupdate().
+        delete config.channels[message.channel].last_timestamp;
+        // Boot all users from the channel. This ensures that they're
+        // not counted as in queue.
         for (var clientId in config.channels[message.channel].sessionIds) {
-          delete config.channels[message.channel].sessionIds[clientId];
+          if (config.channels[message.channel].sessionIds.hasOwnProperty(clientId)) {
+            delete config.channels[message.channel].sessionIds[clientId];
+          }
         }
       }
       sendAdminStatusUpdate();
