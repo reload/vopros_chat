@@ -46,8 +46,9 @@
       var current = timestamp();
       var offset = current - parseFloat($(this).attr('data-timestamp'));
       var idle = Math.floor(parseFloat($(this).attr('data-idle')) + offset);
+      var text = $(this).attr('data-idle-text');
 
-      $(this).text('Idle: ' + idleString(idle));
+      $(this).text(text + idleString(idle));
     });
     timer = window.setTimeout(updateCallback, 1000);
   };
@@ -72,7 +73,7 @@
 
       $('span[data-channel-name=' + message.channel_name + ']').each(function () {
         // Only show counter for channels with users in it and no admin users.
-        if (message.users > 0 && message.admin_users < 1) {
+        if (message.admin_users < 1 || message.users === message.admin_users) {
           activeChannels[message.channel_name] = message.channel_name;
 
           var idle = Math.floor(message.ref_time - message.timestamp);
@@ -81,7 +82,9 @@
           $(this).attr('data-timestamp', timestamp());
           $(this).attr('data-idle', idle);
 
-          $(this).text('Idle: ' + idleString(idle));
+          var text = message.users > message.admin_users ?
+            'Idle: ' : 'User offline: ';
+          $(this).attr('data-idle-text', text);
         }
         else {
           delete activeChannels[message.channel_name];
@@ -93,7 +96,6 @@
             $(this).text(Drupal.t('Empty'));
           }
         }
-
       });
 
       // Check if there's any active channels and start/stop the
@@ -102,6 +104,7 @@
       for (var key in activeChannels) {
         if (activeChannels.hasOwnProperty(key)) {
           wantTicker = true;
+          updateCallback();
           break;
         }
       }

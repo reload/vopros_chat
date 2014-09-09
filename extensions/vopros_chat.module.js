@@ -367,12 +367,9 @@ exports.setup = function (config) {
   process.on('client-disconnect', function (sessionId) {
     // Update status for all channels this connection was part of
     // (should really just be one).
-
-    var updateChannels = [];
-
     hashish(config.channels).forEach(function (channel, channelId) {
       if (hashish(channel.sessionIds).has(sessionId)) {
-        updateChannels.push(channelId);
+        channel.timestamp = (new Date()).getTime();
         // Send part message to channel.
         var msg = {
           type: 'vopros_chat',
@@ -391,7 +388,7 @@ exports.setup = function (config) {
     // Send the updates after completion of this tick, to give
     // cleanupSocket time to remove the socket from the channels.
     process.nextTick(
-      function(channels) {
+      function() {
         sendStatus();
         sendAdminStatusUpdate();
 
