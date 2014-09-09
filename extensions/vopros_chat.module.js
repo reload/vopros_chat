@@ -395,6 +395,10 @@ exports.setup = function (config) {
     if (message.type === 'vopros_chat' && message.action === 'chat_close') {
       if (config.channels.hasOwnProperty(message.channel)) {
         config.channels[message.channel].timestamp = (new Date()).getTime();
+        // Boot all users from the channel.
+        for (var clientId in config.channels[message.channel].sessionIds) {
+          delete config.channels[message.channel].sessionIds[clientId];
+        }
       }
       sendAdminStatusUpdate();
     }
