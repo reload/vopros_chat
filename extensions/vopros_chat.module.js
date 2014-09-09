@@ -51,18 +51,17 @@ exports.setup = function (config) {
       }
 
       if (hashish(channel).has('timestamp')) {
-        if (hashish(channel.sessionIds).length > 0) {
-          channels++;
-        }
-
         if (config.channels[adminChannel]) {
           adminUsers = hashish(channel.sessionIds).filter(function (sessionId) {
             return hashish(config.channels[adminChannel].sessionIds).has(sessionId);
           }).length;
         }
 
-        if (hashish(channel.sessionIds).length > 0 && adminUsers < 1) {
-          inQueue++;
+        if (hashish(channel.sessionIds).length > 0) {
+          channels++;
+          if (adminUsers < 1) {
+            inQueue++;
+          }
         }
 
         // Only send channel status updates when there's anyone listening.
