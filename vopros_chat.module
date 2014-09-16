@@ -872,6 +872,17 @@ function _vopros_chat_standard_messages() {
  * Check whether the server is running.
  */
 function _vopros_chat_server_running() {
+  // Starting the server by hand doesn't create the pid file, so we check if
+  // there's a drush command in the process list which runs the server start
+  // command.
+  exec('ps xa', $output);
+  foreach ($output as $line) {
+    if (strpos($line, 'drush') !== FALSE &&
+      strpos($line, 'vopros-chat-start') !== FALSE) {
+      return TRUE;
+    }
+  }
+
   if (file_exists(VOPROS_CHAT_PIDFILE) &&
     $pid = trim(file_get_contents(VOPROS_CHAT_PIDFILE))) {
     // Kill -0 doesn't actually send a signal, but does all the preflight
