@@ -12,7 +12,7 @@ include_once 'vopros_chat.features.inc';
 /**
  * Implements hook_modules_enabled().
  *
- * Add chat session to search index, when vopros_chat is enabled.
+ * Add chat session to search index, when vopros_search is enabled.
  */
 function vopros_chat_modules_enabled($modules) {
   if (in_array('vopros_search', $modules)) {
@@ -23,7 +23,7 @@ function vopros_chat_modules_enabled($modules) {
 /**
  * Implements hook_modules_disabled().
  *
- * Remove chat session from search index, when vopros_chat is enabled.
+ * Remove chat session from search index, when vopros_search is enabled.
  */
 function vopros_chat_modules_disabled($modules) {
   if (in_array('vopros_search', $modules)) {
@@ -378,36 +378,6 @@ function vopros_chat_element_info() {
   );
 
   return $types;
-}
-
-
-/**
- * Implements hook_views_default_views_alter().
- *
- * On unmodified Question List views we filter out chat questions.
- *
- * If you don't want this filtered set the variable
- * 'vopros_chat_filter_question_list' to FALSE. No need to override the view
- * just for this.
- *
- * Overridden views will be changed on hook_enable().
- *
- * @see vopros_chat_enable()
- */
-function vopros_chat_views_default_views_alter(&$views) {
-  $enabled = variable_get('vopros_chat_filter_question_list', TRUE);
-
-  if ($enabled && isset($views['vopros_question_list'])) {
-    $filter = array(
-      'operator' => '!=',
-      'value' => 'chat',
-    );
-
-    foreach ($views['vopros_question_list']->display as $display) {
-      $views['vopros_question_list']->add_item($display->display_plugin, 'filter', 'vopros_question', 'user_answer_preference', $filter, 'vopros_chat_filter');
-    }
-  }
-
 }
 
 /**
