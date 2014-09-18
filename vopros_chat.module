@@ -39,7 +39,7 @@ function vopros_chat_modules_disabled($modules) {
  */
 function vopros_chat_init() {
   if (user_access('answer vopros chats')) {
-    drupal_add_js(array('vopros_chat' => array('chat_path' => url('admin/vopros/questions/chat'))), 'setting');
+    drupal_add_js(array('vopros_chat' => array('chat_path' => url('admin/vopros/chat'))), 'setting');
     drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_admin_status.js');
   }
 }
@@ -60,16 +60,15 @@ function vopros_chat_menu() {
     'delivery callback' => 'vopros_embed_deliver_html_page',
   );
 
-  $items['admin/vopros/questions/chat'] = array(
-    'title' => 'Chat question list',
+  $items['admin/vopros/chat'] = array(
+    'title' => 'Chat questions',
     'page callback' => 'vopros_chat_admin_page',
     'page arguments' => array(),
     'access callback' => 'vopros_chat_access',
     'file' => 'vopros_chat.pages.inc',
-    'type' => MENU_LOCAL_TASK,
   );
 
-  $items['admin/vopros/questions/chat/channels'] = array(
+  $items['admin/vopros/chat/channels'] = array(
     'title' => 'AHAH callback',
     'page callback' => 'vopros_chat_channels_js',
     'delivery callback' => 'ajax_deliver',
@@ -79,7 +78,7 @@ function vopros_chat_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items['admin/vopros/questions/chat/add/%vopros_question'] = array(
+  $items['admin/vopros/chat/add/%vopros_question'] = array(
     'title' => 'AHAH callback',
     'page callback' => 'vopros_chat_add_chat_js',
     'page arguments' => array(5),

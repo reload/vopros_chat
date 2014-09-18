@@ -131,7 +131,7 @@
         }
         var base = $(this).attr('id');
         var elementSettings = {
-          url: '/admin/vopros/questions/chat/channels',
+          url: Drupal.settings.vopros_chat.chat_path + '/channels',
           event: 'vopros-chat-admin-refresh-channels',
           progress: {
             type: 'throbber'
@@ -162,7 +162,7 @@
           no_link.hide();
           $(this).after(no_link);
           var elementSettings = {
-            url: '/admin/vopros/questions/chat/add/' + questionId,
+            url: Drupal.settings.vopros_chat.chat_path + '/add/' + questionId,
             event: 'click',
             progress: {
               type: 'throbber'
