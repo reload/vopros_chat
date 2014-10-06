@@ -36,10 +36,10 @@ function vopros_chat_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
     'question_id' => 'question_id',
-    'question_status_reason' => 'question_status_reason',
-    'question_title' => 'question_title',
-    'qanda_service_name' => 'qanda_service_name',
+    'user_name' => 'user_name',
+    'label' => 'label',
     'created' => 'created',
+    'chat_status' => 'chat_status',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
@@ -50,21 +50,14 @@ function vopros_chat_views_default_views() {
       'separator' => '',
       'empty_column' => 0,
     ),
-    'question_status_reason' => array(
+    'user_name' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
     ),
-    'question_title' => array(
-      'sortable' => 0,
-      'default_sort_order' => 'asc',
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 0,
-    ),
-    'qanda_service_name' => array(
+    'label' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
@@ -78,8 +71,13 @@ function vopros_chat_views_default_views() {
       'separator' => '',
       'empty_column' => 0,
     ),
+    'chat_status' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
   );
-  /* Footer: Spørgsmål: Views Count */
+  /* Footer: Question: Views Count */
   $handler->display->display_options['footer']['views_count']['id'] = 'views_count';
   $handler->display->display_options['footer']['views_count']['table'] = 'vopros_question';
   $handler->display->display_options['footer']['views_count']['field'] = 'views_count';
@@ -90,52 +88,59 @@ function vopros_chat_views_default_views() {
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
   $handler->display->display_options['empty']['area']['content'] = 'Ingen aktive chats.';
   $handler->display->display_options['empty']['area']['format'] = 'wysiwyg';
-  /* Relationship: Spørgsmål: Feedback */
+  /* Relationship: Question: Feedback */
   $handler->display->display_options['relationships']['feedback_question_id']['id'] = 'feedback_question_id';
   $handler->display->display_options['relationships']['feedback_question_id']['table'] = 'vopros_question';
   $handler->display->display_options['relationships']['feedback_question_id']['field'] = 'feedback_question_id';
-  /* Field: Spørgsmål: Spørgsmål ID */
+  /* Relationship: Question: Question client */
+  $handler->display->display_options['relationships']['client_id']['id'] = 'client_id';
+  $handler->display->display_options['relationships']['client_id']['table'] = 'vopros_question';
+  $handler->display->display_options['relationships']['client_id']['field'] = 'client_id';
+  /* Field: Question: Question ID */
   $handler->display->display_options['fields']['question_id']['id'] = 'question_id';
   $handler->display->display_options['fields']['question_id']['table'] = 'vopros_question';
   $handler->display->display_options['fields']['question_id']['field'] = 'question_id';
   $handler->display->display_options['fields']['question_id']['exclude'] = TRUE;
   $handler->display->display_options['fields']['question_id']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['question_id']['separator'] = '';
-  /* Field: Spørgsmål: User_name */
+  /* Field: Question: User_name */
   $handler->display->display_options['fields']['user_name']['id'] = 'user_name';
   $handler->display->display_options['fields']['user_name']['table'] = 'vopros_question';
   $handler->display->display_options['fields']['user_name']['field'] = 'user_name';
   $handler->display->display_options['fields']['user_name']['label'] = 'Name';
   $handler->display->display_options['fields']['user_name']['alter']['make_link'] = TRUE;
   $handler->display->display_options['fields']['user_name']['alter']['path'] = 'admin/vopros/questions/[question_id]';
-  /* Field: Spørgsmål: Qanda_service_name */
-  $handler->display->display_options['fields']['qanda_service_name']['id'] = 'qanda_service_name';
-  $handler->display->display_options['fields']['qanda_service_name']['table'] = 'vopros_question';
-  $handler->display->display_options['fields']['qanda_service_name']['field'] = 'qanda_service_name';
-  $handler->display->display_options['fields']['qanda_service_name']['label'] = 'Received from';
-  $handler->display->display_options['fields']['qanda_service_name']['element_label_colon'] = FALSE;
-  /* Field: Spørgsmål: Created */
+  /* Field: Client: Label */
+  $handler->display->display_options['fields']['label']['id'] = 'label';
+  $handler->display->display_options['fields']['label']['table'] = 'vopros_question_client';
+  $handler->display->display_options['fields']['label']['field'] = 'label';
+  $handler->display->display_options['fields']['label']['relationship'] = 'client_id';
+  $handler->display->display_options['fields']['label']['label'] = 'Received from';
+  $handler->display->display_options['fields']['label']['element_label_colon'] = FALSE;
+  /* Field: Question: Created */
   $handler->display->display_options['fields']['created']['id'] = 'created';
   $handler->display->display_options['fields']['created']['table'] = 'vopros_question';
   $handler->display->display_options['fields']['created']['field'] = 'created';
   $handler->display->display_options['fields']['created']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['created']['date_format'] = 'short';
-  /* Field: Spørgsmål: Chat status */
+  /* Field: Question: Chat status */
   $handler->display->display_options['fields']['chat_status']['id'] = 'chat_status';
   $handler->display->display_options['fields']['chat_status']['table'] = 'vopros_question';
   $handler->display->display_options['fields']['chat_status']['field'] = 'chat_status';
-  /* Sort criterion: Spørgsmål: Created */
+  /* Sort criterion: Question: Created */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'vopros_question';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Filter criterion: Spørgsmål: User_answer_preference */
+  /* Filter criterion: Question: User_answer_preference */
   $handler->display->display_options['filters']['user_answer_preference']['id'] = 'user_answer_preference';
   $handler->display->display_options['filters']['user_answer_preference']['table'] = 'vopros_question';
   $handler->display->display_options['filters']['user_answer_preference']['field'] = 'user_answer_preference';
-  $handler->display->display_options['filters']['user_answer_preference']['value'] = 'chat';
+  $handler->display->display_options['filters']['user_answer_preference']['value'] = array(
+    'chat' => 'chat',
+  );
   $handler->display->display_options['filters']['user_answer_preference']['group'] = 1;
-  /* Filter criterion: Spørgsmål: Question_status */
+  /* Filter criterion: Question: Question_status */
   $handler->display->display_options['filters']['question_status']['id'] = 'question_status';
   $handler->display->display_options['filters']['question_status']['table'] = 'vopros_question';
   $handler->display->display_options['filters']['question_status']['field'] = 'question_status';
@@ -162,7 +167,8 @@ function vopros_chat_views_default_views() {
     t('last »'),
     t('Ingen aktive chats.'),
     t('question'),
-    t('Spørgsmål ID'),
+    t('Question client'),
+    t('Question ID'),
     t('.'),
     t('Name'),
     t('Received from'),
