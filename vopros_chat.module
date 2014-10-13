@@ -81,7 +81,7 @@ function vopros_chat_menu() {
   $items['admin/vopros/chat/add/%vopros_question'] = array(
     'title' => 'AHAH callback',
     'page callback' => 'vopros_chat_add_chat_js',
-    'page arguments' => array(5),
+    'page arguments' => array(4),
     'delivery callback' => 'ajax_deliver',
     'access arguments' => array('answer vopros chats'),
     'theme callback' => 'ajax_base_page_theme',
