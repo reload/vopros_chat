@@ -385,20 +385,22 @@ function vopros_chat_element_info() {
  * Return renderable activity feed item for chat logs.
  */
 function vopros_chat_vopros_question_activity_feed($question, &$feed) {
-  $feed['vopros_chat_' . $question->question_id] = array(
-    '#weight' => 1,
-    'log_items' => array(
+  if ($question->channel == 'chat') {
+    $feed['vopros_chat_' . $question->question_id] = array(
       '#weight' => 1,
-      '#log' => vopros_chat_log_load($question->question_id),
-      '#theme' => 'vopros_chat_log_activity_feed_items',
-      '#pre_render' => array('vopros_chat_log_activity_feed_items_pre_render'),
-    ),
-    '#question' => vopros_question_load($question->question_id),
-    '#theme' => 'vopros_chat_log_activity_feed',
-    '#attached' => array(
-      'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css'),
-    ),
-  );
+      'log_items' => array(
+        '#weight' => 1,
+        '#log' => vopros_chat_log_load($question->question_id),
+        '#theme' => 'vopros_chat_log_activity_feed_items',
+        '#pre_render' => array('vopros_chat_log_activity_feed_items_pre_render'),
+      ),
+      '#question' => vopros_question_load($question->question_id),
+      '#theme' => 'vopros_chat_log_activity_feed',
+      '#attached' => array(
+        'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.css'),
+      ),
+    );
+  }
 }
 
 /**
