@@ -473,6 +473,18 @@ function vopros_chat_log_load($question_id) {
 }
 
 /**
+ * Render a chat log in plain text.
+ */
+function vopros_chat_log_render_plain($log) {
+  global $user;
+  $plain = array();
+  foreach ($log as $item) {
+    $plain[] = format_date($item->timestamp, 'custom', 'G:i') . ' - ' . $item->name . ': ' . $item->msg;
+  }
+  return implode("\n", $plain);
+}
+
+/**
  * Implements hook_views_data_alter().
  *
  * Add an extra field to questions for chat status.
@@ -748,6 +760,11 @@ function vopros_chat_admin_chat_actions_button_callback($form, &$form_state) {
     // Change status.
     $question->question_status = $button['#question_status'];
     $question->question_status_reason = $button['#question_status_reason'];
+
+    // Copy the chat log to the question body field.
+    $log = vopros_chat_log_load($question->question_id);
+    $question->question_content = t('Chat log: ') . "\n" .
+      vopros_chat_log_render_plain($log);
 
     // The question is still open, change the answer preference to allow editors
     // to contact the user by mail later.
