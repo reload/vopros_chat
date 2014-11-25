@@ -59,10 +59,24 @@ function vopros_chat_setting_form($form, &$form_state) {
   }
 
   $form['vopros_chat_closed_message'] = array(
+    '#type' => 'textfield',
+    '#titel' => t('Closed message'),
+    '#description' => t('Text shown when the chat is closed.'),
+    '#default_value' => variable_get('vopros_chat_closed_message', 'Chat closed.'),
+  );
+
+  $form['vopros_chat_busy_message'] = array(
+    '#type' => 'textfield',
+    '#titel' => t('Busy message'),
+    '#description' => t('Text shown when the chat is busy.'),
+    '#default_value' => variable_get('vopros_chat_busy_message', 'Chat busy.'),
+  );
+
+  $form['vopros_chat_closing_message'] = array(
     '#type' => 'textarea',
     '#title' => t('Close message'),
     '#description' => t('Message sendt to the user when the editor closes the chat.'),
-    '#default_value' => variable_get('vopros_chat_closed_message', 'Chat closed'),
+    '#default_value' => variable_get('vopros_chat_closing_message', 'Chat closed'),
   );
 
   $form['vopros_chat_welcome_message'] = array(

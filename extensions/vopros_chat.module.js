@@ -218,7 +218,8 @@ exports.setup = function (config) {
     getDrupalStatus(function (drupalStatus) {
       var message = {
         'callback': 'voprosChatStatus',
-        'open': openStatus && drupalStatus
+        'open': openStatus && drupalStatus,
+        'drupal_open': drupalStatus
       };
 
       // Always use the last known status if explicitly requested.

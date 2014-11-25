@@ -1,0 +1,8 @@
+
+.chat-status-message {
+  background-image: url(../images/exclamation-circle.png);
+  background-repeat: no-repeat;
+  background-position: top left;
+  padding-left: 27px;
+  padding-top: 3px;
+}
