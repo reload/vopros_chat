@@ -20,7 +20,7 @@
         // Add "disabled" class to support IE8.
         $('.vopros-chat-status-radio').parents().removeClass('disabled_answer_type');
         // Ensure the submit button is enabled.
-        $('.chat-submit').attr('disabled', false).remove('disabled');
+        $('.chat-submit').attr('disabled', false).removeClass('disabled');
         $('.chat-status-message').hide();
       }
       else {
