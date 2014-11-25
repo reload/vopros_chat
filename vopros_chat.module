@@ -953,3 +953,20 @@ function _vopros_chat_start_stop_server($start = TRUE, $method = 'node', $exec =
 
   return $command;
 }
+
+/**
+ * Get chat username for authenticated users.
+ */
+function _vopros_chat_authenticated_user_name($user) {
+  $watch_name = variable_get('site_name', t('Watch'));
+  if (module_exists('profile2')) {
+    $profile = profile2_load_by_user($user, 'vopros_user_librarian');
+    if ($profile) {
+      $wrapper = entity_metadata_wrapper('profile2', $profile);
+      $name = $wrapper->vopros_user_first_name->value();
+      return format_string('@name (@watch)', array('@name' => $name, '@watch' => $watch_name));
+    }
+  }
+
+  return $watch_name;
+}

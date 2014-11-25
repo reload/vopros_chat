@@ -195,7 +195,7 @@ class VoprosChat {
     $current_user = array(
       'uid' => $user->uid,
       // @todo Customizable names for authenticated users?
-      'name' => $user->uid ? variable_get('site_name', t('Watch')) : $username,
+      'name' => $user->uid ? _vopros_chat_authenticated_user_name($user) : $username,
     );
     drupal_add_js(array('vopros_chat' => array('currentUser' => $current_user)), 'setting');
   }
