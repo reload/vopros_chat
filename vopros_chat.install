@@ -103,3 +103,11 @@ function vopros_chat_schema() {
 function vopros_chat_update_7001() {
   variable_del('vopros_chat_open');
 }
+
+/**
+ * Remove unused variable again, after we remembered to remove it from the
+ * configuration page.
+ */
+function vopros_chat_update_7002() {
+  variable_del('vopros_chat_open');
+}
