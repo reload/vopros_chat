@@ -731,6 +731,16 @@ function vopros_chat_admin_chat_actions($form, &$form_state, $question) {
       '#question_status' => 'closed',
       '#question_status_reason' => 'spam',
     );
+
+    $form['leave'] = array(
+      '#type' => 'submit',
+      '#value' => t('Leave'),
+      '#ajax' => array(
+        'callback' => 'vopros_chat_admin_chat_actions_button_callback',
+        'wrapper' => 'vopros-chat-admin-' . $question->question_id,
+      ),
+      '#leave' => TRUE,
+    );
   }
 
   return $form;
@@ -766,11 +776,13 @@ function vopros_chat_admin_chat_actions_button_later_callback($form, &$form_stat
  * Close question with specific state.
  *
  * @see vopros_chat_admin_chat_actions()
+ * @todo this needs a refactor. The logic of each button is getting hard to
+ *   follow.
  */
 function vopros_chat_admin_chat_actions_button_callback($form, &$form_state) {
   $button = $form_state['triggering_element'];
   $question = vopros_question_load($form_state['values']['question_id']);
-  if ($question) {
+  if ($question && !$button['#leave']) {
     // Change status.
     $question->question_status = $button['#question_status'];
     $question->question_status_reason = $button['#question_status_reason'];
