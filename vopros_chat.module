@@ -794,9 +794,14 @@ function vopros_chat_admin_chat_actions_button_callback($form, &$form_state) {
       $question->uid = 0;
     }
 
+    $title = '';
     if (isset($form_state['values']['title'])) {
-      $question->question_title = $form_state['values']['title'];
+      $title = trim($form_state['values']['title']);
     }
+    if (!empty($title)) {
+      $question->question_title = $title;
+    }
+
     $question->save();
 
     // Send message to the client to disable input.
