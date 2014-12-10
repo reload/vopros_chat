@@ -1,5 +1,5 @@
 
-.chat-status-message {
+.chat-status-message.default-icon {
   background-image: url(../images/exclamation-circle.png);
   background-repeat: no-repeat;
   background-position: top left;

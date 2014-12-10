@@ -7,6 +7,13 @@
 /* global jQuery, Drupal */
 
 (function ($) {
+
+  /**
+   * Theme function for rendering the extend status info.
+   */
+  Drupal.theme.prototype.voprosChatStatus = function (vars) {
+    return $('<p class="default-icon">').html(vars.text);
+  };
   /**
    * Nodejs callback to update the chat status.
    */
@@ -30,13 +37,14 @@
         $('.vopros-chat-status-radio').parents().addClass('disabled_answer_type');
         $('.chat-submit').attr('disabled', true).addClass('disabled');
         var status_message = $('.chat-status-message');
+        var vars = {};
         if (message.drupal_open) {
-          status_message.text(Drupal.settings.vopros_chat.busy_message);
+          vars.text = Drupal.settings.vopros_chat.busy_message;
         }
         else {
-          status_message.text(Drupal.settings.vopros_chat.closed_message);
+          vars.text = Drupal.settings.vopros_chat.closed_message;
         }
-        $('.chat-status-message').show();
+        $('.chat-status-message').replaceWith(Drupal.theme('voprosChatStatus', vars).addClass('chat-status-message'));
       }
     }
   };
@@ -51,7 +59,7 @@
         type: 'vopros_chat',
         action: 'chat_status'
       };
-      var status_message = $('<p>banan</p>').addClass('chat-status-message').hide();
+      var status_message = Drupal.theme('voprosChatStatus', {text: ''}).addClass('chat-status-message').hide();
       $('.form-type-radios.form-item-user-answer-preference').append(status_message);
       Drupal.Nodejs.socket.emit('message', msg);
     }
