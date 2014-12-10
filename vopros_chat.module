@@ -443,7 +443,7 @@ function vopros_chat_form_vopros_embed_question_alter(&$form, $form_state) {
         'data' => array(
           'vopros_chat' => array(
             'busy_message' => variable_get('vopros_chat_busy_message', 'Chat busy.'),
-            'closed_message' => variable_get('vopros_chat_closed_message', 'Chat closed.'),
+            'closed_message' => nl2br(variable_get('vopros_chat_closed_message', 'Chat closed.')),
           ),
         ),
       ),

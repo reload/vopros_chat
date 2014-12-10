@@ -59,7 +59,7 @@ function vopros_chat_setting_form($form, &$form_state) {
   }
 
   $form['vopros_chat_closed_message'] = array(
-    '#type' => 'textfield',
+    '#type' => 'textarea',
     '#titel' => t('Closed message'),
     '#description' => t('Text shown when the chat is closed.'),
     '#default_value' => variable_get('vopros_chat_closed_message', 'Chat closed.'),
