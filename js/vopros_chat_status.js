@@ -23,9 +23,9 @@
         // Remove the disabled attribute from the chat radio.
         $('.vopros-chat-status-radio').attr('disabled', false);
         // And remove the form-disabled class.
-        $('.vopros-chat-status-radio').parents('.form-type-radio').removeClass('form-disabled');
+        $('.vopros-chat-status-radio').closest('.form-type-radio').removeClass('form-disabled');
         // Add "disabled" class to support IE8.
-        $('.vopros-chat-status-radio').parents().removeClass('disabled_answer_type');
+        $('.vopros-chat-status-radio').closest('.form-type-radio').removeClass('disabled_answer_type');
         // Ensure the submit button is enabled.
         $('.chat-submit').attr('disabled', false).removeClass('disabled');
         $('.chat-status-message').hide();
@@ -33,8 +33,8 @@
       else {
         // Do the reverse of the above.
         $('.vopros-chat-status-radio').attr('disabled', true);
-        $('.vopros-chat-status-radio').parents('.form-type-radio').addClass('form-disabled');
-        $('.vopros-chat-status-radio').parents().addClass('disabled_answer_type');
+        $('.vopros-chat-status-radio').closest('.form-type-radio').addClass('form-disabled');
+        $('.vopros-chat-status-radio').closest('.form-type-radio').addClass('disabled_answer_type');
         $('.chat-submit').attr('disabled', true).addClass('disabled');
         var status_message = $('.chat-status-message');
         var vars = {};
