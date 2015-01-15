@@ -44,34 +44,21 @@
   };
 
   /**
-   * Add a confirmation on leaving the page when there's active chats.
+   * Update the volatility depending on whether there's active chats.
    */
-  $(document).ready(function() {
-    $(window).bind('beforeunload', function(e) {
-      var active = false;
-      if (Drupal.settings.vopros_chat && Drupal.settings.vopros_chat.chats) {
-        var e = e || window.event;
-        $.each(Drupal.settings.vopros_chat.chats, function(i, chat) {
-          if (chat.initialised) {
-            active = true;
-            return false;
-          }
-        });
-
-        if (active) {
-          // Active chat, trigger the confirmation window.
-          var message = Drupal.t("You will leave the chat.");
-          // Older browsers.
-          if (e) {
-            e.returnValue = message;
-          }
-
-          // The new way.
-          return message;
+  var update_volatile = function() {
+    var active = false;
+    if (Drupal.settings.vopros_chat && Drupal.settings.vopros_chat.chats) {
+      $.each(Drupal.settings.vopros_chat.chats, function(i, chat) {
+        if (chat.initialised) {
+          active = true;
+          return false;
         }
-      }
-    });
-  });
+      });
+
+      Drupal.voprosEmbed.volatile.set(active);
+    }
+  };
 
   /**
    * Leave channel when the chat is removed from the page.
@@ -101,6 +88,8 @@
         var chat = Drupal.settings.vopros_chat.chats[chatId];
         if (!chat.initialised) {
           chat.initialised = true;
+          update_volatile();
+
           // Add a unique session id so we can spot our own messages.
           Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
           // Let the client join the channel.
@@ -121,6 +110,7 @@
         Drupal.settings.vopros_chat.chats[chat].initialised = false;
       }
     }
+    update_volatile();
   };
 
   if (Drupal.ajax) {
@@ -155,7 +145,8 @@
       if (message.data.user.sessionId !== sessionId) {
         $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' left</div>');
       }
-
+      // In case it was ourselves.
+      update_volatile();
     }
   };
 
@@ -186,6 +177,8 @@
       appendToLog(message.channel, messageText);
       // Disable the input field.
       $('#' + message.channel + ' .form-type-textarea textarea').attr('disabled', 'disabled');
+      Drupal.settings.vopros_chat.chats[message.channel].initialised = false;
+      update_volatile();
     }
   };
 
