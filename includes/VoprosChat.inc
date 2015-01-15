@@ -157,6 +157,10 @@ class VoprosChat {
         '#type' => 'submit',
         '#value' => t('Send Message'),
       );
+
+      $form['vopros_chat']['close'] = array(
+        '#markup' => vopros_embed_popup_close_link(check_plain(t('Close chat'))),
+      );
     }
 
     return $form;
