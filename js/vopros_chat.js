@@ -44,6 +44,36 @@
   };
 
   /**
+   * Add a confirmation on leaving the page when there's active chats.
+   */
+  $(document).ready(function() {
+    $(window).bind('beforeunload', function(e) {
+      var active = false;
+      if (Drupal.settings.vopros_chat && Drupal.settings.vopros_chat.chats) {
+        var e = e || window.event;
+        $.each(Drupal.settings.vopros_chat.chats, function(i, chat) {
+          if (chat.initialised) {
+            active = true;
+            return false;
+          }
+        });
+
+        if (active) {
+          // Active chat, trigger the confirmation window.
+          var message = Drupal.t("You will leave the chat.");
+          // Older browsers.
+          if (e) {
+            e.returnValue = message;
+          }
+
+          // The new way.
+          return message;
+        }
+      }
+    });
+  });
+
+  /**
    * Leave channel when the chat is removed from the page.
    */
   Drupal.behaviors.vopros_chat_leave_channel = {
