@@ -183,7 +183,7 @@
 
       appendToLog(message.channel, messageText);
       // Disable the input field.
-      $('#' + message.channel + ' .form-type-textarea textarea').attr('disabled', 'disabled');
+      $('#' + message.channel + ' .form-type-textarea').hide('fast');
       Drupal.settings.vopros_chat.chats[message.channel].initialised = false;
       updateVolatile();
     }
