@@ -44,20 +44,31 @@
   };
 
   /**
+   * Apply a function to all channels with a given state.
+   */
+  var forChannels = function(state, callback) {
+    for (var chatId in Drupal.settings.vopros_chat.chats) {
+      if (Drupal.settings.vopros_chat.chats.hasOwnProperty(chatId)) {
+        var chat = Drupal.settings.vopros_chat.chats[chatId];
+        // We actually want null to evaluate to false here.
+        /* eslint-disable eqeqeq */
+        if (chat.initialised == state) {
+        /*eslint-enable eqeqeq */
+          callback(chat, chatId);
+        }
+      }
+    }
+  };
+
+  /**
    * Update the volatility depending on whether there's active chats.
    */
   var updateVolatile = function() {
     var active = false;
-    if (Drupal.settings.vopros_chat && Drupal.settings.vopros_chat.chats) {
-      $.each(Drupal.settings.vopros_chat.chats, function(i, chat) {
-        if (chat.initialised) {
-          active = true;
-          return false;
-        }
-      });
-
-      Drupal.voprosEmbed.volatile.set(active);
-    }
+    forChannels(true, function(chat, chatId) {
+      active = true;
+    });
+    Drupal.voprosEmbed.volatile.set(active);
   };
 
   /**
@@ -83,33 +94,29 @@
   };
 
   Drupal.voprosChat.initialiseChat = function() {
-    for (var chatId in Drupal.settings.vopros_chat.chats) {
-      if (Drupal.settings.vopros_chat.chats.hasOwnProperty(chatId)) {
-        var chat = Drupal.settings.vopros_chat.chats[chatId];
-        if (!chat.initialised) {
-          chat.initialised = true;
-          updateVolatile();
+    forChannels(null, function(chat) {
+      console.dir(chat);
+      if (!chat.initialised) {
+        chat.initialised = true;
+        updateVolatile();
 
-          // Add a unique session id so we can spot our own messages.
-          Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
-          // Let the client join the channel.
-          Drupal.voprosChat.addClientToChatChannel(chat.channel);
+        // Add a unique session id so we can spot our own messages.
+        Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
+        // Let the client join the channel.
+        Drupal.voprosChat.addClientToChatChannel(chat.channel);
 
-          // Chat form events handling.
-          $('#' + chat.channel + ' .form-type-textarea textarea').keyup(keyUpHandler);
+        // Chat form events handling.
+        $('#' + chat.channel + ' .form-type-textarea textarea').keyup(keyUpHandler);
 
-          $('#' + chat.channel + ' .form-submit').click(submitHandler);
-        }
+        $('#' + chat.channel + ' .form-submit').click(submitHandler);
       }
-    }
+    });
   };
 
   Drupal.voprosChat.deinitialiseChat = function() {
-    for (var chat in Drupal.settings.vopros_chat.chats) {
-      if (Drupal.settings.vopros_chat.chats.hasOwnProperty(chat)) {
-        Drupal.settings.vopros_chat.chats[chat].initialised = false;
-      }
-    }
+    forChannels(true, function (chat) {
+      chat.initialised = false;
+    });
     updateVolatile();
   };
 
