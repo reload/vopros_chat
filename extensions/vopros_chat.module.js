@@ -314,6 +314,8 @@ exports.setup = function (config) {
         if (config.channels[message.channel]) {
           if (config.channels[message.channel].sessionIds[sessionId]) {
             delete config.channels[message.channel].sessionIds[sessionId];
+            // Touch channel for status update.
+            config.channels[message.channel].timestamp = (new Date()).getTime();
           }
           sendAdminStatusUpdate();
 
