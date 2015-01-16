@@ -46,7 +46,7 @@
   /**
    * Update the volatility depending on whether there's active chats.
    */
-  var update_volatile = function() {
+  var updateVolatile = function() {
     var active = false;
     if (Drupal.settings.vopros_chat && Drupal.settings.vopros_chat.chats) {
       $.each(Drupal.settings.vopros_chat.chats, function(i, chat) {
@@ -88,7 +88,7 @@
         var chat = Drupal.settings.vopros_chat.chats[chatId];
         if (!chat.initialised) {
           chat.initialised = true;
-          update_volatile();
+          updateVolatile();
 
           // Add a unique session id so we can spot our own messages.
           Drupal.settings.vopros_chat.currentUser.sessionId = sessionId;
@@ -110,7 +110,7 @@
         Drupal.settings.vopros_chat.chats[chat].initialised = false;
       }
     }
-    update_volatile();
+    updateVolatile();
   };
 
   if (Drupal.ajax) {
@@ -146,7 +146,7 @@
         $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' left</div>');
       }
       // In case it was ourselves.
-      update_volatile();
+      updateVolatile();
     }
   };
 
@@ -178,7 +178,7 @@
       // Disable the input field.
       $('#' + message.channel + ' .form-type-textarea textarea').attr('disabled', 'disabled');
       Drupal.settings.vopros_chat.chats[message.channel].initialised = false;
-      update_volatile();
+      updateVolatile();
     }
   };
 
