@@ -16,6 +16,9 @@
 
   var timer = null;
 
+  // Maximum number of active chats.
+  var maxChats = 2;
+
   /**
    * Show notification to admins via jGrowl.
    */
@@ -154,11 +157,11 @@
           var questionId = $(this).attr('href').split('/').pop();
           var base = 'vopros-chat-' + questionId;
           $(this).attr('id', base);
-          $(this).addClass('vopros-chat-admin-' + questionId + '-on');
+          $(this).addClass('vopros-chat-admin-' + questionId + '-on chat-admin-on');
           // Add an hidden element with the same text as the link,
           // which will be shown instead of the link when the chat is
           // loaded. See Drupal.behaviors.voprosChatAdminDisableLinks.
-          var no_link = $('<span></span>').text($(this).text()).addClass('vopros-chat-admin-' + questionId + '-off');
+          var no_link = $('<span></span>').text($(this).text()).addClass('vopros-chat-admin-' + questionId + '-off chat-admin-off');
           no_link.hide();
           $(this).after(no_link);
           var elementSettings = {
@@ -191,18 +194,33 @@
   Drupal.behaviors.voprosChatAdminDisableLinks = {
     // Not using the context, as jQuery wont find .vopros-chat-admin
     // when it's set on the topmost element of the context. As the
-    // attach and detatch functions are idempotent. Also, it has the
-    // nice side effect of ensuring the listing is in sync with
-    // whatever chats are currently visible on the page.
+    // attach and detatch functions are idempotent, this doesn't have
+    // side effects.. Also, it has the nice side effect of ensuring
+    // the listing is in sync with whatever chats are currently
+    // visible on the page.
     attach: function() {
-      $('.vopros-chat-admin').each(function () {
-        var chatId = $(this).attr('id');
-        $('.' + chatId + '-on').hide();
-        $('.' + chatId + '-off').show();
-      });
+      if ($('.vopros-chat-admin').length >= maxChats) {
+        // If maxchats has been reached, disable all links.
+        $('.chat-admin-on').hide();
+        $('.chat-admin-off').show();
+      }
+      else {
+        // Otherwise disable active chats.
+        $('.vopros-chat-admin').each(function () {
+          var chatId = $(this).attr('id');
+          $('.' + chatId + '-on').hide();
+          $('.' + chatId + '-off').show();
+        });
+      }
     },
     detach: function() {
+      if ($('.vopros-chat-admin').length <= maxChats) {
+        // If no longer over maxchats, re-enable links.
+        $('.chat-admin-on').show();
+        $('.chat-admin-off').hide();
+      }
       $('.vopros-chat-admin').each(function () {
+        // Else re-enable left chat.
         var chatId = $(this).attr('id');
         $('.' + chatId + '-on').show();
         $('.' + chatId + '-off').hide();
