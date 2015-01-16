@@ -95,7 +95,6 @@
 
   Drupal.voprosChat.initialiseChat = function() {
     forChannels(null, function(chat) {
-      console.dir(chat);
       if (!chat.initialised) {
         chat.initialised = true;
         updateVolatile();
