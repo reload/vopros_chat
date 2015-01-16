@@ -89,6 +89,8 @@
           }
         };
         Drupal.Nodejs.socket.emit('message', msg);
+        Drupal.settings.vopros_chat.chats[channelId].initialised = false;
+        updateVolatile();
       });
     }
   };
