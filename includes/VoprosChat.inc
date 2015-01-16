@@ -173,6 +173,7 @@ class VoprosChat {
     if ($this->options['active']) {
       // Add JavaScript.
       drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js');
+      drupal_add_js(drupal_get_path('module', 'vopros_embed') . '/js/vopros_embed_volatile.js');
     }
 
     // Add CSS.
