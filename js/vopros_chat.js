@@ -50,10 +50,10 @@
     for (var chatId in Drupal.settings.vopros_chat.chats) {
       if (Drupal.settings.vopros_chat.chats.hasOwnProperty(chatId)) {
         var chat = Drupal.settings.vopros_chat.chats[chatId];
-        // We actually want null to evaluate to false here.
-        /* eslint-disable eqeqeq */
-        if (chat.initialised == state) {
-        /*eslint-enable eqeqeq */
+        // We actually want null to evaluate to false here, so we
+        // double invert the values as that ensures they're booleans
+        // (there's no "(boolean) var" in JS).
+        if (!!chat.initialised === state) {
           callback(chat, chatId);
         }
       }
@@ -96,7 +96,7 @@
   };
 
   Drupal.voprosChat.initialiseChat = function() {
-    forChannels(null, function(chat) {
+    forChannels(false, function(chat) {
       if (!chat.initialised) {
         chat.initialised = true;
         updateVolatile();
