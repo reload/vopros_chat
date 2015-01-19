@@ -166,6 +166,17 @@ function vopros_chat_libraries_info() {
         ),
       ),
     ),
+    'jquery_color' => array(
+      'name' => 'jquery.color',
+      'vendor url' => 'https://github.com/jquery/jquery-color',
+      'download url' => 'http://code.jquery.com/color/jquery.color-2.1.2.min.js',
+      'version' => '2.1.2',
+      'files' => array(
+        'js' => array(
+          'jquery.color-2.1.2.min.js',
+        ),
+      ),
+    ),
     'playsound' => array(
       'name' => 'jQuery playSound',
       'vendor url' => 'https://github.com/admsev/jquery-play-sound',

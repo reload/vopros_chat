@@ -13,6 +13,11 @@ libraries[date_format][download][url] = https://raw.githubusercontent.com/jacwri
 libraries[date_format][directory_name] = date_format
 libraries[date_format][destination] = libraries
 
+libraries[jquery_color][download][type] = get
+libraries[jquery_color][download][url] = http://code.jquery.com/color/jquery.color-2.1.2.min.js
+libraries[jquery_color][directory_name] = jquery_color
+libraries[jquery_color][destination] = libraries
+
 libraries[notificationjs][download][type] = git
 libraries[notificationjs][download][url] = https://github.com/MrSwitch/notification.js
 libraries[notificationjs][revision] = 38217ab84bd9ddc4ba0fef565a188bbbde6e930f

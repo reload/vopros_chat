@@ -23,7 +23,8 @@
       .append(
       $('<a>')
           .text(Drupal.t('In queue: @queue', {'@queue': vars.queue}))
-          .attr('href', Drupal.settings.vopros_chat.chat_path));
+          .attr('href', Drupal.settings.vopros_chat.chat_path)
+          .addClass('vopros-chat-admin-status-text'));
   };
 
   /**
@@ -49,7 +50,7 @@
    */
   Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
     callback: function (message) {
-      $('.vopros-chat-admin-status').replaceWith(Drupal.theme('voprosChatAdminStatus', message));
+      $('.vopros-chat-admin-status-text').text(Drupal.t('In queue: @queue', {'@queue': message.queue}));
     }
   };
 

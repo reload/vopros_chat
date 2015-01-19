@@ -17,12 +17,22 @@
   var timer = null;
 
   /**
+   * Add a jQuery animation method for flashing an element.
+   */
+  $.fn.flash = function(duration ) {
+    var current = this.css('background-color');
+    return this.animate({'background-color': 'rgb(255,255,255)'}, duration / 2)
+      .animate({'background-color': current}, duration / 2);
+  };
+
+  /**
    * Show notification to admins via jGrowl.
    */
   var notify = function(notification) {
     var message = Drupal.t(notification.string, notification.args);
     var notification_settings = Drupal.settings.vopros_chat.notification;
     $.playSound(notification_settings.sound);
+    $('.vopros-chat-admin-status').flash(500);
     if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
