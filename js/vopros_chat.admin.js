@@ -16,9 +16,6 @@
 
   var timer = null;
 
-  // Maximum number of active chats.
-  var maxChats = 2;
-
   /**
    * Show notification to admins via jGrowl.
    */
@@ -198,6 +195,7 @@
     // the listing is in sync with whatever chats are currently
     // visible on the page.
     attach: function() {
+      var maxChats = Drupal.settings.vopros_chat.maxChats || 2;
       if ($('.vopros-chat-admin').length >= maxChats) {
         // If maxchats has been reached, disable all links.
         $('.chat-admin-on').hide();
@@ -213,6 +211,7 @@
       }
     },
     detach: function() {
+      var maxChats = Drupal.settings.vopros_chat.maxChats || 2;
       if ($('.vopros-chat-admin').length <= maxChats) {
         // If no longer over maxchats, re-enable links.
         $('.chat-admin-on').show();

@@ -73,6 +73,7 @@ function vopros_chat_admin_page() {
                   'sound' => url(drupal_get_path('module', 'vopros_chat') . '/sounds/notify'),
                   'jsPath' => url(libraries_get_path('notificationjs')),
                 ),
+                'maxChats' => variable_get('vopros_chat_max_admin_chats', 2),
               ),
             ),
           ),
