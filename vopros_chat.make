@@ -13,11 +13,6 @@ libraries[date_format][download][url] = https://raw.githubusercontent.com/jacwri
 libraries[date_format][directory_name] = date_format
 libraries[date_format][destination] = libraries
 
-libraries[jgrowl][download][type] = get
-libraries[jgrowl][download][url] = https://github.com/stanlemon/jGrowl/archive/1.3.0.zip
-libraries[jgrowl][directory_name] = jgrowl
-libraries[jgrowl][destination] = libraries
-
 libraries[notificationjs][download][type] = git
 libraries[notificationjs][download][url] = https://github.com/MrSwitch/notification.js
 libraries[notificationjs][revision] = 38217ab84bd9ddc4ba0fef565a188bbbde6e930f

@@ -121,3 +121,10 @@ function vopros_chat_update_7003() {
     variable_del('vopros_chat_closed_message');
   }
 }
+
+/**
+ * Remove jGrowl config.
+ */
+function vopros_chat_update_7101() {
+  variable_del('vopros_chat_notification_config_options');
+}

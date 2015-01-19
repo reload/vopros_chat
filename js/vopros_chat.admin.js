@@ -25,7 +25,6 @@
   var notify = function(notification) {
     var message = Drupal.t(notification.string, notification.args);
     var notification_settings = Drupal.settings.vopros_chat.notification;
-    $.jGrowl(message, notification_settings.config);
     $.playSound(notification_settings.sound);
     if (Notification.permission !== 'granted') {
       Notification.requestPermission();

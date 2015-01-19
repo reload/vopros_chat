@@ -70,7 +70,6 @@ function vopros_chat_admin_page() {
               'vopros_chat' => array(
                 'admin_signin' => user_access('answer vopros chats'),
                 'notification' => array(
-                  'config' => vopros_chat_notification_config_options(),
                   'sound' => url(drupal_get_path('module', 'vopros_chat') . '/sounds/notify'),
                   'jsPath' => url(libraries_get_path('notificationjs')),
                 ),
@@ -81,7 +80,6 @@ function vopros_chat_admin_page() {
         'library' => array(array('system', 'drupal.ajax')),
         'libraries_load' => array(
           array('autolinker'),
-          array('jgrowl'),
           array('playsound'),
           array('notificationjs'),
         ),
@@ -166,20 +164,5 @@ function vopros_chat_add_chat_js($question) {
 function ajax_command_vopros_chat_reinitialize() {
   return array(
     'command' => 'voprosChatReinitialize',
-  );
-}
-
-/**
- * Helper to find configuration options for jGrowl notifications.
- *
- * @return array
- *   An array of configuration options.
- */
-function vopros_chat_notification_config_options() {
-  $options = variable_get('vopros_chat_notification_config_options', array());
-  // Return options and merge in module defaults.
-  return $options + array(
-    'sticky' => TRUE,
-    'closerTemplate' => t('<div>[ close all ]</div>'),
   );
 }
