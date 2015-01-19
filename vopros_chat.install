@@ -89,6 +89,13 @@ function vopros_chat_schema() {
           'length' => 1024,
           'not null' => TRUE,
         ),
+        'type' => array(
+          'description' => 'Message type',
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
       ),
     ),
   );
@@ -125,6 +132,24 @@ function vopros_chat_update_7003() {
 /**
  * Remove jGrowl config.
  */
-function vopros_chat_update_7101() {
+function vopros_chat_update_7004() {
   variable_del('vopros_chat_notification_config_options');
+}
+
+/**
+ * Add type to chat_log.
+ */
+function vopros_chat_update_7005() {
+  $field = array(
+    'description' => 'Message type',
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+  );
+  db_add_field('vopros_chat_log', 'type', $field);
+  // Set existing entries to 'message' type.
+  db_update('vopros_chat_log')
+    ->fields(array('type' => 1))
+    ->execute();
 }

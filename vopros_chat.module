@@ -7,6 +7,10 @@
 
 define('VOPROS_CHAT_PIDFILE', '/tmp/vopros_chat.pid');
 
+// Types of chat log entries.
+define('VOPROS_CHAT_LOG_MESSAGE', 1);
+define('VOPROS_CHAT_LOG_JOINPART', 2);
+
 include_once 'vopros_chat.features.inc';
 
 /**
@@ -251,6 +255,7 @@ function vopros_chat_vopros_question_insert($question) {
       'name' => $question->user_name,
       'session_id' => '',
       'msg' => $question->question_content,
+      'type' => VOPROS_CHAT_LOG_MESSAGE,
     );
     drupal_write_record('vopros_chat_log', $chat_log);
   }

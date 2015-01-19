@@ -85,8 +85,9 @@
           // Set the callback so all users know a new user has entered the chat.
           callback: 'voprosChatUserOfflineHandler',
           data: {
-            user: Drupal.settings.vopros_chat.currentUser
-          }
+            user: Drupal.settings.vopros_chat.currentUser,
+            msg:  Drupal.settings.vopros_chat.currentUser.name + ' left'
+}
         };
         Drupal.Nodejs.socket.emit('message', msg);
         Drupal.settings.vopros_chat.chats[channelId].initialised = false;
@@ -142,7 +143,7 @@
   Drupal.Nodejs.callbacks.voprosChatUserOnlineHandler = {
     callback: function (message) {
       if (message.data.user.sessionId !== sessionId) {
-        $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' joined</div>');
+        appendToLog(message.channel, message.data.msg);
       }
 
     }
@@ -151,7 +152,7 @@
   Drupal.Nodejs.callbacks.voprosChatUserOfflineHandler = {
     callback: function (message) {
       if (message.data.user.sessionId !== sessionId) {
-        $('#' + message.channel + ' .chat-log').append('<div class="vopros-chat-message">' + message.data.user.name + ' left</div>');
+        appendToLog(message.channel, message.data.msg);
       }
       // In case it was ourselves.
       updateVolatile();
@@ -162,7 +163,7 @@
     callback: function(message) {
       var msg = message.data;
 
-      var messageAuthor = '<span class="message-author' + ((msg.sessionId === sessionId) ? ' message-author-me' : '') + '">' + (msg.sessionId === sessionId ? Drupal.t('Me') : msg.name) + ': </span>';
+      var messageAuthor = '<span class="message-author' + ((msg.user.sessionId === sessionId) ? ' message-author-me' : '') + '">' + (msg.user.sessionId === sessionId ? Drupal.t('Me') : msg.user.name) + ': </span>';
 
       // Auto link URLs and mail addresses. Don't auto link Twitter
       // handles because Drupals text filter won't do that.
@@ -198,7 +199,8 @@
       // Set the callback so all users know a new user has entered the chat.
       callback: 'voprosChatUserOnlineHandler',
       data: {
-        user: Drupal.settings.vopros_chat.currentUser
+        user: Drupal.settings.vopros_chat.currentUser,
+        msg:  Drupal.settings.vopros_chat.currentUser.name + ' joined'
       }
     };
     Drupal.Nodejs.socket.emit('message', msg);
@@ -211,9 +213,7 @@
       channel: channel,
       callback: 'voprosChatMessageHandler',
       data: {
-        uid: Drupal.settings.vopros_chat.currentUser.uid,
-        name: Drupal.settings.vopros_chat.currentUser.name,
-        sessionId: sessionId,
+        user: Drupal.settings.vopros_chat.currentUser,
         msg: message
       }
     };

@@ -36,6 +36,9 @@ exports.setup = function (config) {
   // Keep track of the names of the user from sockets.
   var nicks = {};
 
+  var LOG_TYPE_MESSAGE = 1;
+  var LOG_TYPE_JOINPART = 2;
+
   /**
    * Send status updates to admins.
    */
@@ -169,11 +172,11 @@ exports.setup = function (config) {
   /**
    * Log a chat message to the Drupal database.
    */
-  var logMessageToDatabase = function(message) {
+  var logMessageToDatabase = function(type, message) {
     var questionId = message.channel.split('__')[1].split('_')[0];
     var table = config.settings.database_tables['{vopros_chat_log}'];
     var timestamp = Math.floor(Date.now() / 1000);
-    drupal.db.query('INSERT INTO `' + table + '` (timestamp, question_id, uid, name, session_id, msg) VALUES (?, ?, ?, ?, ?, ?)', [timestamp, questionId, message.data.uid, message.data.name, message.data.sessionId, message.data.msg], function (err, rows) {
+    drupal.db.query('INSERT INTO `' + table + '` (timestamp, question_id, uid, name, session_id, msg, type) VALUES (?, ?, ?, ?, ?, ?, ?)', [timestamp, questionId, message.data.user.uid, message.data.user.name, message.data.user.sessionId, message.data.msg, type], function (err, rows) {
       if (err) {
         console.log(err);
       }
@@ -304,6 +307,7 @@ exports.setup = function (config) {
         // When entering a chat channel, the client might have sent a message
         // so that users know about this.
         publishMessageToChannel(message);
+        logMessageToDatabase(LOG_TYPE_JOINPART, message);
         break;
 
         // Leave channel.
@@ -321,6 +325,7 @@ exports.setup = function (config) {
 
           // Also publish the message, so other users see the parting.
           publishMessageToChannel(message);
+          logMessageToDatabase(LOG_TYPE_JOINPART, message);
         }
         break;
 
@@ -335,7 +340,7 @@ exports.setup = function (config) {
         }
 
         publishMessageToChannel(message);
-        logMessageToDatabase(message);
+        logMessageToDatabase(LOG_TYPE_MESSAGE, message);
         break;
 
         // Chat status request.
@@ -380,7 +385,8 @@ exports.setup = function (config) {
           channel: channelId,
           callback: 'voprosChatUserOfflineHandler',
           data: {
-            user: nicks[sessionId]
+            user: nicks[sessionId],
+            msg: nicks[sessionId].name + ' left'
           }
         };
 

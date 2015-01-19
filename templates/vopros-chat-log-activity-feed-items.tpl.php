@@ -15,7 +15,9 @@ global $user;
 <?php foreach ($variables['log_items']['#log'] as $item): ?>
 <div class="vopros-chat-message">
   <div class="message-content">
+<?php if ($item->type == VOPROS_CHAT_LOG_MESSAGE): ?>
     <span class="message-author<?php echo ($user->uid == $item->uid) ? ' message-author-me' : '' ?>"><?php echo ($user->uid == $item->uid) ? t('Me') : $item->name ?>: </span>
+<?php endif; ?>
     <span class="message-text"><?php echo $item->msg ?></span>
   </div>
   <span class="message-time"><?php echo format_date($item->timestamp, 'custom', 'G:i') ?></span>
