@@ -52,6 +52,7 @@ exports.setup = function (config) {
     if (typeof user.sessionId === 'undefined') {
       user.sessionId = '';
     }
+    return user;
   };
 
   /**
