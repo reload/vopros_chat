@@ -395,16 +395,18 @@ exports.setup = function (config) {
       if (hashish(channel.sessionIds).has(sessionId)) {
         channel.timestamp = (new Date()).getTime();
         // Send part message to channel.
-        var msg = {
-          type: 'vopros_chat',
-          action: 'chat_part',
-          channel: channelId,
-          callback: 'voprosChatUserOfflineHandler',
-          data: {
-            user: nicks[sessionId],
-            msg: nicks[sessionId].name + ' left'
-          }
-        };
+        if (nicks[sessionId]) {
+          var msg = {
+            type: 'vopros_chat',
+            action: 'chat_part',
+            channel: channelId,
+            callback: 'voprosChatUserOfflineHandler',
+            data: {
+              user: nicks[sessionId],
+              msg: nicks[sessionId].name + ' left'
+            }
+          };
+        }
 
         publishMessageToChannel(msg);
       }
