@@ -406,9 +406,8 @@ exports.setup = function (config) {
               msg: nicks[sessionId].name + ' left'
             }
           };
+          publishMessageToChannel(msg);
         }
-
-        publishMessageToChannel(msg);
       }
     });
 
