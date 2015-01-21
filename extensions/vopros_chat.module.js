@@ -40,6 +40,21 @@ exports.setup = function (config) {
   var LOG_TYPE_JOINPART = 2;
 
   /**
+   * Ensure object quacks like a user.
+   */
+  var safeUser = function (user) {
+    if (typeof user.name === 'undefined') {
+      user.name = 'unknown';
+    }
+    if (typeof user.uid === 'undefined') {
+      user.uid = 0;
+    }
+    if (typeof user.sessionId === 'undefined') {
+      user.sessionId = '';
+    }
+  };
+
+  /**
    * Send status updates to admins.
    */
   var sendAdminStatusUpdate = function(socketId) {
@@ -176,7 +191,8 @@ exports.setup = function (config) {
     var questionId = message.channel.split('__')[1].split('_')[0];
     var table = config.settings.database_tables['{vopros_chat_log}'];
     var timestamp = Math.floor(Date.now() / 1000);
-    drupal.db.query('INSERT INTO `' + table + '` (timestamp, question_id, uid, name, session_id, msg, type) VALUES (?, ?, ?, ?, ?, ?, ?)', [timestamp, questionId, message.data.user.uid, message.data.user.name, message.data.user.sessionId, message.data.msg, type], function (err, rows) {
+    var user = safeUser(message.data.user);
+    drupal.db.query('INSERT INTO `' + table + '` (timestamp, question_id, uid, name, session_id, msg, type) VALUES (?, ?, ?, ?, ?, ?, ?)', [timestamp, questionId, user.uid, user.name, user.sessionId, message.data.msg, type], function (err, rows) {
       if (err) {
         console.log(err);
       }
@@ -284,7 +300,7 @@ exports.setup = function (config) {
         }
 
         // Note user for later.
-        nicks[sessionId] = message.data.user;
+        nicks[sessionId] = safeUser(message.data.user);
 
         addClientToChannel(sessionId, message.channel);
 
