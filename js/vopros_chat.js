@@ -86,8 +86,8 @@
           callback: 'voprosChatUserOfflineHandler',
           data: {
             user: Drupal.settings.vopros_chat.currentUser,
-            msg:  Drupal.settings.vopros_chat.currentUser.name + ' left'
-}
+            msg:  Drupal.t('@user left', {'@user': Drupal.settings.vopros_chat.currentUser.name})
+          }
         };
         Drupal.Nodejs.socket.emit('message', msg);
         Drupal.settings.vopros_chat.chats[channelId].initialised = false;
@@ -143,16 +143,23 @@
   Drupal.Nodejs.callbacks.voprosChatUserOnlineHandler = {
     callback: function (message) {
       if (message.data.user.sessionId !== sessionId) {
-        appendToLog(message.channel, message.data.msg);
+        var msg = message.data.msg;
+        if (message.data.user.name) {
+          msg = Drupal.t('@user joined', {'@user': message.data.user.name})
+        }
+        appendToLog(message.channel, msg);
       }
-
     }
   };
 
   Drupal.Nodejs.callbacks.voprosChatUserOfflineHandler = {
     callback: function (message) {
       if (message.data.user.sessionId !== sessionId) {
-        appendToLog(message.channel, message.data.msg);
+        var msg = message.data.msg;
+        if (message.data.user.name) {
+          msg = Drupal.t('@user left', {'@user': message.data.user.name})
+        }
+        appendToLog(message.channel, msg);
       }
       // In case it was ourselves.
       updateVolatile();
@@ -200,7 +207,7 @@
       callback: 'voprosChatUserOnlineHandler',
       data: {
         user: Drupal.settings.vopros_chat.currentUser,
-        msg:  Drupal.settings.vopros_chat.currentUser.name + ' joined'
+        msg:  Drupal.t('@user joined', {'@user': Drupal.settings.vopros_chat.currentUser.name})
       }
     };
     Drupal.Nodejs.socket.emit('message', msg);
