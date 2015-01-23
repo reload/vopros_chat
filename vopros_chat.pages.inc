@@ -59,6 +59,8 @@ function vopros_chat_admin_page() {
       '#attached' => array(
         'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.admin.css'),
         'js' => array(
+          // Need the volatile script.
+          drupal_get_path('module', 'vopros_embed') . '/js/vopros_embed_volatile.js',
           drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.admin.js',
           // Need to add the client JS so it can add the ajax command we use to
           // initialize the chat after we fetch it over AHAH.

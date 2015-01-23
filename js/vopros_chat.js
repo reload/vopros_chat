@@ -22,6 +22,8 @@
     }
   };
 
+  var volatile;
+
   var submitHandler = function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -68,7 +70,15 @@
     forChannels(true, function(chat, chatId) {
       active = true;
     });
-    Drupal.voprosEmbed.volatile.set(active);
+    volatile.set(active);
+  };
+
+  Drupal.behaviors.voprosVolatile = {
+    attach: function(context) {
+      if (!volatile) {
+        volatile = Drupal.voprosEmbed.volatile.client(Drupal.t("Chat will close."));
+      }
+    }
   };
 
   /**

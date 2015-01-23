@@ -16,6 +16,8 @@
 
   var timer = null;
 
+  var volatile = Drupal.voprosEmbed.volatile.client(Drupal.t("The chat will close if you are the last editor to leave."));
+
   /**
    * Add a jQuery animation method for flashing an element.
    */
@@ -132,6 +134,7 @@
    */
   Drupal.behaviors.voprosChatAdmin = {
     attach: function(context, settings) {
+      volatile.set(true);
       $('#vopros-chat-admin-channel-list').once('voproc-chat', function() {
         if (typeof Drupal.Nodejs.socket.emit === 'undefined') {
           // No socket, which usuallay means no server. Print a message.
