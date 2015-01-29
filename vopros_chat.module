@@ -5,8 +5,6 @@
  * Vopros chat module.
  */
 
-define('VOPROS_CHAT_PIDFILE', '/tmp/vopros_chat.pid');
-
 // Types of chat log entries.
 define('VOPROS_CHAT_LOG_MESSAGE', 1);
 define('VOPROS_CHAT_LOG_JOINPART', 2);
@@ -892,8 +890,9 @@ function _vopros_chat_server_running() {
     }
   }
 
-  if (file_exists(VOPROS_CHAT_PIDFILE) &&
-    $pid = trim(file_get_contents(VOPROS_CHAT_PIDFILE))) {
+  $pidfile = _vopros_chat_server_pidfile();
+  if (file_exists($pidfile) &&
+    $pid = trim(file_get_contents($pidfile))) {
     // Kill -0 doesn't actually send a signal, but does all the preflight
     // checking. So it'll check that the process is running and that we're
     // allowed to signal it.
@@ -921,7 +920,7 @@ function _vopros_chat_start_stop_server($start = TRUE, $method = 'node', $exec =
   if ($method == 'daemon' || !$start) {
     $node_bin = '/sbin/start-stop-daemon --' . ($start ? 'start' : 'stop') .
       ' --oknodo --make-pidfile --pidfile ' .
-      escapeshellarg(VOPROS_CHAT_PIDFILE) . ' ' .
+      escapeshellarg(_vopros_chat_server_pidfile()) . ' ' .
       ($start ? '--background' : '') . ' --exec ' . $node_bin . ' -- ';
   }
   elseif ($method == 'nodemon') {
@@ -976,4 +975,12 @@ function _vopros_chat_authenticated_user_name($user) {
   }
 
   return $watch_name;
+}
+
+/**
+ * Return path to server pidfile.
+ */
+function _vopros_chat_server_pidfile() {
+  $nodejs_config = nodejs_get_config();
+  return '/tmp/vopros_chat.' . $nodejs_config['nodejs']['port'] . '.pid';
 }
