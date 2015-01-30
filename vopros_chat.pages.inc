@@ -48,6 +48,8 @@ function vopros_chat_admin_page() {
       '#attached' => array(
         'library' => array(array('system', 'drupal.progress')),
         'js' => array(
+          // Need the volatile script.
+          drupal_get_path('module', 'vopros_embed') . '/js/vopros_embed_volatile.js',
           drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.admin.js',
         ),
       ),

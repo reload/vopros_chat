@@ -134,13 +134,13 @@
    */
   Drupal.behaviors.voprosChatAdmin = {
     attach: function(context, settings) {
-      volatile.set(true);
       $('#vopros-chat-admin-channel-list').once('voproc-chat', function() {
         if (typeof Drupal.Nodejs.socket.emit === 'undefined') {
           // No socket, which usuallay means no server. Print a message.
           $(this).append(Drupal.t('Could not communicate with chat server. Reload page to try again.'));
           return;
         }
+        volatile.set(true);
         var base = $(this).attr('id');
         var elementSettings = {
           url: Drupal.settings.vopros_chat.chat_path + '/channels',
