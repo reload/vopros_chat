@@ -41,6 +41,15 @@ function vopros_chat_modules_disabled($modules) {
  */
 function vopros_chat_init() {
   if (user_access('answer vopros chats')) {
+    // As we end up pulling in quite a lot of JS code through nodejs.module
+    // including socket.io and other things, we install a generic error handler
+    // that'll at least tell the user that something failed.
+    drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_error_handler.js', array(
+        'type' => 'file',
+        'scope' => 'header',
+        'weight' => -100,
+        'preprocess' => FALSE,
+      ));
     drupal_add_js(array('vopros_chat' => array('chat_path' => url('admin/vopros/chat'))), 'setting');
     drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_admin_status.js');
   }
