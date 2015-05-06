@@ -537,14 +537,6 @@ function vopros_chat_views_data_alter(&$data) {
       'handler' => 'vopros_chat_handler_field_vopros_quesiton_chat_status',
     ),
   );
-
-  $data['vopros_question']['question_assigned'] = array(
-    'title' => t('Assigned'),
-    'help' => t('Whether the question is assigned'),
-    'field' => array(
-      'handler' => 'vopros_chat_handler_field_vopros_quesiton_question_assigned',
-    ),
-  );
 }
 
 /**
