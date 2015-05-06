@@ -86,6 +86,7 @@ function vopros_chat_admin_page() {
         'libraries_load' => array(
           array('autolinker'),
           array('jquery_color'),
+          array('jquery_pulse'),
           array('playsound'),
           array('notificationjs'),
         ),

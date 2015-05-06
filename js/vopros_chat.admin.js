@@ -34,7 +34,6 @@
     var message = Drupal.t(notification.string, notification.args);
     var notification_settings = Drupal.settings.vopros_chat.notification;
     $.playSound(notification_settings.sound);
-    $('.vopros-chat-admin-status').flash(500);
     if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }

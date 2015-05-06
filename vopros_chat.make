@@ -18,6 +18,11 @@ libraries[jquery_color][download][url] = http://code.jquery.com/color/jquery.col
 libraries[jquery_color][directory_name] = jquery_color
 libraries[jquery_color][destination] = libraries
 
+libraries[jquery_pulse][download][type] = get
+libraries[jquery_pulse][download][url] = https://raw.githubusercontent.com/jsoverson/jquery.pulse.js/master/jquery.pulse.min.js
+libraries[jquery_pulse][directory_name] = jquery_pulse
+libraries[jquery_pulse][destination] = libraries
+
 libraries[notificationjs][download][type] = git
 libraries[notificationjs][download][url] = https://github.com/MrSwitch/notification.js
 libraries[notificationjs][revision] = 38217ab84bd9ddc4ba0fef565a188bbbde6e930f
