@@ -50,7 +50,9 @@
    */
   Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
     callback: function (message) {
-      $('.vopros-chat-admin-status-text').text(Drupal.t('In queue: @queue', {'@queue': message.queue}));
+      $.getJSON(Drupal.settings.vopros_chat.status_path, function (data) {
+        $('.vopros-chat-admin-status-text').text(Drupal.t('In queue: @queue', {'@queue': data}));
+      });
     }
   };
 

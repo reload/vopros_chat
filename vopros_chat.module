@@ -50,7 +50,12 @@ function vopros_chat_init() {
         'weight' => -100,
         'preprocess' => FALSE,
       ));
-    drupal_add_js(array('vopros_chat' => array('chat_path' => url('admin/vopros/chat'))), 'setting');
+    drupal_add_js(array(
+        'vopros_chat' => array(
+          'chat_path' => url('admin/vopros/chat'),
+          'status_path' => url('admin/vopros/chat/status'),
+        ),
+      ), 'setting');
     drupal_add_js(drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat_admin_status.js');
   }
 }
@@ -82,6 +87,16 @@ function vopros_chat_menu() {
   $items['admin/vopros/chat/channels'] = array(
     'title' => 'AHAH callback',
     'page callback' => 'vopros_chat_channels_js',
+    'delivery callback' => 'ajax_deliver',
+    'access callback' => 'vopros_chat_access',
+    'theme callback' => 'ajax_base_page_theme',
+    'file' => 'vopros_chat.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/vopros/chat/status'] = array(
+    'title' => 'AHAH callback',
+    'page callback' => 'vopros_chat_status_js',
     'delivery callback' => 'ajax_deliver',
     'access callback' => 'vopros_chat_access',
     'theme callback' => 'ajax_base_page_theme',
@@ -506,6 +521,14 @@ function vopros_chat_views_data_alter(&$data) {
     'help' => t('Shows the current status of chat questions.'),
     'field' => array(
       'handler' => 'vopros_chat_handler_field_vopros_quesiton_chat_status',
+    ),
+  );
+
+  $data['vopros_question']['question_assigned'] = array(
+    'title' => t('Assigned'),
+    'help' => t('Whether the question is assigned'),
+    'field' => array(
+      'handler' => 'vopros_chat_handler_field_vopros_quesiton_question_assigned',
     ),
   );
 }

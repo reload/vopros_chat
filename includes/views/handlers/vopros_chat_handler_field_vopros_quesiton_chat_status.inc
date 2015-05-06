@@ -14,6 +14,7 @@ class vopros_chat_handler_field_vopros_quesiton_chat_status extends views_handle
     parent::construct();
     $this->additional_fields += array(
       'user_answer_preference' => 'user_answer_preference',
+      'uid' => 'uid',
     );
     $this->real_field = 'question_id';
   }
@@ -23,7 +24,7 @@ class vopros_chat_handler_field_vopros_quesiton_chat_status extends views_handle
    */
   public function render($values) {
     if ($this->get_value($values, 'user_answer_preference') == 'chat') {
-      return '<span class="chat-status" data-channel-name="' . vopros_chat_get_channel_name_from_question_id($this->get_value($values)) . '"></span>';
+      return '<span class="chat-status" data-channel-name="' . vopros_chat_get_channel_name_from_question_id($this->get_value($values)) . '">' .  ($this->get_value($values, 'uid') > 0 ? t('Assigned') : '') . '</span>';
     }
 
     return t('N/A');

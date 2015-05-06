@@ -159,6 +159,25 @@ function vopros_chat_add_chat_js($question) {
 }
 
 /**
+ * Ajax page callback.
+ *
+ * Return the number of active chat questions.
+ */
+function vopros_chat_status_js() {
+  $query = new EntityFieldQuery();
+  $result = $query->entityCondition('entity_type', 'vopros_question')
+          ->propertyCondition('user_answer_preference', 'chat')
+          ->propertyCondition('question_status', array('new', 'active'))
+          ->count()
+          ->execute();
+
+  drupal_json_output($result);
+  // Exit immediately, else the output might be munged by settings getting
+  // appended to the output.
+  drupal_exit();
+}
+
+/**
  * Creates a Drupal Ajax 'voprosChatReinitialize' command.
  *
  * The 'voprosChatReinitialize' command instructs the client to reinitialize
