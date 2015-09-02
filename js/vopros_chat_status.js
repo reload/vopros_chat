@@ -14,6 +14,7 @@
   Drupal.theme.prototype.voprosChatStatus = function (vars) {
     return $('<p class="default-icon">').html(vars.text);
   };
+
   /**
    * Nodejs callback to update the chat status.
    */
