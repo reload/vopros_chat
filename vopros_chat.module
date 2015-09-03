@@ -516,10 +516,11 @@ function vopros_chat_log_load($question_id) {
  * Render a chat log in plain text.
  */
 function vopros_chat_log_render_plain($log) {
-  global $user;
+  // Same as drupal_get_user_timezone() uses to get the system default.
+  $timezone = variable_get('date_default_timezone', @date_default_timezone_get());
   $plain = array();
   foreach ($log as $item) {
-    $plain[] = format_date($item->timestamp, 'custom', 'G:i') . ' - ' . $item->name . ': ' . $item->msg;
+    $plain[] = format_date($item->timestamp, 'custom', 'G:i', $timezone) . ' - ' . $item->name . ': ' . $item->msg;
   }
   return implode("\n", $plain);
 }
