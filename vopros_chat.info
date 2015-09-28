@@ -3,7 +3,6 @@ description = Implements chat for Vopros.
 core = 7.x
 package = Vopros
 version = 7.x-1.0
-project = vopros_chat2
 dependencies[] = libraries
 dependencies[] = nodejs
 dependencies[] = views
