@@ -115,7 +115,7 @@
   Drupal.Nodejs.callbacks.voprosChatAdminStatus = {
     callback: function (message) {
       $.getJSON(Drupal.settings.vopros_chat.status_path, function (data) {
-        $('.vopros-chat-admin-status-text .inner').text(Drupal.t('In queue: @queue', {'@queue': data}));
+        $('.vopros-chat-admin-status-text').text(Drupal.t('In queue: @queue', {'@queue': data}));
         var link = $('.vopros-chat-admin-status a');
         queue = data;
         pulse1();
