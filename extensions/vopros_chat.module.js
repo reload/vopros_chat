@@ -215,10 +215,15 @@ exports.setup = function (config) {
         var hours;
         if (rx && (hours = JSON.parse(rx[1]))) {
           var time = new Date();
+          var day = time.getDay();
+          if (day === 0) {
+            // Drupal calls Sunday day number 7.
+            day = 7;
+          }
           var today = hours[time.getDay()];
           var minutes = (time.getHours() * 60) + time.getMinutes();
           // If neither of open or close is set, we're closed.
-          if (today.open !== null || today.close !== null ) {
+          if (today.open !== null || today.close !== null) {
             if ((today.open === null || today.open <= minutes) &&
                 (today.close === null || today.close > minutes)) {
               status = true;
