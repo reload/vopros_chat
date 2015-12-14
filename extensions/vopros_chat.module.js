@@ -220,7 +220,7 @@ exports.setup = function (config) {
             // Drupal calls Sunday day number 7.
             day = 7;
           }
-          var today = hours[time.getDay()];
+          var today = hours[day];
           var minutes = (time.getHours() * 60) + time.getMinutes();
           // If neither of open or close is set, we're closed.
           if (today.open !== null || today.close !== null) {
