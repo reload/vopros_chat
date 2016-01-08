@@ -24,7 +24,7 @@ class vopros_chat_handler_field_vopros_quesiton_chat_status extends views_handle
    */
   public function render($values) {
     if ($this->get_value($values, 'user_answer_preference') == 'chat') {
-      return '<span class="chat-status" data-channel-name="' . vopros_chat_get_channel_name_from_question_id($this->get_value($values)) . '">' .  ($this->get_value($values, 'uid') > 0 ? t('Assigned') : '') . '</span>';
+      return '<span class="chat-status" data-channel-name="' . vopros_chat_get_channel_name_from_question_id($this->get_value($values)) . '">' .  ($this->get_value($values, 'uid') > 0 ? t('Not yet closed') : '') . '</span>';
     }
 
     return t('N/A');

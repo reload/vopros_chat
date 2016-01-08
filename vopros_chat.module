@@ -809,51 +809,59 @@ function vopros_chat_admin_chat_actions_button_later_callback($form, &$form_stat
 function vopros_chat_admin_chat_actions_button_callback($form, &$form_state) {
   $button = $form_state['triggering_element'];
   $question = vopros_question_load($form_state['values']['question_id']);
-  if ($question && !$button['#leave']) {
-    // Change status.
-    $question->question_status = $button['#question_status'];
-    $question->question_status_reason = $button['#question_status_reason'];
-
-    // Copy the chat log to the question body field.
-    $log = vopros_chat_log_load($question->question_id);
-    $question->question_content = t('Chat log: ') . "\n" .
-      vopros_chat_log_render_plain($log);
-
-    // The question is still open, change the answer preference to allow editors
-    // to contact the user by mail later.
-    if ($question->question_status == 'active') {
-      $question->user_answer_preference = 'mail';
-    }
-
-    if ($form_state['values']['keep']) {
-      $question->question_status = 'assigned';
+  if ($question) {
+    if ($button['#leave']) {
+      // Unassign the question.
+      $question->question_status = 'active';
+      $question->uid = 0;
+      $question->save();
     }
     else {
-      // Release the question.
-      $question->uid = 0;
-    }
+      // Change status.
+      $question->question_status = $button['#question_status'];
+      $question->question_status_reason = $button['#question_status_reason'];
 
-    $title = '';
-    if (isset($form_state['values']['title'])) {
-      $title = trim($form_state['values']['title']);
-    }
-    if (!empty($title)) {
-      $question->question_title = $title;
-    }
+      // Copy the chat log to the question body field.
+      $log = vopros_chat_log_load($question->question_id);
+      $question->question_content = t('Chat log: ') . "\n" .
+                                  vopros_chat_log_render_plain($log);
 
-    $question->save();
+      // The question is still open, change the answer preference to allow editors
+      // to contact the user by mail later.
+      if ($question->question_status == 'active') {
+        $question->user_answer_preference = 'mail';
+      }
 
-    // Send message to the client to disable input.
-    $message = (object) array(
-      'type' => 'vopros_chat',
-      'action' => 'chat_close',
-      'channel' => vopros_chat_get_channel_name_from_question_id($question->question_id),
-      'callback' => 'closeChannelHandler',
-      'data' => array(
-        'msg' => variable_get('vopros_chat_closing_message', 'Chat closed'),
-      ),
-    );
-    nodejs_send_message($message);
+      if ($form_state['values']['keep']) {
+        $question->question_status = 'assigned';
+      }
+      else {
+        // Release the question.
+        $question->uid = 0;
+      }
+
+      $title = '';
+      if (isset($form_state['values']['title'])) {
+        $title = trim($form_state['values']['title']);
+      }
+      if (!empty($title)) {
+        $question->question_title = $title;
+      }
+
+      $question->save();
+
+      // Send message to the client to disable input.
+      $message = (object) array(
+        'type' => 'vopros_chat',
+        'action' => 'chat_close',
+        'channel' => vopros_chat_get_channel_name_from_question_id($question->question_id),
+        'callback' => 'closeChannelHandler',
+        'data' => array(
+          'msg' => variable_get('vopros_chat_closing_message', 'Chat closed'),
+        ),
+      );
+      nodejs_send_message($message);
+    }
   }
 
   // Contrary to what the docs say, ajax_command_remove() doesn't use the
