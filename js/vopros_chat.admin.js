@@ -87,6 +87,11 @@
           activeChannels[message.channel_name] = message.channel_name;
 
           var idle = Math.floor(message.ref_time - message.timestamp);
+          if (message.users <= message.admin_users &&
+              // If the channel is empty, use the time since last part.
+              message.user_part_timestamp > 0) {
+            idle = Math.floor(message.ref_time - message.user_part_timestamp);
+          }
 
           $(this).addClass('idleTimer');
           $(this).attr('data-timestamp', timestamp());

@@ -101,6 +101,7 @@ exports.setup = function (config) {
               'users': Object.keys(channel.sessionIds).length,
               'admin_users': adminUsers,
               'timestamp': Math.floor(channel.timestamp / 1000),
+              'user_part_timestamp': channel.user_part_timestamp ? Math.floor(channel.user_part_timestamp / 1000) : 0,
               'ref_time': Math.floor(time / 1000),
               'refresh': channel.last_timestamp ? false : true,
               'notification': channel.notification
@@ -400,8 +401,14 @@ exports.setup = function (config) {
     hashish(config.channels).forEach(function (channel, channelId) {
       if (hashish(channel.sessionIds).has(sessionId)) {
         channel.timestamp = (new Date()).getTime();
-        // Send part message to channel.
+
         if (nicks[sessionId]) {
+          // Note last part of non-admin users.
+          if (nicks[sessionId].uid === 0) {
+            channel.user_part_timestamp = (new Date()).getTime();
+          }
+
+          // Send part message to channel.
           var msg = {
             type: 'vopros_chat',
             action: 'chat_part',
@@ -424,9 +431,12 @@ exports.setup = function (config) {
         sendStatus();
         sendAdminStatusUpdate();
 
-        // Clean up channels without users.
+        // Clean up channels without users after a timeout.
         hashish(config.channels).forEach(function (channel, channelId) {
-          if (hashish(channel).has('timestamp') && hashish(channel.sessionIds).length < 1) {
+          if (hashish(channel).has('timestamp') &&
+              hashish(channel.sessionIds).length < 1 &&
+              channel.timestamp < ((new Date()).getTime() - 10)
+             ) {
             delete config.channels[channelId];
           }
         });
