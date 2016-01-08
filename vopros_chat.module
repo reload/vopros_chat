@@ -813,6 +813,7 @@ function vopros_chat_admin_chat_actions_button_callback($form, &$form_state) {
     if ($button['#leave']) {
       // Unassign the question.
       $question->question_status = 'active';
+      $question->question_status_reason = '';
       $question->uid = 0;
       $question->save();
     }
