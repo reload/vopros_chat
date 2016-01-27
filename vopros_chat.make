@@ -30,6 +30,6 @@ libraries[notificationjs][directory_name] = notificationjs
 libraries[notificationjs][destination] = libraries
 
 libraries[playsound][download][type] = get
-libraries[playsound][download][url] = https://raw.githubusercontent.com/admsev/jquery-play-sound/ed002a306b473c7a57d8e51a8a1a73705a09222c/jquery.playSound.js
+libraries[playsound][download][url] = https://raw.githubusercontent.com/admsev/jquery-play-sound/8159c920b1ec75cd367ef78b01a20385d0d65df8/jquery.playSound.js
 libraries[playsound][directory_name] = playsound
 libraries[playsound][destination] = libraries
