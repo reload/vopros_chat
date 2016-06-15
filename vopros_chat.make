@@ -1,6 +1,20 @@
 api = 2
 core = 7.x
 
+projects[nodejs][version] = 1.8
+; Fix missing session. https://www.drupal.org/node/2288625
+projects[nodejs][patch][] = https://www.drupal.org/files/issues/sessionid.patch
+; Revive checkChannel. https://www.drupal.org/node/2288629
+projects[nodejs][patch][] = https://www.drupal.org/files/issues/check-channel-url.patch
+; Fix up socket.io transports. https://www.drupal.org/node/2288897
+projects[nodejs][patch][] = https://www.drupal.org/files/issues/tranports.patch
+; Fix https server start. https://www.drupal.org/node/2280989
+projects[nodejs][patch][] = http://cgit.drupalcode.org/nodejs/patch/?id=4c4e8c5d89395097c32e0d060caab96a050e1081
+; Add passphrase option to HTTPS server. https://www.drupal.org/node/2295635
+projects[nodejs][patch][] = https://www.drupal.org/files/issues/0001-Add-passphrase-option-to-HTTPS-server.patch
+; Allow extensions to alter settings. https://www.drupal.org/node/2295635
+projects[nodejs][patch][] = https://www.drupal.org/files/issues/0002-Allow-extensions-to-alter-settings.patch
+
 ;;; Libraries
 
 libraries[autolinker][download][type] = get
