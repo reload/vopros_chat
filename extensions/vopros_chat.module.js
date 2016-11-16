@@ -1,5 +1,6 @@
 /**
- * @file vopros_chat.module.js
+ * @file
+ * vopros_chat.module.js
  *
  * Node JS Chat Server extension.
  */
@@ -58,7 +59,7 @@ exports.setup = function (config) {
   /**
    * Send status updates to admins.
    */
-  var sendAdminStatusUpdate = function(socketId) {
+  var sendAdminStatusUpdate = function (socketId) {
     var time = (new Date()).getTime();
     var channels = 0;
     var channelsWithAdmins = 0;
@@ -91,9 +92,9 @@ exports.setup = function (config) {
             hashish(config.channels[statusChannel].sessionIds).length > 0) {
 
           // Update status for channel if it's been changed since last
-          // run, or a socketId was given
+          // run, or a socketId was given.
           if (channel.timestamp > lastStatusTime || socketId) {
-            // send update for channel.
+            // Send update for channel.
             var message = {
               'callback': 'voprosChatAdminChannelStatus',
               'channel': statusChannel,
@@ -148,7 +149,7 @@ exports.setup = function (config) {
   /**
    * Create a database connection.
    */
-  var connectToDatabase = function(config) {
+  var connectToDatabase = function (config) {
     // Filter out empty values, and extract only the ones we need.
     var options = hashish(config.settings.database)
       .filter(function (x) {return x !== '';})
@@ -169,7 +170,7 @@ exports.setup = function (config) {
   /**
    * Check that a channel hash is valid.
    */
-  var checkHash = function(message) {
+  var checkHash = function (message) {
     // First compare hash value of question id.
     var questionId = message.channel.split('__')[1].split('_')[0];
     var questionHashFromUrl = message.channel.split('__')[1].split('_')[1];
@@ -189,7 +190,7 @@ exports.setup = function (config) {
   /**
    * Log a chat message to the Drupal database.
    */
-  var logMessageToDatabase = function(type, message) {
+  var logMessageToDatabase = function (type, message) {
     var questionId = message.channel.split('__')[1].split('_')[0];
     var table = config.settings.database_tables['{vopros_chat_log}'];
     var timestamp = Math.floor(Date.now() / 1000);
@@ -204,7 +205,7 @@ exports.setup = function (config) {
   /**
    * Return the open status of Drupal.
    */
-  var getDrupalStatus = function(callback) {
+  var getDrupalStatus = function (callback) {
     var table = config.settings.database_tables['{variable}'];
     drupal.db.query('SELECT value FROM `' + table + '` WHERE name = "vopros_chat_hours"', function (err, rows) {
       var status = false;
@@ -240,7 +241,7 @@ exports.setup = function (config) {
   /**
    * Send simple chat status to clients.
    */
-  var sendStatus = function(sessionId) {
+  var sendStatus = function (sessionId) {
     getDrupalStatus(function (drupalStatus) {
       var message = {
         'callback': 'voprosChatStatus',
@@ -427,7 +428,7 @@ exports.setup = function (config) {
     // Send the updates after completion of this tick, to give
     // cleanupSocket time to remove the socket from the channels.
     process.nextTick(
-      function() {
+      function () {
         sendStatus();
         sendAdminStatusUpdate();
 
@@ -445,7 +446,7 @@ exports.setup = function (config) {
 
   // Sadly, messages originating in Drupal trigger completely
   // different events.
-  process.on('message-published', function(message) {
+  process.on('message-published', function (message) {
     // Trigger an channel refresh in admin page when chats are closed
     // by Drupal.
     if (message.type === 'vopros_chat' && message.action === 'chat_close') {
