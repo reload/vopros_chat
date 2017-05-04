@@ -927,11 +927,11 @@ function _vopros_chat_standard_messages() {
 }
 
 /**
- *
+ * Get path to drupal-node npm package.
  */
 function vopros_chat_drupal_node_js_path($add_root = FALSE) {
-  //$path = libraries_get_path('drupal-node.js') . '/node_modules/drupal-node.js';
-  $path = 'sites/all/libraries/drupal-node.js' . '/node_modules/drupal-node.js';
+  libraries_load('drupal-node.js');
+  $path = libraries_get_path('drupal-node.js') . '/node_modules/drupal-node.js';
 
   if ($add_root) {
     return DRUPAL_ROOT . '/' . $path;
@@ -948,8 +948,6 @@ function _vopros_chat_start_stop_server($start = TRUE, $exec = 'shell_exec', $de
 
   $vopros_chat_path = getcwd() . '/' . drupal_get_path('module', 'vopros_chat');
 
-  $old_dir = getcwd();
-  chdir(drupal_get_path('module', 'vopros_chat') . '/server');
   $config_file = vopros_chat_create_chat_config();
 
   $command_parts = array();
@@ -967,13 +965,11 @@ function _vopros_chat_start_stop_server($start = TRUE, $exec = 'shell_exec', $de
 
   $command = implode(' ', $command_parts);
 
+  $old_dir = getcwd();
+  chdir(drupal_get_path('module', 'vopros_chat') . '/server');
   $exec($command);
 
   chdir($old_dir);
-  if (!$start) {
-    // start-stop-daemon doesn't remove the pid file when stopping, so we do.
-    unlink('/tmp/vopros_chat.pid');
-  }
 
   return $command;
 }
