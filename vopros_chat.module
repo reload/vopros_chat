@@ -242,11 +242,6 @@ function vopros_chat_libraries_info() {
     'drupal-node.js' => array(
       'name' => 'drupal-node.js',
       'vendor url' => 'https://www.drupal.org/project/nodejs',
-      'files' => array(
-        'js' => array(
-          'node_modules/drupal-node.js/app.js',
-        ),
-      ),
     ),
   );
 }
