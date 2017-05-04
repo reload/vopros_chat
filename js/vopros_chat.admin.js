@@ -1,16 +1,17 @@
 /**
- * @file vopros_chat.admin.js
+ * @file
+ * vopros_chat.admin.js
  *
  * Node JS callbacks and general admin Javascript code for Vopro Chat.
  */
 
 /* global jQuery, Drupal, window, Notification */
 
-(function($) {
+(function ($) {
   // Keeps track of channels with users, that is, active.
   var activeChannels = {};
 
-  var timestamp = function() {
+  var timestamp = function () {
     return ((new Date()).getTime() / 1000);
   };
 
@@ -21,7 +22,7 @@
   /**
    * Add a jQuery animation method for flashing an element.
    */
-  $.fn.flash = function(duration ) {
+  $.fn.flash = function (duration) {
     var current = this.css('background-color');
     return this.animate({'background-color': 'rgb(255,255,255)'}, duration / 2)
       .animate({'background-color': current}, duration / 2);
@@ -30,7 +31,7 @@
   /**
    * Show notification to admins via jGrowl.
    */
-  var notify = function(notification) {
+  var notify = function (notification) {
     var message = Drupal.t(notification.string, notification.args);
     var notification_settings = Drupal.settings.vopros_chat.notification;
     $.playSound(notification_settings.sound);
@@ -43,7 +44,7 @@
     });
   };
 
-  var idleString = function(idle) {
+  var idleString = function (idle) {
     var idleString = '';
     if (idle > 60) {
       idleString = Math.floor(idle / 60) + ' min ';
@@ -51,8 +52,8 @@
     return idleString + (idle % 60) + ' secs';
   };
 
-  var updateCallback = function() {
-    $('.idleTimer').each(function() {
+  var updateCallback = function () {
+    $('.idleTimer').each(function () {
       var current = timestamp();
       var offset = current - parseFloat($(this).attr('data-timestamp'));
       var idle = Math.floor(parseFloat($(this).attr('data-idle')) + offset);
@@ -137,8 +138,8 @@
    * Behavior to attach ajax loading to channel list and chats.
    */
   Drupal.behaviors.voprosChatAdmin = {
-    attach: function(context, settings) {
-      $('#vopros-chat-admin-channel-list').once('voproc-chat', function() {
+    attach: function (context, settings) {
+      $('#vopros-chat-admin-channel-list').once('voproc-chat', function () {
         if (typeof Drupal.Nodejs.socket.emit === 'undefined') {
           // No socket, which usuallay means no server. Print a message.
           $(this).append(Drupal.t('Could not communicate with chat server. Reload page to try again.'));
@@ -163,10 +164,10 @@
    * Behaviour to make question links open a chat.
    */
   Drupal.behaviors.voprosChatAdminLinks = {
-    attach: function(context, settings) {
+    attach: function (context, settings) {
       var loadListing = false;
-      $('.view-vopros-chat-question-list').once('voproc-chat', function() {
-        $('a', this).each(function() {
+      $('.view-vopros-chat-question-list').once('voproc-chat', function () {
+        $('a', this).each(function () {
           var questionId = $(this).attr('href').split('/').pop();
           var base = 'vopros-chat-' + questionId;
           $(this).attr('id', base);
@@ -201,8 +202,9 @@
   };
 
   /**
-   * Behavior to disable the link for opening the chat when the chat
-   * is open.
+   * Behavior for chat links.
+   *
+   * Disables the link for opening the chat when the chat is open.
    */
   Drupal.behaviors.voprosChatAdminDisableLinks = {
     // Not using the context, as jQuery wont find .vopros-chat-admin
@@ -211,7 +213,7 @@
     // side effects.. Also, it has the nice side effect of ensuring
     // the listing is in sync with whatever chats are currently
     // visible on the page.
-    attach: function() {
+    attach: function () {
       var maxChats = Drupal.settings.vopros_chat.maxChats || 2;
       if ($('.vopros-chat-admin').length >= maxChats) {
         // If maxchats has been reached, disable all links.
@@ -227,7 +229,7 @@
         });
       }
     },
-    detach: function() {
+    detach: function () {
       var maxChats = Drupal.settings.vopros_chat.maxChats || 2;
       if ($('.vopros-chat-admin').length <= maxChats) {
         // If no longer over maxchats, re-enable links.
@@ -247,7 +249,7 @@
    * Behavior to show loading bar.
    */
   Drupal.behaviors.voprosChatAdminServerLoading = {
-    attach: function() {
+    attach: function () {
       $('.vopros-chat-server-loading').each(function () {
         // Create a progress bar that fills over 5 seconds and then
         // reload the page. Should give the server enuogh time to boot
@@ -269,12 +271,12 @@
   };
 
   Drupal.Nodejs.connectionSetupHandlers.voprosChatAdmin = {
-    connect: function() {
+    connect: function () {
       // Update the channel listing when nodejs (re)connects.
       $('#vopros-chat-admin-channel-list').trigger('vopros-chat-admin-refresh-channels');
 
       if (Drupal.settings.vopros_chat.admin_signin) {
-        //  When connecting to the server, notify that we're an admin.
+        // When connecting to the server, notify that we're an admin.
         var msg = {
           type: 'vopros_chat_admin',
           action: 'admin_signin'
