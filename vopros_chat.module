@@ -169,7 +169,7 @@ function vopros_chat_permission() {
 }
 
 /**
- * Implements hook_library().
+ * Implements hook_libraries_info().
  */
 function vopros_chat_libraries_info() {
   return array(
@@ -236,6 +236,15 @@ function vopros_chat_libraries_info() {
       'files' => array(
         'js' => array(
           'notification.js',
+        ),
+      ),
+    ),
+    'drupal-node.js' => array(
+      'name' => 'drupal-node.js',
+      'vendor url' => 'https://www.drupal.org/project/nodejs',
+      'files' => array(
+        'js' => array(
+          'node_modules/drupal-node.js/app.js',
         ),
       ),
     ),
@@ -589,8 +598,7 @@ function vopros_chat_get_channel_hash_from_question_id($question_id) {
  *   File name of the generated config file.
  */
 function vopros_chat_create_chat_config() {
-  $vopros_chat_extension_path = _vopros_chat_relative_path(drupal_get_path('module', 'nodejs'), drupal_get_path('module', 'vopros_chat') . '/extensions');
-
+  $vopros_chat_extension_path = _vopros_chat_relative_path(vopros_chat_drupal_node_js_path() . '/lib', drupal_get_path('module', 'vopros_chat') . '/extensions');
   global $is_https;
 
   $nodejs_config = nodejs_get_config();
@@ -960,6 +968,20 @@ function _vopros_chat_server_running() {
 }
 
 /**
+ *
+ */
+function vopros_chat_drupal_node_js_path($add_root = FALSE) {
+  //$path = libraries_get_path('drupal-node.js') . '/node_modules/drupal-node.js';
+  $path = 'sites/all/libraries/drupal-node.js' . '/node_modules/drupal-node.js';
+
+  if ($add_root) {
+    return DRUPAL_ROOT . '/' . $path;
+  }
+
+  return $path;
+}
+
+/**
  * Start or stop the server.
  */
 function _vopros_chat_start_stop_server($start = TRUE, $method = 'node', $exec = 'shell_exec', $debug = FALSE) {
@@ -975,7 +997,6 @@ function _vopros_chat_start_stop_server($start = TRUE, $method = 'node', $exec =
     $node_bin = 'nodemon';
   }
 
-  $nodejs_path = getcwd() . '/' . drupal_get_path('module', 'nodejs');
   $vopros_chat_path = getcwd() . '/' . drupal_get_path('module', 'vopros_chat');
 
   $old_dir = getcwd();
@@ -992,7 +1013,7 @@ function _vopros_chat_start_stop_server($start = TRUE, $method = 'node', $exec =
     escapeshellarg($vopros_chat_path . '/server/node_modules');
 
   $command_parts[] = $node_bin;
-  $command_parts[] = escapeshellarg($nodejs_path . '/server.js');
+  $command_parts[] = escapeshellarg(vopros_chat_drupal_node_js_path(TRUE) . '/app.js');
   $command_parts[] = escapeshellarg($config_file);
 
   $command = implode(' ', $command_parts);

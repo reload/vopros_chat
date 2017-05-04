@@ -212,7 +212,7 @@
     var msg = {
       type: 'vopros_chat',
       action: 'chat_init',
-      channel: channelId,
+      join_channel: channelId,
       // Set the callback so all users know a new user has entered the chat.
       callback: 'voprosChatUserOnlineHandler',
       data: {
