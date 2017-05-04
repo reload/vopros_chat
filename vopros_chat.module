@@ -932,42 +932,6 @@ function _vopros_chat_standard_messages() {
 }
 
 /**
- * Check whether the server is running.
- */
-function _vopros_chat_server_running() {
-  // Starting the server by hand doesn't create the pid file, so we check if
-  // there's a drush command in the process list which runs the server start
-  // command.
-  exec('ps xa', $output);
-  foreach ($output as $line) {
-    if (strpos($line, 'drush') !== FALSE &&
-      strpos($line, 'vopros-chat-start') !== FALSE) {
-      return TRUE;
-    }
-  }
-
-  $pidfile = _vopros_chat_server_pidfile();
-  if (file_exists($pidfile) &&
-    $pid = trim(file_get_contents($pidfile))) {
-    // Kill -0 doesn't actually send a signal, but does all the preflight
-    // checking. So it'll check that the process is running and that we're
-    // allowed to signal it.
-    exec('kill 2>&1 -0 ' . escapeshellarg($pid), $output, $return_code);
-    if ($return_code == 0) {
-      // Success, all good.
-      return TRUE;
-    }
-    elseif (strpos(implode("\n", $output), 'not permitted')) {
-      // Failure, but the output indicated that we're not allowed to signal the
-      // process, which means that it's runnning. So we'll call that a success
-      // too.
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
-
-/**
  *
  */
 function vopros_chat_drupal_node_js_path($add_root = FALSE) {
@@ -984,18 +948,8 @@ function vopros_chat_drupal_node_js_path($add_root = FALSE) {
 /**
  * Start or stop the server.
  */
-function _vopros_chat_start_stop_server($start = TRUE, $method = 'node', $exec = 'shell_exec', $debug = FALSE) {
+function _vopros_chat_start_stop_server($start = TRUE, $exec = 'shell_exec', $debug = FALSE) {
   $node_bin = '/usr/bin/node';
-  // Stop implies daemon.
-  if ($method == 'daemon' || !$start) {
-    $node_bin = '/sbin/start-stop-daemon --' . ($start ? 'start' : 'stop') .
-      ' --oknodo --make-pidfile --pidfile ' .
-      escapeshellarg(_vopros_chat_server_pidfile()) . ' ' .
-      ($start ? '--background' : '') . ' --exec ' . $node_bin . ' -- ';
-  }
-  elseif ($method == 'nodemon') {
-    $node_bin = 'nodemon';
-  }
 
   $vopros_chat_path = getcwd() . '/' . drupal_get_path('module', 'vopros_chat');
 

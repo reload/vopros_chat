@@ -32,67 +32,43 @@ function vopros_chat_client_page($question_id, $chat_hash) {
  * Render the admin page.
  */
 function vopros_chat_admin_page() {
-  // Check that server is running, and try to start it if it's not the case, but
-  // only if start-stop-daemon is available.
-  if (file_exists('/sbin/start-stop-daemon') && !_vopros_chat_server_running()) {
-    // Use flood control.
-    if (flood_is_allowed('vopros_chat_start_server', 3, 300, 'server')) {
-      _vopros_chat_start_stop_server(TRUE, 'daemon', 'shell_exec');
-      flood_register_event('vopros_chat_start_server', 300, 'server');
-    }
-
-    // Shows a JS progress bar for 5 seconds before reloading the page. The
-    // server should be up by that time.
-    $build = array(
-      '#markup' => '<div class="vopros-chat-server-loading"></div>',
-      '#attached' => array(
-        'library' => array(array('system', 'drupal.progress')),
-        'js' => array(
-          // Need the volatile script.
-          drupal_get_path('module', 'vopros_embed') . '/js/vopros_embed_volatile.js',
-          drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.admin.js',
-        ),
-      ),
-    );
-  }
-  else {
-    $build = array(
-      '#theme' => 'vopros_chat_admin_page',
-      '#attached' => array(
-        'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.admin.css'),
-        'js' => array(
-          // Need the volatile script.
-          drupal_get_path('module', 'vopros_embed') . '/js/vopros_embed_volatile.js',
-          drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.admin.js',
-          // Need to add the client JS so it can add the ajax command we use to
-          // initialize the chat after we fetch it over AHAH.
-          drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js',
-          drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.polyfills.js',
-          array(
-            'type' => 'setting',
-            'data' => array(
-              'vopros_chat' => array(
-                'admin_signin' => user_access('answer vopros chats'),
-                'notification' => array(
-                  'sound' => url(drupal_get_path('module', 'vopros_chat') . '/sounds/notify'),
-                  'jsPath' => url(libraries_get_path('notificationjs')),
-                ),
-                'maxChats' => variable_get('vopros_chat_max_admin_chats', 2),
+  $build = array(
+    '#theme' => 'vopros_chat_admin_page',
+    '#attached' => array(
+      'css' => array(drupal_get_path('module', 'vopros_chat') . '/css/vopros_chat.admin.css'),
+      'js' => array(
+        // Need the volatile script.
+        drupal_get_path('module', 'vopros_embed') . '/js/vopros_embed_volatile.js',
+        drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.admin.js',
+        // Need to add the client JS so it can add the ajax command we use to
+        // initialize the chat after we fetch it over AHAH.
+        drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.js',
+        drupal_get_path('module', 'vopros_chat') . '/js/vopros_chat.polyfills.js',
+        array(
+          'type' => 'setting',
+          'data' => array(
+            'vopros_chat' => array(
+              'admin_signin' => user_access('answer vopros chats'),
+              'notification' => array(
+                'sound' => url(drupal_get_path('module', 'vopros_chat') . '/sounds/notify'),
+                'jsPath' => url(libraries_get_path('notificationjs')),
               ),
+              'maxChats' => variable_get('vopros_chat_max_admin_chats', 2),
             ),
           ),
         ),
-        'library' => array(array('system', 'drupal.ajax')),
-        'libraries_load' => array(
-          array('autolinker'),
-          array('jquery_color'),
-          array('jquery_pulse'),
-          array('playsound'),
-          array('notificationjs'),
-        ),
       ),
-    );
-  }
+      'library' => array(array('system', 'drupal.ajax')),
+      'libraries_load' => array(
+        array('autolinker'),
+        array('jquery_color'),
+        array('jquery_pulse'),
+        array('playsound'),
+        array('notificationjs'),
+      ),
+    ),
+  );
+
   return $build;
 }
 

@@ -16,8 +16,6 @@ function vopros_chat_drush_command() {
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL,
     'options' => array(
       'node-debug' => 'Show debugging output.',
-      'nodemon' => 'Run with nodemon.',
-      'daemon' => 'Spawn daemon process.',
     ),
   );
 
@@ -38,25 +36,14 @@ function vopros_chat_drush_command() {
  * Command callback for starting server.
  */
 function drush_vopros_chat_start() {
-  $method = 'node';
-  if (drush_get_option('nodemon', FALSE)) {
-    if (drush_get_option('daemon', FALSE)) {
-      return drush_set_error("--nodemon and --daemon doesn't make sense together.");
-    }
-    $method = 'nodemon';
-  }
-  if (drush_get_option('daemon', FALSE)) {
-    $method = 'daemon';
-  }
-
-  _vopros_chat_start_stop_server(TRUE, $method, 'drush_shell_exec_interactive', drush_get_option('node-debug', FALSE));
+  _vopros_chat_start_stop_server(TRUE, 'drush_shell_exec_interactive', drush_get_option('node-debug', FALSE));
 }
 
 /**
  * Command callback for stopping server.
  */
 function drush_vopros_chat_stop() {
-  _vopros_chat_start_stop_server(FALSE, 'daemon', 'drush_shell_exec_interactive');
+  _vopros_chat_start_stop_server(FALSE, 'drush_shell_exec_interactive');
 }
 
 /**
