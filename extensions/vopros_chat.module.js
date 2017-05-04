@@ -392,8 +392,9 @@ VoprosChat.prototype.messageHandlers = {
       delete channel.last_timestamp;
       // Boot all users from the channel. This ensures that they're
       // not counted as in queue.
+      var self = this;
       hashish(channel.sessionIds).forEach(function (sessionId) {
-        this.clientManager.removeClientFromChannel(sessionId, message.channel)
+        self.clientManager.removeClientFromChannel(sessionId, message.channel)
       })
     }
     this.sendAdminStatusUpdate();
@@ -512,7 +513,7 @@ voprosChatExtension.setup = function (clientManager) {
   // Messages originating in Drupal trigger a completely different
   // event.
   process.on('message-published', function (message) {
-    voprosChat.handleMessage(sessionId, message);
+    voprosChat.handleMessage(null, message);
   });
 
   process.on('client-disconnect', function (sessionId) {
