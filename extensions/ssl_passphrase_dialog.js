@@ -10,7 +10,8 @@
  */
 
 var exec = require('sync-exec');
-exports.settingsAlter = function(settings) {
+
+exports.alterSettings = function (settings) {
   if (settings.sslPassPhraseDialog) {
     settings.sslPassPhrase = exec(settings.sslPassPhraseDialog).stdout.trim();
   }
